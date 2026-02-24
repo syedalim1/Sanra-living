@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import SiteHeader from "@/app/components/SiteHeader";
 import SiteFooter from "@/app/components/SiteFooter";
+import { useCart } from "@/app/context/CartContext";
 
 /* ── FONTS ───────────────────────────────────────────────────── */
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
@@ -166,8 +167,10 @@ const CheckIcon = () => (
 /* ── PAGE ────────────────────────────────────────────────────── */
 export default function ProductDetailPage() {
     const { id } = useParams();
+    const router = useRouter();
     const product = products.find((p) => p.id === Number(id)) ?? products[0];
     const related = products.filter((p) => product.relatedIds.includes(p.id));
+    const { dispatch } = useCart();
 
     const [activeImg, setActiveImg] = useState(0);
     const [activeTab, setActiveTab] = useState<Tab>("Description");
@@ -175,10 +178,38 @@ export default function ProductDetailPage() {
     const [qty, setQty] = useState(1);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [zoomed, setZoomed] = useState(false);
+    const [addedToCart, setAddedToCart] = useState(false);
 
     const isMobile = useIsMobile(768);
     const isTablet = useIsMobile(1024);
     const stockLow = product.stockQty <= 5;
+
+    const handleAddToCart = () => {
+        dispatch({
+            type: "ADD",
+            payload: {
+                id: product.id, title: product.title,
+                subtitle: product.subtitle, finish,
+                price: product.price, image: product.images[0],
+                qty, stockQty: product.stockQty,
+            },
+        });
+        setAddedToCart(true);
+        setTimeout(() => setAddedToCart(false), 2000);
+    };
+
+    const handleBuyNow = () => {
+        dispatch({
+            type: "ADD",
+            payload: {
+                id: product.id, title: product.title,
+                subtitle: product.subtitle, finish,
+                price: product.price, image: product.images[0],
+                qty, stockQty: product.stockQty,
+            },
+        });
+        router.push("/checkout");
+    };
 
     /* shared style helpers */
     const label = (extra?: object) => ({
@@ -299,10 +330,10 @@ export default function ProductDetailPage() {
 
                         {/* CTAs */}
                         <div style={{ display: "flex", gap: "0.75rem", flexDirection: isMobile ? "column" : "row" }}>
-                            <button style={{ flex: 1, padding: "1rem", background: "#1C1C1C", color: "#fff", fontWeight: 700, fontSize: "0.82rem", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: FM }}>
-                                Add to Cart
+                            <button onClick={handleAddToCart} style={{ flex: 1, padding: "1rem", background: addedToCart ? "#2a7d4f" : "#1C1C1C", color: "#fff", fontWeight: 700, fontSize: "0.82rem", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: FM, transition: "background 0.3s" }}>
+                                {addedToCart ? "✓ Added to Cart" : "Add to Cart"}
                             </button>
-                            <button style={{ flex: 1, padding: "1rem", background: "transparent", color: "#1C1C1C", fontWeight: 700, fontSize: "0.82rem", letterSpacing: "0.12em", textTransform: "uppercase", border: "2px solid #1C1C1C", cursor: "pointer", fontFamily: FM }}>
+                            <button onClick={handleBuyNow} style={{ flex: 1, padding: "1rem", background: "transparent", color: "#1C1C1C", fontWeight: 700, fontSize: "0.82rem", letterSpacing: "0.12em", textTransform: "uppercase", border: "2px solid #1C1C1C", cursor: "pointer", fontFamily: FM }}>
                                 Buy Now
                             </button>
                         </div>
@@ -554,7 +585,7 @@ export default function ProductDetailPage() {
                         <p style={{ fontSize: "0.68rem", color: "#888", fontFamily: FM }}>{product.title}</p>
                         <p style={{ fontSize: "1rem", fontWeight: 800, color: "#111", fontFamily: FM }}>₹{product.price.toLocaleString("en-IN")}</p>
                     </div>
-                    <button style={{ flex: 2, background: "#1C1C1C", color: "#fff", fontWeight: 700, fontSize: "0.82rem", letterSpacing: "0.1em", textTransform: "uppercase", border: "none", cursor: "pointer", padding: "0.875rem", fontFamily: FM }}>
+                    <button onClick={handleBuyNow} style={{ flex: 2, background: "#1C1C1C", color: "#fff", fontWeight: 700, fontSize: "0.82rem", letterSpacing: "0.1em", textTransform: "uppercase", border: "none", cursor: "pointer", padding: "0.875rem", fontFamily: FM }}>
                         Buy Now
                     </button>
                 </div>

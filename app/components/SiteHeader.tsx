@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { useCart } from "@/app/context/CartContext";
 
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
 const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
@@ -11,6 +12,7 @@ const NAV_LINKS = [
     { label: "About", href: "/about" },
     { label: "Bulk Orders", href: "/bulk-orders" },
     { label: "Track Order", href: "/track-order" },
+    { label: "Contact", href: "/contact" },
 ];
 
 const DRAWER_LINKS = [
@@ -43,7 +45,7 @@ const SearchIcon = () => (
 export default function SiteHeader() {
     const [scrolled, setScrolled] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [cartCount] = useState(0); // wire to cart state when ready
+    const { totalItems } = useCart();
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 10);
@@ -123,7 +125,7 @@ export default function SiteHeader() {
                         {/* Cart */}
                         <Link href="/cart" aria-label="Cart" style={{ color: "#1C1C1C", position: "relative", display: "flex", alignItems: "center" }}>
                             <CartIcon />
-                            {cartCount > 0 && (
+                            {totalItems > 0 && (
                                 <span style={{
                                     position: "absolute", top: -6, right: -6,
                                     width: 16, height: 16, background: "#1C1C1C", color: "#fff",
@@ -131,7 +133,7 @@ export default function SiteHeader() {
                                     display: "flex", alignItems: "center", justifyContent: "center",
                                     borderRadius: "50%",
                                 }}>
-                                    {cartCount}
+                                    {totalItems}
                                 </span>
                             )}
                         </Link>
