@@ -4,8 +4,22 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-// ─── DATA ────────────────────────────────────────────────────────────────────
+/* ── FONTS ─────────────────────────────────────────────────── */
+const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
+const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
 
+/* ── TOKENS ────────────────────────────────────────────────── */
+const C = {
+    black: "#111111",
+    dark: "#1C1C1C",
+    mid: "#555555",
+    muted: "#888888",
+    border: "#E8E8E8",
+    bg: "#F5F5F5",
+    white: "#FFFFFF",
+};
+
+/* ── TYPES ─────────────────────────────────────────────────── */
 type StockStatus = "In Stock" | "Only 12 Left" | "Only 3 Left" | "New" | "Limited";
 
 interface Product {
@@ -19,131 +33,20 @@ interface Product {
     stock: StockStatus;
     image: string;
     hoverImage: string;
-    warranty: string;
     isNew?: boolean;
 }
 
+/* ── DATA ──────────────────────────────────────────────────── */
 const products: Product[] = [
-    {
-        id: 1,
-        title: "SL Edge",
-        subtitle: "Entryway Steel Organizer",
-        price: 2499,
-        priceDisplay: "₹2,499",
-        category: "Entryway Storage",
-        finish: "Matte Black",
-        stock: "In Stock",
-        image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-    },
-    {
-        id: 2,
-        title: "SL Apex",
-        subtitle: "Wall-Mount Study Desk",
-        price: 5499,
-        priceDisplay: "₹5,499",
-        category: "Study Desks",
-        finish: "Graphite Grey",
-        stock: "Only 12 Left",
-        image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-    },
-    {
-        id: 3,
-        title: "SL Vault",
-        subtitle: "Modular Wall Storage System",
-        price: 8999,
-        priceDisplay: "₹8,999",
-        category: "Wall Storage",
-        finish: "Matte Black",
-        stock: "In Stock",
-        image: "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-        isNew: true,
-    },
-    {
-        id: 4,
-        title: "SL Crest",
-        subtitle: "Steel Magazine & Key Holder",
-        price: 1299,
-        priceDisplay: "₹1,299",
-        category: "Entryway Storage",
-        finish: "Graphite Grey",
-        stock: "New",
-        image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-        isNew: true,
-    },
-    {
-        id: 5,
-        title: "SL Slate",
-        subtitle: "Standing Study Desk – Height Adjust",
-        price: 12999,
-        priceDisplay: "₹12,999",
-        category: "Study Desks",
-        finish: "Matte Black",
-        stock: "Only 3 Left",
-        image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-    },
-    {
-        id: 6,
-        title: "SL Grid",
-        subtitle: "Pegboard Wall Storage",
-        price: 3499,
-        priceDisplay: "₹3,499",
-        category: "Wall Storage",
-        finish: "Graphite Grey",
-        stock: "In Stock",
-        image: "https://images.unsplash.com/photo-1493663284031-b7e3aaa4e00f?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-    },
-    {
-        id: 7,
-        title: "SL Mono",
-        subtitle: "Minimalist Entryway Shelf",
-        price: 1899,
-        priceDisplay: "₹1,899",
-        category: "Entryway Storage",
-        finish: "Matte Black",
-        stock: "Limited",
-        image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-    },
-    {
-        id: 8,
-        title: "SL Frame",
-        subtitle: "Wall Display Frame Storage",
-        price: 6299,
-        priceDisplay: "₹6,299",
-        category: "Wall Storage",
-        finish: "Graphite Grey",
-        stock: "In Stock",
-        image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-    },
-    {
-        id: 9,
-        title: "SL Pro Desk",
-        subtitle: "Corner Steel Study Station",
-        price: 9499,
-        priceDisplay: "₹9,499",
-        category: "Study Desks",
-        finish: "Matte Black",
-        stock: "New",
-        image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=600&q=80",
-        hoverImage: "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=600&q=80",
-        warranty: "10 Year Warranty Included",
-        isNew: true,
-    },
+    { id: 1, title: "SL Edge", subtitle: "Entryway Steel Organizer", price: 2499, priceDisplay: "₹2,499", category: "Entryway Storage", finish: "Matte Black", stock: "In Stock", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80" },
+    { id: 2, title: "SL Apex", subtitle: "Wall-Mount Study Desk", price: 5499, priceDisplay: "₹5,499", category: "Study Desks", finish: "Graphite Grey", stock: "Only 12 Left", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=600&q=80" },
+    { id: 3, title: "SL Vault", subtitle: "Modular Wall Storage System", price: 8999, priceDisplay: "₹8,999", category: "Wall Storage", finish: "Matte Black", stock: "In Stock", image: "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?w=600&q=80", isNew: true },
+    { id: 4, title: "SL Crest", subtitle: "Steel Magazine & Key Holder", price: 1299, priceDisplay: "₹1,299", category: "Entryway Storage", finish: "Graphite Grey", stock: "New", image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80", isNew: true },
+    { id: 5, title: "SL Slate", subtitle: "Standing Study Desk – Height Adjust", price: 12999, priceDisplay: "₹12,999", category: "Study Desks", finish: "Matte Black", stock: "Only 3 Left", image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80" },
+    { id: 6, title: "SL Grid", subtitle: "Pegboard Wall Storage", price: 3499, priceDisplay: "₹3,499", category: "Wall Storage", finish: "Graphite Grey", stock: "In Stock", image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&q=80" },
+    { id: 7, title: "SL Mono", subtitle: "Minimalist Entryway Shelf", price: 1899, priceDisplay: "₹1,899", category: "Entryway Storage", finish: "Matte Black", stock: "Limited", image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80" },
+    { id: 8, title: "SL Frame", subtitle: "Wall Display Frame Storage", price: 6299, priceDisplay: "₹6,299", category: "Wall Storage", finish: "Graphite Grey", stock: "In Stock", image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=600&q=80" },
+    { id: 9, title: "SL Pro Desk", subtitle: "Corner Steel Study Station", price: 9499, priceDisplay: "₹9,499", category: "Study Desks", finish: "Matte Black", stock: "New", image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=600&q=80", isNew: true },
 ];
 
 const categories = ["All", "Entryway Storage", "Study Desks", "Wall Storage"];
@@ -152,104 +55,96 @@ const finishes = ["All", "Matte Black", "Graphite Grey"];
 const availability = ["All", "In Stock", "Limited Stock"];
 const sortOptions = ["Featured", "Price: Low to High", "Price: High to Low", "Newest"];
 
-// ─── STOCK BADGE ─────────────────────────────────────────────────────────────
-
+/* ── STOCK BADGE ───────────────────────────────────────────── */
 function StockBadge({ status }: { status: StockStatus }) {
-    const config: Record<StockStatus, { label: string; cls: string }> = {
-        "In Stock": { label: "In Stock", cls: "bg-[#111111] text-white" },
-        "Only 12 Left": { label: "Only 12 Left", cls: "bg-[#4A4A4A] text-white" },
-        "Only 3 Left": { label: "Only 3 Left", cls: "bg-[#2a2a2a] text-white" },
-        "New": { label: "New", cls: "bg-white text-[#111111] border border-[#111111]" },
-        "Limited": { label: "Limited", cls: "bg-[#3a3a3a] text-white" },
+    const map: Record<StockStatus, { label: string; bg: string; color: string; border?: string }> = {
+        "In Stock": { label: "In Stock", bg: "#111", color: "#fff" },
+        "Only 12 Left": { label: "Only 12 Left", bg: "#3a3a3a", color: "#fff" },
+        "Only 3 Left": { label: "Only 3 Left", bg: "#1C1C1C", color: "#fff" },
+        "New": { label: "New", bg: "#fff", color: "#111", border: "1px solid #111" },
+        "Limited": { label: "Limited", bg: "#555", color: "#fff" },
     };
-    const { label, cls } = config[status];
+    const cfg = map[status];
     return (
-        <span
-            className={`absolute top-3 left-3 text-[10px] font-semibold uppercase tracking-[0.12em] px-2.5 py-1 z-10 ${cls}`}
-            style={{ fontFamily: "Montserrat, sans-serif" }}
-        >
-            {label}
+        <span style={{
+            position: "absolute", top: 12, left: 12, zIndex: 10,
+            fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase",
+            padding: "0.3rem 0.65rem", background: cfg.bg, color: cfg.color,
+            border: cfg.border ?? "none", fontFamily: FM,
+        }}>
+            {cfg.label}
         </span>
     );
 }
 
-// ─── PRODUCT CARD ─────────────────────────────────────────────────────────────
-
+/* ── PRODUCT CARD ──────────────────────────────────────────── */
 function ProductCard({ product, index }: { product: Product; index: number }) {
     const [hovered, setHovered] = useState(false);
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.07 }}
-            className="bg-white group cursor-pointer flex flex-col"
-            style={{ boxShadow: "0 2px 20px rgba(0,0,0,0.06)" }}
+            transition={{ duration: 0.45, delay: index * 0.06 }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
+            style={{
+                background: C.white, display: "flex", flexDirection: "column", cursor: "pointer",
+                boxShadow: hovered ? "0 8px 32px rgba(0,0,0,0.12)" : "0 2px 12px rgba(0,0,0,0.06)",
+                transition: "box-shadow 0.3s ease, transform 0.3s ease",
+                transform: hovered ? "translateY(-2px)" : "translateY(0)",
+            }}
         >
-            {/* Image */}
-            <div className="relative overflow-hidden aspect-square bg-[#F9F9F9]">
+            {/* Image Area */}
+            <div style={{ position: "relative", aspectRatio: "1/1", overflow: "hidden", background: "#F5F5F3" }}>
                 <StockBadge status={product.stock} />
-
-                {/* Primary Image */}
                 <img
-                    src={product.image}
-                    alt={product.title}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${hovered ? "opacity-0" : "opacity-100"
-                        }`}
-                    loading="lazy"
+                    src={product.image} alt={product.title} loading="lazy"
+                    style={{
+                        position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover",
+                        opacity: hovered ? 0 : 1, transition: "opacity 0.6s ease"
+                    }}
                 />
-                {/* Hover Image */}
                 <img
-                    src={product.hoverImage}
-                    alt={`${product.title} alternate view`}
-                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${hovered ? "opacity-100" : "opacity-0"
-                        }`}
-                    loading="lazy"
-                />
-
-                {/* Subtle overlay on hover */}
-                <div
-                    className={`absolute inset-0 bg-[#111111]/5 transition-opacity duration-500 ${hovered ? "opacity-100" : "opacity-0"
-                        }`}
+                    src={product.hoverImage} alt="" loading="lazy"
+                    style={{
+                        position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover",
+                        opacity: hovered ? 1 : 0, transition: "opacity 0.6s ease",
+                        transform: hovered ? "scale(1.04)" : "scale(1)", transitionProperty: "opacity, transform",
+                        transitionDuration: "0.6s"
+                    }}
                 />
             </div>
 
             {/* Card Body */}
-            <div className="p-5 flex flex-col flex-1">
-                <h3
-                    className="text-[#111111] font-semibold text-base leading-tight tracking-wide"
-                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                >
+            <div style={{ padding: "1.25rem 1.25rem 1.5rem", display: "flex", flexDirection: "column", flex: 1 }}>
+                <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.18em", color: C.muted, textTransform: "uppercase", marginBottom: "0.375rem", fontFamily: FM }}>
+                    {product.category}
+                </p>
+                <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: C.black, letterSpacing: "0.02em", fontFamily: FM, marginBottom: "0.25rem", lineHeight: 1.3 }}>
                     {product.title}
                 </h3>
-                <p
-                    className="text-[#555555] text-sm font-light mt-1 mb-3"
-                    style={{ fontFamily: "Outfit, sans-serif" }}
-                >
+                <p style={{ fontSize: "0.8rem", color: C.mid, fontWeight: 400, marginBottom: "1rem", fontFamily: FO, lineHeight: 1.4 }}>
                     {product.subtitle}
                 </p>
 
-                <div className="mt-auto">
-                    <p
-                        className="text-[#111111] text-xl font-bold tracking-tight mb-1"
-                        style={{ fontFamily: "Montserrat, sans-serif" }}
-                    >
+                <div style={{ marginTop: "auto" }}>
+                    <p style={{ fontSize: "1.25rem", fontWeight: 800, color: C.black, letterSpacing: "-0.02em", fontFamily: FM, marginBottom: "0.25rem" }}>
                         {product.priceDisplay}
                     </p>
-                    <p className="text-[#888888] text-[11px] tracking-wide uppercase mb-4">
-                        {product.warranty}
+                    <p style={{ fontSize: "0.63rem", fontWeight: 600, letterSpacing: "0.14em", color: C.muted, textTransform: "uppercase", marginBottom: "1rem", fontFamily: FM }}>
+                        10 Year Warranty Included
                     </p>
 
-                    <Link href={`/shop/${product.id}`}>
-                        <button
-                            className={`w-full py-3 text-sm font-semibold uppercase tracking-[0.15em] transition-all duration-400 border ${hovered
-                                ? "bg-[#1C1C1C] text-white border-[#1C1C1C]"
-                                : "bg-transparent text-[#1C1C1C] border-[#1C1C1C] hover:bg-[#1C1C1C] hover:text-white"
-                                }`}
-                            style={{ fontFamily: "Montserrat, sans-serif" }}
-                        >
+                    <Link href={`/shop/${product.id}`} style={{ textDecoration: "none", display: "block" }}>
+                        <button style={{
+                            width: "100%", padding: "0.8rem", fontSize: "0.72rem", fontWeight: 700,
+                            letterSpacing: "0.14em", textTransform: "uppercase", cursor: "pointer", fontFamily: FM,
+                            background: hovered ? C.dark : "transparent",
+                            color: hovered ? "#fff" : C.dark,
+                            border: `1.5px solid ${C.dark}`,
+                            transition: "all 0.3s ease",
+                        }}>
                             View Details
                         </button>
                     </Link>
@@ -259,52 +154,39 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
     );
 }
 
-// ─── FILTER SECTION ─────────────────────────────────────────────────────────
-
-function FilterSection({
-    title,
-    options,
-    selected,
-    onSelect,
-}: {
-    title: string;
-    options: string[];
-    selected: string;
-    onSelect: (v: string) => void;
+/* ── FILTER ITEM ───────────────────────────────────────────── */
+function FilterSection({ title, options, selected, onSelect }: {
+    title: string; options: string[]; selected: string; onSelect: (v: string) => void;
 }) {
     return (
-        <div className="mb-7">
-            <h4
-                className="text-[#111111] text-xs font-bold uppercase tracking-[0.2em] mb-3 pb-2 border-b border-[#E5E5E5]"
-                style={{ fontFamily: "Montserrat, sans-serif" }}
-            >
+        <div style={{ marginBottom: "1.5rem" }}>
+            <h4 style={{ fontSize: "0.62rem", fontWeight: 800, letterSpacing: "0.22em", textTransform: "uppercase", color: C.black, fontFamily: FM, paddingBottom: "0.625rem", borderBottom: "1px solid #EBEBEB", marginBottom: "0.75rem" }}>
                 {title}
             </h4>
-            <ul className="space-y-2">
-                {options.map((opt) => (
-                    <li key={opt}>
-                        <button
-                            onClick={() => onSelect(opt)}
-                            className={`w-full text-left text-sm py-1 px-2 transition-all duration-200 rounded-sm ${selected === opt
-                                ? "text-[#111111] font-semibold bg-[#F0F0F0]"
-                                : "text-[#666666] hover:text-[#111111] hover:bg-[#F5F5F5]"
-                                }`}
-                            style={{ fontFamily: "Outfit, sans-serif" }}
-                        >
-                            {selected === opt && (
-                                <span className="inline-block w-2 h-2 bg-[#111111] rounded-full mr-2 align-middle" />
-                            )}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.125rem" }}>
+                {options.map((opt) => {
+                    const active = selected === opt;
+                    return (
+                        <button key={opt} onClick={() => onSelect(opt)} style={{
+                            width: "100%", textAlign: "left", padding: "0.45rem 0.625rem",
+                            fontSize: "0.82rem", fontFamily: FO, cursor: "pointer", border: "none",
+                            background: active ? "#F0F0F0" : "transparent",
+                            color: active ? C.black : "#666",
+                            fontWeight: active ? 700 : 400,
+                            display: "flex", alignItems: "center", gap: "0.5rem",
+                            transition: "all 0.15s",
+                        }}>
+                            {active && <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: C.black, flexShrink: 0 }} />}
                             {opt}
                         </button>
-                    </li>
-                ))}
-            </ul>
+                    );
+                })}
+            </div>
         </div>
     );
 }
 
-// ─── MAIN PAGE ────────────────────────────────────────────────────────────────
-
+/* ── MAIN PAGE ─────────────────────────────────────────────── */
 export default function ShopPage() {
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedPrice, setSelectedPrice] = useState("All");
@@ -314,7 +196,6 @@ export default function ShopPage() {
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
     const [visibleCount, setVisibleCount] = useState(9);
 
-    // Filter logic
     const filtered = products.filter((p) => {
         if (selectedCategory !== "All" && p.category !== selectedCategory) return false;
         if (selectedFinish !== "All" && p.finish !== selectedFinish) return false;
@@ -326,7 +207,6 @@ export default function ShopPage() {
         return true;
     });
 
-    // Sort logic
     const sorted = [...filtered].sort((a, b) => {
         if (selectedSort === "Price: Low to High") return a.price - b.price;
         if (selectedSort === "Price: High to Low") return b.price - a.price;
@@ -337,305 +217,183 @@ export default function ShopPage() {
     const visible = sorted.slice(0, visibleCount);
     const hasMore = visibleCount < sorted.length;
 
-    // Lock body scroll when filter drawer open on mobile
     useEffect(() => {
         document.body.style.overflow = filterDrawerOpen ? "hidden" : "";
         return () => { document.body.style.overflow = ""; };
     }, [filterDrawerOpen]);
 
+    const resetFilters = () => {
+        setSelectedCategory("All"); setSelectedPrice("All");
+        setSelectedFinish("All"); setSelectedAvailability("All");
+    };
+
+    const FilterPanel = () => (
+        <>
+            <FilterSection title="Category" options={categories} selected={selectedCategory} onSelect={setSelectedCategory} />
+            <FilterSection title="Price Range" options={priceRanges} selected={selectedPrice} onSelect={setSelectedPrice} />
+            <FilterSection title="Finish" options={finishes} selected={selectedFinish} onSelect={setSelectedFinish} />
+            <FilterSection title="Availability" options={availability} selected={selectedAvailability} onSelect={setSelectedAvailability} />
+            <button onClick={resetFilters} style={{
+                width: "100%", padding: "0.625rem", fontSize: "0.68rem", fontWeight: 700,
+                letterSpacing: "0.18em", textTransform: "uppercase", cursor: "pointer", marginTop: "0.5rem",
+                border: "1.5px solid #ddd", background: "transparent", color: "#666", fontFamily: FM,
+                transition: "border-color 0.2s, color 0.2s",
+            }}>
+                Clear Filters
+            </button>
+        </>
+    );
+
     return (
-        <main className="bg-[#F5F5F5] min-h-screen selection:bg-[#111111]/20">
-            {/* ── SANRA LIVING MINI HEADER ── */}
-            <div
-                className="bg-[#111111] text-white py-3 px-6 flex items-center justify-between"
-                style={{ fontFamily: "Montserrat, sans-serif" }}
-            >
-                <Link href="/" className="flex items-center gap-2 group">
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-gray-400 group-hover:text-white transition-colors">
-                        ← Almond
-                    </span>
-                </Link>
-                <span className="text-xs uppercase tracking-[0.4em] font-semibold text-white">
-                    SANRA LIVING™
-                </span>
-                <Link href="/contact">
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 hover:text-white transition-colors">
-                        Contact
-                    </span>
-                </Link>
+        <main style={{ background: C.bg, minHeight: "100vh", fontFamily: FO }}>
+
+            {/* ── TOP BAR ──────────────────────────────────────────── */}
+            <div style={{ background: C.black, color: "#fff", padding: "0.75rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", fontFamily: FM }}>
+                <Link href="/" style={{ color: "#999", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none" }}>← Home</Link>
+                <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.4em" }}>SANRA LIVING™</span>
+                <Link href="/contact" style={{ color: "#999", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none" }}>Contact</Link>
             </div>
 
-            {/* ── SECTION 1: SHOP HEADER ── */}
-            <section className="bg-white border-b border-[#E8E8E8] px-6 md:px-10 lg:px-16 py-8">
-                <div className="max-w-[1200px] mx-auto">
+            {/* ── SHOP HEADER ──────────────────────────────────────── */}
+            <section style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: "2.5rem 1.5rem" }}>
+                <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                     {/* Breadcrumb */}
-                    <p className="text-[#888888] text-xs uppercase tracking-[0.2em] mb-5" style={{ fontFamily: "Outfit, sans-serif" }}>
-                        <Link href="/" className="hover:text-[#111111] transition-colors">Home</Link>
-                        <span className="mx-2">/</span>
-                        <span className="text-[#111111]">Shop</span>
+                    <p style={{ fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted, marginBottom: "1.5rem", fontFamily: FM }}>
+                        <Link href="/" style={{ color: C.muted, textDecoration: "none" }}>Home</Link>
+                        <span style={{ margin: "0 0.5rem" }}>/</span>
+                        <span style={{ color: C.black, fontWeight: 700 }}>Shop</span>
                     </p>
 
-                    <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "1rem" }}>
                         <div>
-                            <h1
-                                className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#111111] leading-tight tracking-tight"
-                                style={{ fontFamily: "Montserrat, sans-serif" }}
-                            >
+                            <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 900, color: C.black, letterSpacing: "-0.03em", lineHeight: 1.1, fontFamily: FM, marginBottom: "0.5rem" }}>
                                 Shop Collection
                             </h1>
-                            <p className="text-[#555555] text-sm md:text-base mt-2 font-light" style={{ fontFamily: "Outfit, sans-serif" }}>
-                                Premium steel furniture engineered for modern homes.
-                            </p>
+                            <p style={{ fontSize: "0.9375rem", color: C.mid, fontFamily: FO }}>Premium steel furniture engineered for modern homes.</p>
                         </div>
 
-                        {/* Sort (Desktop) */}
-                        <div className="hidden md:flex items-center gap-3">
-                            <label className="text-[#888888] text-xs uppercase tracking-[0.2em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-                                Sort By
-                            </label>
-                            <select
-                                value={selectedSort}
-                                onChange={(e) => setSelectedSort(e.target.value)}
-                                className="border border-[#DDDDDD] bg-white text-[#111111] text-sm px-4 py-2.5 focus:outline-none focus:border-[#111111] transition-colors"
-                                style={{ fontFamily: "Outfit, sans-serif" }}
-                            >
-                                {sortOptions.map((opt) => (
-                                    <option key={opt} value={opt}>{opt}</option>
-                                ))}
+                        {/* Sort – desktop */}
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                            <span style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted, fontFamily: FM }}>Sort By</span>
+                            <select value={selectedSort} onChange={(e) => setSelectedSort(e.target.value)}
+                                style={{ border: `1.5px solid ${C.border}`, background: C.white, color: C.black, fontSize: "0.82rem", padding: "0.6rem 1rem", fontFamily: FO, appearance: "none", cursor: "pointer" }}>
+                                {sortOptions.map((o) => <option key={o}>{o}</option>)}
                             </select>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* ── MAIN CONTENT: FILTER + GRID ── */}
-            <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16 py-10">
-                <div className="flex gap-8 lg:gap-10">
+            {/* ── MAIN: SIDEBAR + GRID ─────────────────────────────── */}
+            <div style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
+                <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start" }}>
 
-                    {/* ── SECTION 2: FILTER SIDEBAR (Desktop) ── */}
-                    <aside className="hidden lg:block w-56 flex-shrink-0">
-                        <div className="sticky top-6">
-                            <div className="bg-white p-6" style={{ boxShadow: "0 2px 12px rgba(0,0,0,0.05)" }}>
-                                <h3
-                                    className="text-[#111111] text-xs font-black uppercase tracking-[0.3em] mb-6 pb-3 border-b border-[#E5E5E5]"
-                                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                                >
+                    {/* ── SIDEBAR – desktop only ────────────────────────── */}
+                    <aside className="hidden lg:block" style={{ width: 220, flexShrink: 0 }}>
+                        <div style={{ position: "sticky", top: "1.5rem" }}>
+                            <div style={{ background: C.white, padding: "1.5rem", boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}>
+                                <h3 style={{ fontSize: "0.62rem", fontWeight: 900, letterSpacing: "0.28em", textTransform: "uppercase", color: C.black, fontFamily: FM, paddingBottom: "0.875rem", borderBottom: `2px solid ${C.black}`, marginBottom: "1.5rem" }}>
                                     Filters
                                 </h3>
-
-                                <FilterSection
-                                    title="Category"
-                                    options={categories}
-                                    selected={selectedCategory}
-                                    onSelect={setSelectedCategory}
-                                />
-                                <FilterSection
-                                    title="Price Range"
-                                    options={priceRanges}
-                                    selected={selectedPrice}
-                                    onSelect={setSelectedPrice}
-                                />
-                                <FilterSection
-                                    title="Finish"
-                                    options={finishes}
-                                    selected={selectedFinish}
-                                    onSelect={setSelectedFinish}
-                                />
-                                <FilterSection
-                                    title="Availability"
-                                    options={availability}
-                                    selected={selectedAvailability}
-                                    onSelect={setSelectedAvailability}
-                                />
-
-                                {/* Reset */}
-                                <button
-                                    onClick={() => {
-                                        setSelectedCategory("All");
-                                        setSelectedPrice("All");
-                                        setSelectedFinish("All");
-                                        setSelectedAvailability("All");
-                                    }}
-                                    className="w-full mt-2 py-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] border border-[#DDDDDD] text-[#555555] hover:border-[#111111] hover:text-[#111111] transition-all duration-200"
-                                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                                >
-                                    Clear Filters
-                                </button>
+                                <FilterPanel />
                             </div>
                         </div>
                     </aside>
 
-                    {/* ── SECTION 3: PRODUCT GRID ── */}
-                    <div className="flex-1 min-w-0">
-                        {/* Mobile Top Bar: Filter + Sort */}
-                        <div className="flex items-center justify-between mb-6 lg:hidden">
-                            <button
-                                onClick={() => setFilterDrawerOpen(true)}
-                                className="flex items-center gap-2 border border-[#DDDDDD] bg-white px-4 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] text-[#111111] hover:border-[#111111] transition-all"
-                                style={{ fontFamily: "Montserrat, sans-serif" }}
-                            >
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    {/* ── PRODUCT AREA ─────────────────────────────────── */}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+
+                        {/* Mobile top bar */}
+                        <div className="flex lg:hidden" style={{ justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
+                            <button onClick={() => setFilterDrawerOpen(true)}
+                                style={{ display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.625rem 1rem", border: `1.5px solid ${C.border}`, background: C.white, fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", cursor: "pointer", color: C.black, fontFamily: FM }}>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                     <line x1="3" y1="6" x2="21" y2="6" /><line x1="7" y1="12" x2="17" y2="12" /><line x1="10" y1="18" x2="14" y2="18" />
                                 </svg>
                                 Filters
                             </button>
-                            <select
-                                value={selectedSort}
-                                onChange={(e) => setSelectedSort(e.target.value)}
-                                className="border border-[#DDDDDD] bg-white text-[#111111] text-xs px-3 py-2.5 focus:outline-none focus:border-[#111111]"
-                                style={{ fontFamily: "Outfit, sans-serif" }}
-                            >
-                                {sortOptions.map((opt) => (
-                                    <option key={opt} value={opt}>{opt}</option>
-                                ))}
+                            <select value={selectedSort} onChange={(e) => setSelectedSort(e.target.value)}
+                                style={{ border: `1.5px solid ${C.border}`, background: C.white, color: C.black, fontSize: "0.78rem", padding: "0.5rem 0.875rem", fontFamily: FO }}>
+                                {sortOptions.map((o) => <option key={o}>{o}</option>)}
                             </select>
                         </div>
 
-                        {/* Results count */}
-                        <p className="text-[#888888] text-xs uppercase tracking-[0.15em] mb-6" style={{ fontFamily: "Outfit, sans-serif" }}>
+                        {/* Count */}
+                        <p style={{ fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted, marginBottom: "1.5rem", fontFamily: FM }}>
                             {sorted.length} {sorted.length === 1 ? "product" : "products"} found
                         </p>
 
                         {/* Grid */}
                         {sorted.length === 0 ? (
-                            <div className="text-center py-20">
-                                <p className="text-[#888888] text-base" style={{ fontFamily: "Outfit, sans-serif" }}>
-                                    No products match your selected filters.
-                                </p>
-                                <button
-                                    onClick={() => {
-                                        setSelectedCategory("All");
-                                        setSelectedPrice("All");
-                                        setSelectedFinish("All");
-                                        setSelectedAvailability("All");
-                                    }}
-                                    className="mt-4 text-[#111111] underline text-sm"
-                                >
-                                    Clear all filters
-                                </button>
+                            <div style={{ textAlign: "center", padding: "5rem 0" }}>
+                                <p style={{ color: C.muted, fontFamily: FO }}>No products match your filters.</p>
+                                <button onClick={resetFilters} style={{ marginTop: "1rem", background: "none", border: "none", color: C.black, fontSize: "0.875rem", fontFamily: FO, textDecoration: "underline", cursor: "pointer" }}>Clear all filters</button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-[30px]">
-                                {visible.map((product, i) => (
-                                    <ProductCard key={product.id} product={product} index={i} />
-                                ))}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" style={{ gap: "1.5rem" }}>
+                                {visible.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
                             </div>
                         )}
 
-                        {/* ── SECTION 4: LIMITED STOCK STRIP ── */}
+                        {/* Quality strip */}
                         {sorted.length > 0 && (
-                            <motion.div
-                                initial={{ opacity: 0 }}
-                                whileInView={{ opacity: 1 }}
-                                viewport={{ once: true }}
-                                className="my-12 py-8 px-8 bg-white border border-[#E8E8E8] text-center"
-                            >
-                                <div className="w-6 h-[1px] bg-[#111111] mx-auto mb-4" />
-                                <p
-                                    className="text-[#111111] text-sm font-semibold uppercase tracking-[0.2em] mb-2"
-                                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                                >
+                            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+                                style={{ margin: "3rem 0", padding: "2rem", background: C.white, border: `1px solid ${C.border}`, textAlign: "center" }}>
+                                <div style={{ width: 24, height: 1, background: C.black, margin: "0 auto 1rem" }} />
+                                <p style={{ fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.black, fontFamily: FM, marginBottom: "0.5rem" }}>
                                     Limited Production Runs.
                                 </p>
-                                <p className="text-[#666666] text-sm font-light leading-relaxed max-w-md mx-auto" style={{ fontFamily: "Outfit, sans-serif" }}>
+                                <p style={{ fontSize: "0.875rem", color: "#666", fontFamily: FO, maxWidth: 440, margin: "0 auto", lineHeight: 1.65 }}>
                                     Each product is manufactured in controlled batches to maintain quality standards.
                                 </p>
-                                <div className="w-6 h-[1px] bg-[#111111] mx-auto mt-4" />
+                                <div style={{ width: 24, height: 1, background: C.black, margin: "1rem auto 0" }} />
                             </motion.div>
                         )}
 
-                        {/* ── SECTION 5: LOAD MORE / PAGINATION ── */}
+                        {/* Load more */}
                         {hasMore && (
-                            <div className="flex justify-center mt-4 mb-8">
-                                <button
-                                    onClick={() => setVisibleCount((c) => c + 6)}
-                                    className="px-10 py-3.5 bg-[#1C1C1C] text-white text-xs font-semibold uppercase tracking-[0.2em] hover:bg-[#111111] transition-all duration-300"
-                                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                                >
+                            <div style={{ display: "flex", justifyContent: "center", margin: "1rem 0 2rem" }}>
+                                <button onClick={() => setVisibleCount((c) => c + 6)}
+                                    style={{ padding: "0.9rem 3rem", background: C.dark, color: "#fff", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: FM, transition: "background 0.2s" }}>
                                     Load More
                                 </button>
                             </div>
                         )}
 
-                        {/* ── CONVERSION BOOST: BULK ORDERS ── */}
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            className="text-center mt-6 mb-2"
-                        >
-                            <p className="text-[#888888] text-xs" style={{ fontFamily: "Outfit, sans-serif" }}>
-                                Need bulk orders or custom sizing?{" "}
-                                <Link href="/contact" className="text-[#111111] font-semibold underline underline-offset-2 hover:opacity-70 transition-opacity">
-                                    Contact Us
-                                </Link>
-                            </p>
-                        </motion.div>
+                        {/* Bulk CTA */}
+                        <p style={{ textAlign: "center", fontSize: "0.8rem", color: C.muted, fontFamily: FO, paddingBottom: "1rem" }}>
+                            Need bulk orders or custom sizing?{" "}
+                            <Link href="/contact" style={{ color: C.black, fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 3 }}>Contact Us</Link>
+                        </p>
                     </div>
                 </div>
             </div>
 
-            {/* ── MOBILE FILTER DRAWER ── */}
+            {/* ── MOBILE FILTER DRAWER ─────────────────────────────── */}
             <AnimatePresence>
                 {filterDrawerOpen && (
                     <>
-                        {/* Backdrop */}
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="fixed inset-0 bg-black/40 z-40"
+                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
                             onClick={() => setFilterDrawerOpen(false)}
+                            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 40 }}
                         />
-                        {/* Drawer */}
-                        <motion.div
-                            initial={{ x: "-100%" }}
-                            animate={{ x: 0 }}
-                            exit={{ x: "-100%" }}
-                            transition={{ type: "tween", duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                            className="fixed top-0 left-0 h-full w-[300px] max-w-[85vw] bg-white z-50 overflow-y-auto"
-                        >
-                            <div className="flex items-center justify-between p-5 border-b border-[#E8E8E8]">
-                                <h2
-                                    className="text-[#111111] text-xs font-black uppercase tracking-[0.3em]"
-                                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                                >
-                                    Filters
-                                </h2>
-                                <button
-                                    onClick={() => setFilterDrawerOpen(false)}
-                                    className="w-8 h-8 flex items-center justify-center text-[#111111] hover:bg-[#F5F5F5] rounded-full transition-colors"
-                                >
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
+                            transition={{ type: "tween", duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                            style={{ position: "fixed", top: 0, left: 0, height: "100%", width: 300, maxWidth: "85vw", background: C.white, zIndex: 50, overflowY: "auto" }}>
+                            {/* Drawer header */}
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 1.5rem", borderBottom: `1px solid ${C.border}` }}>
+                                <h2 style={{ fontSize: "0.62rem", fontWeight: 900, letterSpacing: "0.28em", textTransform: "uppercase", color: C.black, fontFamily: FM }}>Filters</h2>
+                                <button onClick={() => setFilterDrawerOpen(false)}
+                                    style={{ background: "none", border: "none", cursor: "pointer", padding: "0.25rem" }}>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5">
                                         <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                                     </svg>
                                 </button>
                             </div>
-
-                            <div className="p-5">
-                                <FilterSection title="Category" options={categories} selected={selectedCategory} onSelect={setSelectedCategory} />
-                                <FilterSection title="Price Range" options={priceRanges} selected={selectedPrice} onSelect={setSelectedPrice} />
-                                <FilterSection title="Finish" options={finishes} selected={selectedFinish} onSelect={setSelectedFinish} />
-                                <FilterSection title="Availability" options={availability} selected={selectedAvailability} onSelect={setSelectedAvailability} />
-
-                                <button
-                                    onClick={() => {
-                                        setSelectedCategory("All");
-                                        setSelectedPrice("All");
-                                        setSelectedFinish("All");
-                                        setSelectedAvailability("All");
-                                    }}
-                                    className="w-full py-3 text-[11px] font-semibold uppercase tracking-[0.2em] border border-[#DDDDDD] text-[#555555] hover:border-[#111111] hover:text-[#111111] transition-all duration-200 mb-3"
-                                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                                >
-                                    Clear Filters
-                                </button>
-
-                                <button
-                                    onClick={() => setFilterDrawerOpen(false)}
-                                    className="w-full py-3 text-[11px] font-semibold uppercase tracking-[0.2em] bg-[#1C1C1C] text-white hover:bg-[#111111] transition-all duration-200"
-                                    style={{ fontFamily: "Montserrat, sans-serif" }}
-                                >
+                            <div style={{ padding: "1.5rem" }}>
+                                <FilterPanel />
+                                <button onClick={() => setFilterDrawerOpen(false)}
+                                    style={{ width: "100%", marginTop: "0.75rem", padding: "0.875rem", background: C.dark, color: "#fff", fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", border: "none", cursor: "pointer", fontFamily: FM }}>
                                     Apply & View Results
                                 </button>
                             </div>
@@ -644,54 +402,31 @@ export default function ShopPage() {
                 )}
             </AnimatePresence>
 
-            {/* ── FOOTER (SANRA LIVING MINI) ── */}
-            <footer className="bg-[#111111] text-white mt-16 py-12 px-6 md:px-10 lg:px-16">
-                <div className="max-w-[1200px] mx-auto">
-                    <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8">
+            {/* ── FOOTER ───────────────────────────────────────────── */}
+            <footer style={{ background: "#111", color: "#888", padding: "3rem 1.5rem" }}>
+                <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "2rem" }}>
                         <div>
-                            <h4
-                                className="text-white font-bold text-base tracking-[0.2em] uppercase mb-2"
-                                style={{ fontFamily: "Montserrat, sans-serif" }}
-                            >
-                                SANRA LIVING™
-                            </h4>
-                            <p className="text-gray-400 text-sm font-light max-w-xs leading-relaxed" style={{ fontFamily: "Outfit, sans-serif" }}>
-                                Premium steel furniture. Engineered for lasting homes.
-                                A SANRA Group Brand.
-                            </p>
+                            <p style={{ fontSize: "0.9rem", fontWeight: 800, color: "#fff", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: FM, marginBottom: "0.625rem" }}>SANRA LIVING™</p>
+                            <p style={{ fontSize: "0.82rem", color: "#666", fontFamily: FO, maxWidth: 280, lineHeight: 1.65 }}>Premium steel furniture. Engineered for lasting homes.</p>
                         </div>
-
-                        <div className="flex gap-12">
-                            <div>
-                                <h5 className="text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-4 font-semibold" style={{ fontFamily: "Montserrat, sans-serif" }}>Navigate</h5>
-                                <ul className="space-y-2 text-sm text-gray-400 font-light" style={{ fontFamily: "Outfit, sans-serif" }}>
-                                    {[["#", "Home"], ["/shop", "Shop"], ["/about", "About"], ["/contact", "Contact"]].map(([href, label]) => (
-                                        <li key={label}>
-                                            <Link href={href} className="hover:text-white transition-colors">{label}</Link>
-                                        </li>
+                        <div style={{ display: "flex", gap: "3rem" }}>
+                            {[
+                                { h: "Navigate", links: [["/", "Home"], ["/shop", "Shop"], ["/about", "About"], ["/contact", "Contact"]] },
+                                { h: "Policies", links: [["#", "Warranty"], ["#", "Shipping"], ["#", "Returns"], ["#", "Privacy"]] },
+                            ].map((col) => (
+                                <div key={col.h}>
+                                    <h5 style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.28em", textTransform: "uppercase", color: "#666", fontFamily: FM, marginBottom: "0.875rem" }}>{col.h}</h5>
+                                    {col.links.map(([href, label]) => (
+                                        <Link key={label} href={href} style={{ display: "block", fontSize: "0.82rem", color: "#666", fontFamily: FO, marginBottom: "0.375rem", textDecoration: "none" }}>{label}</Link>
                                     ))}
-                                </ul>
-                            </div>
-                            <div>
-                                <h5 className="text-[10px] uppercase tracking-[0.3em] text-gray-500 mb-4 font-semibold" style={{ fontFamily: "Montserrat, sans-serif" }}>Policies</h5>
-                                <ul className="space-y-2 text-sm text-gray-400 font-light" style={{ fontFamily: "Outfit, sans-serif" }}>
-                                    {[["#", "Warranty"], ["#", "Shipping"], ["#", "Returns"], ["#", "Privacy"]].map(([href, label]) => (
-                                        <li key={label}>
-                                            <Link href={href} className="hover:text-white transition-colors">{label}</Link>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
-
-                    <div className="border-t border-white/10 mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-                        <p className="text-gray-600 text-[11px] uppercase tracking-[0.2em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-                            © {new Date().getFullYear()} SANRA LIVING™. All Rights Reserved.
-                        </p>
-                        <p className="text-gray-600 text-[11px] uppercase tracking-[0.2em]" style={{ fontFamily: "Montserrat, sans-serif" }}>
-                            10 Year Warranty · Made in India
-                        </p>
+                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginTop: "2.5rem", paddingTop: "1.25rem", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+                        <p style={{ fontSize: "0.68rem", letterSpacing: "0.12em", color: "#444", fontFamily: FM }}>© {new Date().getFullYear()} SANRA LIVING™. All Rights Reserved.</p>
+                        <p style={{ fontSize: "0.68rem", letterSpacing: "0.12em", color: "#444", fontFamily: FM }}>10 Year Warranty · Made in India</p>
                     </div>
                 </div>
             </footer>

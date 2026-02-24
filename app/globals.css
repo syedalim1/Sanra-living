@@ -1,6 +1,6 @@
 @import "tailwindcss";
-
-
+@source "../app/**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
 
 :root {
   --background: #F5F5F5;
@@ -9,6 +9,8 @@
   --accent-black: #1C1C1C;
   --divider: #E6E6E6;
   --white: #FFFFFF;
+  --font-montserrat: var(--font-montserrat, 'Montserrat', sans-serif);
+  --font-outfit: var(--font-outfit, 'Outfit', sans-serif);
 }
 
 * {
