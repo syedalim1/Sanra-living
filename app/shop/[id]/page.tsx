@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import SiteHeader from "@/app/components/SiteHeader";
+import SiteFooter from "@/app/components/SiteFooter";
 
 /* ── FONTS ───────────────────────────────────────────────────── */
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
@@ -188,11 +190,8 @@ export default function ProductDetailPage() {
         <main style={{ background: "#F5F5F5", minHeight: "100vh", fontFamily: FO }}>
 
             {/* ── TOP NAV BAR ─────────────────────────────────────── */}
-            <div style={{ background: "#111", color: "#fff", padding: "0.75rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", fontFamily: FM }}>
-                <Link href="/" style={{ color: "#999", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none" }}>← Home</Link>
-                <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.4em" }}>SANRA LIVING™</span>
-                <Link href="/shop" style={{ color: "#999", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none" }}>Shop</Link>
-            </div>
+            <SiteHeader />
+
 
             {/* ── BREADCRUMB ───────────────────────────────────────── */}
             <div style={{ background: "#fff", borderBottom: "1px solid #E6E6E6", padding: "0.875rem 1.5rem" }}>
@@ -310,7 +309,18 @@ export default function ProductDetailPage() {
 
                         {/* Trust badges */}
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem", paddingTop: "0.25rem" }}>
-                            {["10 Year Structural Warranty", "10 Days Replacement", "COD Available Across India"].map((t) => (
+                            {/* Warranty — clickable link */}
+                            <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", fontSize: "0.82rem", color: "#444", fontFamily: FO }}>
+                                <CheckIcon />
+                                <Link
+                                    href="/warranty"
+                                    style={{ color: "#111", fontWeight: 700, textDecoration: "underline", textUnderlineOffset: "3px", letterSpacing: "0.01em" }}
+                                >
+                                    10 Year Structural Warranty Included
+                                </Link>
+                            </div>
+                            {/* Other badges */}
+                            {["10 Days Replacement", "COD Available Across India"].map((t) => (
                                 <div key={t} style={{ display: "flex", alignItems: "center", gap: "0.625rem", fontSize: "0.82rem", color: "#444", fontFamily: FO }}>
                                     <CheckIcon /> {t}
                                 </div>
@@ -535,10 +545,7 @@ export default function ProductDetailPage() {
                 </div>
             </section>
 
-            {/* ── FOOTER ──────────────────────────────────────────── */}
-            <footer style={{ background: "#111", color: "#555", padding: "1.5rem", textAlign: "center", fontSize: "0.72rem", letterSpacing: "0.1em", fontFamily: FM }}>
-                © {new Date().getFullYear()} SANRA LIVING™ · Premium Steel Furniture by Indian Make Steel Industries
-            </footer>
+            <SiteFooter />
 
             {/* ── MOBILE STICKY BUY NOW ────────────────────────────── */}
             {isMobile && (

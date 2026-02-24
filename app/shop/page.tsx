@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import SiteHeader from "../components/SiteHeader";
+import SiteFooter from "../components/SiteFooter";
 
 /* ── FONTS ─────────────────────────────────────────────────── */
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
@@ -247,12 +249,7 @@ export default function ShopPage() {
     return (
         <main style={{ background: C.bg, minHeight: "100vh", fontFamily: FO }}>
 
-            {/* ── TOP BAR ──────────────────────────────────────────── */}
-            <div style={{ background: C.black, color: "#fff", padding: "0.75rem 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", fontFamily: FM }}>
-                <Link href="/" style={{ color: "#999", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none" }}>← Home</Link>
-                <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.4em" }}>SANRA LIVING™</span>
-                <Link href="/contact" style={{ color: "#999", fontSize: "0.68rem", letterSpacing: "0.2em", textTransform: "uppercase", textDecoration: "none" }}>Contact</Link>
-            </div>
+            <SiteHeader />
 
             {/* ── SHOP HEADER ──────────────────────────────────────── */}
             <section style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: "2.5rem 1.5rem" }}>
@@ -402,34 +399,7 @@ export default function ShopPage() {
                 )}
             </AnimatePresence>
 
-            {/* ── FOOTER ───────────────────────────────────────────── */}
-            <footer style={{ background: "#111", color: "#888", padding: "3rem 1.5rem" }}>
-                <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-                    <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", gap: "2rem" }}>
-                        <div>
-                            <p style={{ fontSize: "0.9rem", fontWeight: 800, color: "#fff", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: FM, marginBottom: "0.625rem" }}>SANRA LIVING™</p>
-                            <p style={{ fontSize: "0.82rem", color: "#666", fontFamily: FO, maxWidth: 280, lineHeight: 1.65 }}>Premium steel furniture. Engineered for lasting homes.</p>
-                        </div>
-                        <div style={{ display: "flex", gap: "3rem" }}>
-                            {[
-                                { h: "Navigate", links: [["/", "Home"], ["/shop", "Shop"], ["/about", "About"], ["/contact", "Contact"]] },
-                                { h: "Policies", links: [["#", "Warranty"], ["#", "Shipping"], ["#", "Returns"], ["#", "Privacy"]] },
-                            ].map((col) => (
-                                <div key={col.h}>
-                                    <h5 style={{ fontSize: "0.6rem", fontWeight: 800, letterSpacing: "0.28em", textTransform: "uppercase", color: "#666", fontFamily: FM, marginBottom: "0.875rem" }}>{col.h}</h5>
-                                    {col.links.map(([href, label]) => (
-                                        <Link key={label} href={href} style={{ display: "block", fontSize: "0.82rem", color: "#666", fontFamily: FO, marginBottom: "0.375rem", textDecoration: "none" }}>{label}</Link>
-                                    ))}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", marginTop: "2.5rem", paddingTop: "1.25rem", display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
-                        <p style={{ fontSize: "0.68rem", letterSpacing: "0.12em", color: "#444", fontFamily: FM }}>© {new Date().getFullYear()} SANRA LIVING™. All Rights Reserved.</p>
-                        <p style={{ fontSize: "0.68rem", letterSpacing: "0.12em", color: "#444", fontFamily: FM }}>10 Year Warranty · Made in India</p>
-                    </div>
-                </div>
-            </footer>
+            <SiteFooter />
         </main>
     );
 }
