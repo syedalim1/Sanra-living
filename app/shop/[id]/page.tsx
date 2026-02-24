@@ -348,16 +348,23 @@ export default function ProductDetailPage() {
             <section style={{ background: "#fff", borderBottom: "1px solid #E6E6E6", padding: "0 1.5rem" }}>
                 <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                     {/* Tab Bar */}
-                    <div style={{ display: "flex", borderBottom: "1px solid #E6E6E6", overflowX: "auto" }}>
+                    <div style={{
+                        display: isMobile ? "grid" : "flex",
+                        gridTemplateColumns: isMobile ? "1fr 1fr" : "none",
+                        borderBottom: isMobile ? "none" : "1px solid #E6E6E6",
+                        gap: isMobile ? "1px" : "0",
+                        background: isMobile ? "#E6E6E6" : "transparent"
+                    }}>
                         {TABS.map((tab) => (
                             <button key={tab} onClick={() => setActiveTab(tab)} style={{
-                                padding: isMobile ? "0.875rem 1.125rem" : "1.125rem 1.75rem",
+                                padding: isMobile ? "1rem 0.5rem" : "1.125rem 1.75rem",
                                 fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.1em",
-                                textTransform: "uppercase", background: "none", border: "none", cursor: "pointer",
+                                textTransform: "uppercase", background: "#fff", border: "none", cursor: "pointer",
                                 color: activeTab === tab ? "#111" : "#999",
                                 borderBottom: activeTab === tab ? "2.5px solid #111" : "2.5px solid transparent",
-                                marginBottom: "-1px", transition: "all 0.2s", whiteSpace: "nowrap",
+                                marginBottom: isMobile ? 0 : "-1px", transition: "all 0.2s", whiteSpace: "nowrap",
                                 fontFamily: FM,
+                                width: "100%",
                             }}>
                                 {tab}
                             </button>
