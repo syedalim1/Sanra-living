@@ -15,7 +15,7 @@ import Navbar from "./components/navbar";
 function HeroSection() {
   return (
     <section className="sl-hero" style={{
-      backgroundImage: "url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=1600&q=85&auto=format&fit=crop')",
+      backgroundImage: "url('/images/HERO_BACKGROUND.png')",
       backgroundSize: "cover", backgroundPosition: "center",
     }}>
       <div className="sl-hero-overlay" />
@@ -108,8 +108,8 @@ function FeaturedProduct() {
           {/* Image */}
           <div className="sl-product-img-wrap" style={{ borderRadius: "2px", aspectRatio: "4/5", position: "relative" }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&q=80&auto=format&fit=crop"
-              alt="SL Edge" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img src="/images/FEATURED_PRODUCT.png"
+              alt="SL Edge — Steel Entryway Organizer" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
 
           {/* Info */}
@@ -148,9 +148,9 @@ function FeaturedProduct() {
    SECTION 4 – CATEGORY GRID
 ───────────────────────────────────────────────────────────── */
 const categories = [
-  { name: "Entryway Storage", sub: "First impression. Every day.", img: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80", href: "/shop" },
-  { name: "Study Desks", sub: "Where focus meets design.", img: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=80", href: "/shop" },
-  { name: "Wall Storage", sub: "Maximise every inch.", img: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=80", href: "/shop" },
+  { name: "Entryway Storage", sub: "First impression. Every day.", img: "/images/UTILITY_RACK.png", href: "/shop" },
+  { name: "Study Desks", sub: "Where focus meets design.", img: "/images/STUDY_DESK.png", href: "/shop" },
+  { name: "Wall Storage", sub: "Maximise every inch.", img: "/images/STEEL_CLOSE-UP_TEXTURE.png", href: "/shop" },
 ];
 
 function CategoryGrid() {
@@ -200,8 +200,10 @@ const pillars = [
 
 function WhySanra() {
   return (
-    <section className="sl-section" style={{ background: "#F5F5F5" }}>
-      <div className="sl-container">
+    <section className="sl-section" style={{ background: "#F5F5F5", position: "relative", overflow: "hidden" }}>
+      {/* Background texture */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "url('/images/ABOUT_SECTION_BACKGROUND.png')", backgroundSize: "cover", backgroundPosition: "center", opacity: 0.06, pointerEvents: "none" }} />
+      <div className="sl-container" style={{ position: "relative", zIndex: 1 }}>
         <div style={{ textAlign: "center", maxWidth: "680px", margin: "0 auto 4rem" }}>
           <span style={{ fontSize: "0.7rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#555", display: "block", marginBottom: "0.75rem" }}>Built Different</span>
           <h2 className="sl-heading-lg" style={{ marginBottom: "1.25rem" }}>Not Just Furniture.<br />Engineered Living.</h2>
@@ -246,6 +248,11 @@ function WarrantyStrip() {
             </p>
           </div>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "1.5rem" }}>
+            {/* Warranty badge image */}
+            <div style={{ width: "100%", maxWidth: 240, borderRadius: 4, overflow: "hidden", border: "1px solid rgba(255,255,255,0.12)" }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/WARRANTY_DARK.png" alt="10 Year Warranty" style={{ width: "100%", display: "block", objectFit: "cover" }} />
+            </div>
             <div style={{ border: "1px solid rgba(255,255,255,0.15)", padding: "1.5rem 2rem", textAlign: "center", minWidth: "180px" }}>
               <div style={{ fontSize: "3rem", fontWeight: 900, color: "#fff", lineHeight: 1 }}>10</div>
               <div style={{ fontSize: "0.7rem", letterSpacing: "0.15em", color: "rgba(255,255,255,0.5)", marginTop: "0.25rem", textTransform: "uppercase" }}>Year Warranty</div>
@@ -280,10 +287,10 @@ function LaunchNote() {
    SECTION 8 – INSTAGRAM PREVIEW
 ───────────────────────────────────────────────────────────── */
 const instaImages = [
-  "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
-  "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80",
-  "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80",
-  "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80",
+  "/images/UTILITY_RACK.png",
+  "/images/STUDY_DESK.png",
+  "/images/FEATURED_PRODUCT.png",
+  "/images/STEEL_CLOSE-UP_TEXTURE.png",
 ];
 
 function InstagramPreview() {

@@ -3,7 +3,7 @@ import { supabaseAdmin } from "@/lib/supabase";
 
 function checkAdminKey(req: NextRequest) {
     const key = req.headers.get("x-admin-key");
-    return key === process.env.ADMIN_PASSWORD || "123";
+    return key === process.env.ADMIN_PASSWORD;
 }
 
 export async function PATCH(
