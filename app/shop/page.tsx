@@ -22,34 +22,20 @@ const C = {
 };
 
 /* ── TYPES ─────────────────────────────────────────────────── */
-type StockStatus = "In Stock" | "Only 12 Left" | "Only 3 Left" | "New" | "Limited";
-
 interface Product {
-    id: number;
+    id: string;
     title: string;
     subtitle: string;
     price: number;
-    priceDisplay: string;
     category: string;
     finish: string;
-    stock: StockStatus;
-    image: string;
-    hoverImage: string;
-    isNew?: boolean;
+    stock_status: string;
+    stock_qty: number;
+    image_url: string;
+    hover_image_url: string;
+    is_new: boolean;
+    is_active: boolean;
 }
-
-/* ── DATA ──────────────────────────────────────────────────── */
-const products: Product[] = [
-    { id: 1, title: "SL Edge", subtitle: "Entryway Steel Organizer", price: 2499, priceDisplay: "₹2,499", category: "Entryway Storage", finish: "Matte Black", stock: "In Stock", image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80" },
-    { id: 2, title: "SL Apex", subtitle: "Wall-Mount Study Desk", price: 5499, priceDisplay: "₹5,499", category: "Study Desks", finish: "Graphite Grey", stock: "Only 12 Left", image: "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=600&q=80" },
-    { id: 3, title: "SL Vault", subtitle: "Modular Wall Storage System", price: 8999, priceDisplay: "₹8,999", category: "Wall Storage", finish: "Matte Black", stock: "In Stock", image: "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?w=600&q=80", isNew: true },
-    { id: 4, title: "SL Crest", subtitle: "Steel Magazine & Key Holder", price: 1299, priceDisplay: "₹1,299", category: "Entryway Storage", finish: "Graphite Grey", stock: "New", image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&q=80", isNew: true },
-    { id: 5, title: "SL Slate", subtitle: "Standing Study Desk – Height Adjust", price: 12999, priceDisplay: "₹12,999", category: "Study Desks", finish: "Matte Black", stock: "Only 3 Left", image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80" },
-    { id: 6, title: "SL Grid", subtitle: "Pegboard Wall Storage", price: 3499, priceDisplay: "₹3,499", category: "Wall Storage", finish: "Graphite Grey", stock: "In Stock", image: "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600&q=80" },
-    { id: 7, title: "SL Mono", subtitle: "Minimalist Entryway Shelf", price: 1899, priceDisplay: "₹1,899", category: "Entryway Storage", finish: "Matte Black", stock: "Limited", image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80" },
-    { id: 8, title: "SL Frame", subtitle: "Wall Display Frame Storage", price: 6299, priceDisplay: "₹6,299", category: "Wall Storage", finish: "Graphite Grey", stock: "In Stock", image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=600&q=80" },
-    { id: 9, title: "SL Pro Desk", subtitle: "Corner Steel Study Station", price: 9499, priceDisplay: "₹9,499", category: "Study Desks", finish: "Matte Black", stock: "New", image: "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=600&q=80", hoverImage: "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=600&q=80", isNew: true },
-];
 
 const categories = ["All", "Entryway Storage", "Study Desks", "Wall Storage"];
 const priceRanges = ["All", "₹999 – ₹2999", "₹3000 – ₹7999", "₹8000+"];
@@ -58,6 +44,8 @@ const availability = ["All", "In Stock", "Limited Stock"];
 const sortOptions = ["Featured", "Price: Low to High", "Price: High to Low", "Newest"];
 
 /* ── STOCK BADGE ───────────────────────────────────────────── */
+type StockStatus = "In Stock" | "Only 12 Left" | "Only 3 Left" | "New" | "Limited";
+
 function StockBadge({ status }: { status: StockStatus }) {
     const map: Record<StockStatus, { label: string; bg: string; color: string; border?: string }> = {
         "In Stock": { label: "In Stock", bg: "#111", color: "#fff" },
@@ -66,7 +54,7 @@ function StockBadge({ status }: { status: StockStatus }) {
         "New": { label: "New", bg: "#fff", color: "#111", border: "1px solid #111" },
         "Limited": { label: "Limited", bg: "#555", color: "#fff" },
     };
-    const cfg = map[status];
+    const cfg = map[status] ?? { label: status, bg: "#555", color: "#fff" };
     return (
         <span style={{
             position: "absolute", top: 12, left: 12, zIndex: 10,
@@ -82,6 +70,8 @@ function StockBadge({ status }: { status: StockStatus }) {
 /* ── PRODUCT CARD ──────────────────────────────────────────── */
 function ProductCard({ product, index }: { product: Product; index: number }) {
     const [hovered, setHovered] = useState(false);
+    const priceDisplay = `₹${product.price.toLocaleString("en-IN")}`;
+    const stockStatus = product.stock_status as "In Stock" | "Only 12 Left" | "Only 3 Left" | "New" | "Limited";
 
     return (
         <motion.div
@@ -99,16 +89,16 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
         >
             {/* Image Area */}
             <div style={{ position: "relative", aspectRatio: "1/1", overflow: "hidden", background: "#F5F5F3" }}>
-                <StockBadge status={product.stock} />
+                <StockBadge status={stockStatus} />
                 <img
-                    src={product.image} alt={product.title} loading="lazy"
+                    src={product.image_url || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80"} alt={product.title} loading="lazy"
                     style={{
                         position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover",
                         opacity: hovered ? 0 : 1, transition: "opacity 0.6s ease"
                     }}
                 />
                 <img
-                    src={product.hoverImage} alt="" loading="lazy"
+                    src={product.hover_image_url || product.image_url || "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80"} alt="" loading="lazy"
                     style={{
                         position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover",
                         opacity: hovered ? 1 : 0, transition: "opacity 0.6s ease",
@@ -132,7 +122,7 @@ function ProductCard({ product, index }: { product: Product; index: number }) {
 
                 <div style={{ marginTop: "auto" }}>
                     <p style={{ fontSize: "1.25rem", fontWeight: 800, color: C.black, letterSpacing: "-0.02em", fontFamily: FM, marginBottom: "0.25rem" }}>
-                        {product.priceDisplay}
+                        {priceDisplay}
                     </p>
                     <p style={{ fontSize: "0.63rem", fontWeight: 600, letterSpacing: "0.14em", color: C.muted, textTransform: "uppercase", marginBottom: "1rem", fontFamily: FM }}>
                         10 Year Warranty Included
@@ -190,6 +180,9 @@ function FilterSection({ title, options, selected, onSelect }: {
 
 /* ── MAIN PAGE ─────────────────────────────────────────────── */
 export default function ShopPage() {
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
+    const [loadingProducts, setLoadingProducts] = useState(true);
+    const [fetchError, setFetchError] = useState<string | null>(null);
     const [selectedCategory, setSelectedCategory] = useState("All");
     const [selectedPrice, setSelectedPrice] = useState("All");
     const [selectedFinish, setSelectedFinish] = useState("All");
@@ -198,11 +191,29 @@ export default function ShopPage() {
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
     const [visibleCount, setVisibleCount] = useState(9);
 
-    const filtered = products.filter((p) => {
+    // Fetch all products from Supabase on mount
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch("/api/products?limit=100");
+                if (!res.ok) throw new Error("Failed to load products");
+                const json = await res.json();
+                setAllProducts(json.products ?? []);
+            } catch (err) {
+                console.error(err);
+                setFetchError("Could not load products. Please try again later.");
+            } finally {
+                setLoadingProducts(false);
+            }
+        })();
+    }, []);
+
+    const filtered = allProducts.filter((p) => {
         if (selectedCategory !== "All" && p.category !== selectedCategory) return false;
         if (selectedFinish !== "All" && p.finish !== selectedFinish) return false;
-        if (selectedAvailability === "In Stock" && p.stock !== "In Stock") return false;
-        if (selectedAvailability === "Limited Stock" && p.stock !== "Only 12 Left" && p.stock !== "Only 3 Left" && p.stock !== "Limited") return false;
+        const limitedStatuses = ["Only 12 Left", "Only 3 Left", "Limited"];
+        if (selectedAvailability === "In Stock" && p.stock_status !== "In Stock") return false;
+        if (selectedAvailability === "Limited Stock" && !limitedStatuses.includes(p.stock_status)) return false;
         if (selectedPrice === "₹999 – ₹2999" && (p.price < 999 || p.price > 2999)) return false;
         if (selectedPrice === "₹3000 – ₹7999" && (p.price < 3000 || p.price > 7999)) return false;
         if (selectedPrice === "₹8000+" && p.price < 8000) return false;
@@ -212,7 +223,7 @@ export default function ShopPage() {
     const sorted = [...filtered].sort((a, b) => {
         if (selectedSort === "Price: Low to High") return a.price - b.price;
         if (selectedSort === "Price: High to Low") return b.price - a.price;
-        if (selectedSort === "Newest") return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
+        if (selectedSort === "Newest") return (b.is_new ? 1 : 0) - (a.is_new ? 1 : 0);
         return 0;
     });
 
@@ -317,11 +328,28 @@ export default function ShopPage() {
 
                         {/* Count */}
                         <p style={{ fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted, marginBottom: "1.5rem", fontFamily: FM }}>
-                            {sorted.length} {sorted.length === 1 ? "product" : "products"} found
+                            {loadingProducts ? "Loading…" : `${sorted.length} ${sorted.length === 1 ? "product" : "products"} found`}
                         </p>
 
+                        {/* Error */}
+                        {fetchError && (
+                            <div style={{ textAlign: "center", padding: "4rem 0" }}>
+                                <p style={{ color: "#b04000", fontFamily: FO, marginBottom: "0.75rem" }}>{fetchError}</p>
+                                <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: C.black, fontSize: "0.875rem", fontFamily: FO, textDecoration: "underline", cursor: "pointer" }}>Retry</button>
+                            </div>
+                        )}
+
+                        {/* Loading skeleton */}
+                        {loadingProducts && (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" style={{ gap: "1.5rem" }}>
+                                {Array.from({ length: 6 }).map((_, i) => (
+                                    <div key={i} style={{ background: C.white, aspectRatio: "3/4", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", animation: "pulse 1.5s ease-in-out infinite" }} />
+                                ))}
+                            </div>
+                        )}
+
                         {/* Grid */}
-                        {sorted.length === 0 ? (
+                        {!loadingProducts && !fetchError && (sorted.length === 0 ? (
                             <div style={{ textAlign: "center", padding: "5rem 0" }}>
                                 <p style={{ color: C.muted, fontFamily: FO }}>No products match your filters.</p>
                                 <button onClick={resetFilters} style={{ marginTop: "1rem", background: "none", border: "none", color: C.black, fontSize: "0.875rem", fontFamily: FO, textDecoration: "underline", cursor: "pointer" }}>Clear all filters</button>
@@ -330,7 +358,7 @@ export default function ShopPage() {
                             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" style={{ gap: "1.5rem" }}>
                                 {visible.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
                             </div>
-                        )}
+                        ))}
 
                         {/* Quality strip */}
                         {sorted.length > 0 && (

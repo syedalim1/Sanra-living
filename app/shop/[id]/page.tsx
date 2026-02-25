@@ -7,11 +7,11 @@ import SiteHeader from "@/app/components/SiteHeader";
 import SiteFooter from "@/app/components/SiteFooter";
 import { useCart } from "@/app/context/CartContext";
 
-/* ── FONTS ───────────────────────────────────────────────────── */
+/* ── FONTS ────────────────────────────────────────────────────── */
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
 const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
 
-/* ── RESPONSIVE HOOK ─────────────────────────────────────────── */
+/* ── RESPONSIVE HOOK ───────────────────────────────────────────── */
 function useIsMobile(bp = 768) {
     const [mobile, setMobile] = useState(false);
     useEffect(() => {
@@ -24,126 +24,21 @@ function useIsMobile(bp = 768) {
     return mobile;
 }
 
-/* ── DATA ────────────────────────────────────────────────────── */
-const products = [
-    {
-        id: 1, title: "SL Edge", subtitle: "Entryway Steel Organizer", price: 2499,
-        category: "Entryway Storage", finish: "Matte Charcoal Black", stock: "In Stock", stockQty: 12,
-        images: [
-            "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=85",
-            "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=85",
-            "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=85",
-            "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=800&q=85",
-        ],
-        description: "SL Edge is designed for modern entryways and compact homes. Crafted from structural-grade steel and finished in matte powder coating, it delivers durability without compromising aesthetics. Every joint is precision-welded, every angle calculated.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "1.2 mm", Finish: "Matte Charcoal Black", "Load Capacity": "25 kg", Dimensions: "120 × 35 × 30 cm", Weight: "6.5 kg" },
-        relatedIds: [2, 4, 7],
-    },
-    {
-        id: 2, title: "SL Apex", subtitle: "Wall-Mount Study Desk", price: 5499,
-        category: "Study Desks", finish: "Graphite Grey", stock: "Only 12 Left", stockQty: 12,
-        images: [
-            "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=85",
-            "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=800&q=85",
-            "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=85",
-            "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=85",
-        ],
-        description: "SL Apex wall-mount desk transforms any vertical wall into a functional workspace. Engineered from 1.5mm structural steel with a graphite grey finish, it folds flat when not in use and supports up to 40kg at full extension.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "1.5 mm", Finish: "Graphite Grey", "Load Capacity": "40 kg", Dimensions: "75 × 90 × 45 cm", Weight: "9.2 kg" },
-        relatedIds: [5, 9, 6],
-    },
-    {
-        id: 3, title: "SL Vault", subtitle: "Modular Wall Storage System", price: 8999,
-        category: "Wall Storage", finish: "Matte Black", stock: "In Stock", stockQty: 20,
-        images: [
-            "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&q=85",
-            "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?w=800&q=85",
-            "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&q=85",
-            "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=85",
-        ],
-        description: "SL Vault is a fully modular wall storage system designed for living rooms, studies, and offices. Mix and match panels, shelves, and hooks to create a configuration that fits exactly your space.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "1.5 mm", Finish: "Matte Black", "Load Capacity": "60 kg total", Dimensions: "200 × 120 × 25 cm", Weight: "18 kg" },
-        relatedIds: [6, 8, 4],
-    },
-    {
-        id: 4, title: "SL Crest", subtitle: "Steel Magazine & Key Holder", price: 1299,
-        category: "Entryway Storage", finish: "Graphite Grey", stock: "New", stockQty: 30,
-        images: [
-            "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=800&q=85",
-            "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=85",
-            "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=85",
-            "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=85",
-        ],
-        description: "SL Crest is a compact entryway essential — magazine rack, key hooks, and mail organiser all in one clean steel frame. Wall-mounted design keeps your entry clutter-free without taking up floor space.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "1.0 mm", Finish: "Graphite Grey", "Load Capacity": "5 kg", Dimensions: "45 × 30 × 12 cm", Weight: "1.8 kg" },
-        relatedIds: [1, 7, 2],
-    },
-    {
-        id: 5, title: "SL Slate", subtitle: "Standing Study Desk – Height Adjust", price: 12999,
-        category: "Study Desks", finish: "Matte Black", stock: "Only 3 Left", stockQty: 3,
-        images: [
-            "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=85",
-            "https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=85",
-            "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=85",
-            "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=800&q=85",
-        ],
-        description: "SL Slate is a height-adjustable standing desk engineered for long work sessions. The dual-column steel frame supports a 25mm steel top, adjustable from sitting to standing height with a smooth hand crank mechanism.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "2.0 mm", Finish: "Matte Black", "Load Capacity": "80 kg", Dimensions: "72–118 × 140 × 70 cm", Weight: "28 kg" },
-        relatedIds: [2, 9, 3],
-    },
-    {
-        id: 6, title: "SL Grid", subtitle: "Pegboard Wall Storage", price: 3499,
-        category: "Wall Storage", finish: "Graphite Grey", stock: "In Stock", stockQty: 25,
-        images: [
-            "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=85",
-            "https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=800&q=85",
-            "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&q=85",
-            "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?w=800&q=85",
-        ],
-        description: "SL Grid is a perforated steel pegboard system that turns any wall into an organised, customisable storage surface. Compatible with the full SANRA LIVING accessory range — hooks, shelves, and baskets.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "1.2 mm", Finish: "Graphite Grey", "Load Capacity": "30 kg", Dimensions: "90 × 60 cm panel", Weight: "4.2 kg" },
-        relatedIds: [3, 8, 4],
-    },
-    {
-        id: 7, title: "SL Mono", subtitle: "Minimalist Entryway Shelf", price: 1899,
-        category: "Entryway Storage", finish: "Matte Black", stock: "Limited", stockQty: 8,
-        images: [
-            "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=85",
-            "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=800&q=85",
-            "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=85",
-            "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=85",
-        ],
-        description: "SL Mono is a single-shelf floating steel shelf designed for pure simplicity. No hardware visible from the front. Just a clean steel surface, perfectly level, endlessly versatile.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "1.0 mm", Finish: "Matte Black", "Load Capacity": "15 kg", Dimensions: "12 × 80 × 20 cm", Weight: "2.1 kg" },
-        relatedIds: [1, 4, 6],
-    },
-    {
-        id: 8, title: "SL Frame", subtitle: "Wall Display Frame Storage", price: 6299,
-        category: "Wall Storage", finish: "Graphite Grey", stock: "In Stock", stockQty: 15,
-        images: [
-            "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&q=85",
-            "https://images.unsplash.com/photo-1572025442646-866d16c84a54?w=800&q=85",
-            "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=85",
-            "https://images.unsplash.com/photo-1484101403633-562f891dc89a?w=800&q=85",
-        ],
-        description: "SL Frame combines display and storage in a single wall-mounted steel frame. Six sections of variable depth allow you to display plants, books, and objects — all within a single architectural composition.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "1.5 mm", Finish: "Graphite Grey", "Load Capacity": "35 kg", Dimensions: "100 × 80 × 20 cm", Weight: "7.8 kg" },
-        relatedIds: [3, 6, 9],
-    },
-    {
-        id: 9, title: "SL Pro Desk", subtitle: "Corner Steel Study Station", price: 9499,
-        category: "Study Desks", finish: "Matte Black", stock: "New", stockQty: 20,
-        images: [
-            "https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=800&q=85",
-            "https://images.unsplash.com/photo-1593062096033-9a26b09da705?w=800&q=85",
-            "https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=800&q=85",
-            "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=85",
-        ],
-        description: "SL Pro Desk is a full-corner study station built for serious work environments. The L-shaped steel frame maximises usable surface area while the integrated cable management spine keeps your setup clean.",
-        specs: { Material: "Powder Coated Mild Steel", "Frame Thickness": "2.0 mm", Finish: "Matte Black", "Load Capacity": "60 kg", Dimensions: "75 × 140 × 140 cm", Weight: "22 kg" },
-        relatedIds: [2, 5, 8],
-    },
-];
+/* ── DB PRODUCT TYPE ────────────────────────────────────────── */
+interface DbProduct {
+    id: string;
+    title: string;
+    subtitle: string;
+    price: number;
+    category: string;
+    finish: string;
+    stock_status: string;
+    stock_qty: number;
+    image_url: string;
+    hover_image_url: string;
+    is_new: boolean;
+    description?: string;
+}
 
 const faqs = [
     { q: "Is self-assembly difficult?", a: "No. The kit uses a simple bolt-together system with pre-drilled holes. Assembly takes 15–20 minutes with the included Allen key. A step-by-step guide is also available for download." },
@@ -156,7 +51,7 @@ const faqs = [
 const TABS = ["Description", "Specifications", "Assembly", "Warranty"] as const;
 type Tab = (typeof TABS)[number];
 
-/* ── ICON ────────────────────────────────────────────────────── */
+/* ── ICON ─────────────────────────────────────────────────────────── */
 const CheckIcon = () => (
     <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
         <circle cx="8" cy="8" r="7" stroke="#1C1C1C" strokeWidth="1.3" />
@@ -168,13 +63,14 @@ const CheckIcon = () => (
 export default function ProductDetailPage() {
     const { id } = useParams();
     const router = useRouter();
-    const product = products.find((p) => p.id === Number(id)) ?? products[0];
-    const related = products.filter((p) => product.relatedIds.includes(p.id));
     const { dispatch } = useCart();
 
+    const [dbProduct, setDbProduct] = useState<DbProduct | null>(null);
+    const [loadingProduct, setLoadingProduct] = useState(true);
+    const [notFound, setNotFound] = useState(false);
     const [activeImg, setActiveImg] = useState(0);
     const [activeTab, setActiveTab] = useState<Tab>("Description");
-    const [finish, setFinish] = useState(product.finish);
+    const [finish, setFinish] = useState("");
     const [qty, setQty] = useState(1);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [zoomed, setZoomed] = useState(false);
@@ -182,13 +78,82 @@ export default function ProductDetailPage() {
 
     const isMobile = useIsMobile(768);
     const isTablet = useIsMobile(1024);
+
+    // Fetch product from Supabase
+    useEffect(() => {
+        if (!id) return;
+        (async () => {
+            try {
+                const res = await fetch(`/api/products/${id}`);
+                if (!res.ok) { setNotFound(true); return; }
+                const json = await res.json();
+                setDbProduct(json.product);
+                setFinish(json.product.finish ?? "");
+            } catch {
+                setNotFound(true);
+            } finally {
+                setLoadingProduct(false);
+            }
+        })();
+    }, [id]);
+
+    if (loadingProduct) {
+        return (
+            <main style={{ background: "#F5F5F5", minHeight: "100vh", fontFamily: FO }}>
+                <SiteHeader />
+                <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
+                    <p style={{ color: "#888", fontFamily: FO, fontSize: "0.9rem" }}>Loading product…</p>
+                </div>
+            </main>
+        );
+    }
+
+    if (notFound || !dbProduct) {
+        return (
+            <main style={{ background: "#F5F5F5", minHeight: "100vh", fontFamily: FO }}>
+                <SiteHeader />
+                <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "60vh", gap: "1rem" }}>
+                    <p style={{ color: "#111", fontFamily: FO, fontSize: "1.1rem", fontWeight: 700 }}>Product Not Found</p>
+                    <Link href="/shop" style={{ color: "#888", fontFamily: FO, fontSize: "0.875rem", textDecoration: "underline" }}>Back to Shop</Link>
+                </div>
+            </main>
+        );
+    }
+
+    // Map DB product to UI-friendly shape
+    const defaultImages = [
+        "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=85",
+        "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=85",
+        "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=800&q=85",
+        "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=800&q=85",
+    ];
+    const images = dbProduct.image_url
+        ? [dbProduct.image_url, dbProduct.hover_image_url || dbProduct.image_url, ...defaultImages.slice(2)]
+        : defaultImages;
+
+    const product = {
+        ...dbProduct,
+        images,
+        stock: dbProduct.stock_status,
+        stockQty: dbProduct.stock_qty,
+        description: dbProduct.description || `${dbProduct.title} is precision-engineered from structural-grade steel, finished in premium matte powder coating. Designed for modern homes that value both function and aesthetic clarity.`,
+        specs: {
+            Material: "Powder Coated Mild Steel",
+            "Frame Thickness": "1.2 mm",
+            Finish: dbProduct.finish,
+            "Load Capacity": "25 kg",
+            Dimensions: "Custom",
+            Weight: "N/A",
+        },
+    };
+
     const stockLow = product.stockQty <= 5;
 
     const handleAddToCart = () => {
         dispatch({
             type: "ADD",
             payload: {
-                id: product.id, title: product.title,
+                id: product.id as unknown as number, title: product.title,
                 subtitle: product.subtitle, finish,
                 price: product.price, image: product.images[0],
                 qty, stockQty: product.stockQty,
@@ -202,7 +167,7 @@ export default function ProductDetailPage() {
         dispatch({
             type: "ADD",
             payload: {
-                id: product.id, title: product.title,
+                id: product.id as unknown as number, title: product.title,
                 subtitle: product.subtitle, finish,
                 price: product.price, image: product.images[0],
                 qty, stockQty: product.stockQty,
@@ -509,32 +474,12 @@ export default function ProductDetailPage() {
                 </div>
             </section>
 
-            {/* ── SECTION 5: RELATED PRODUCTS ──────────────────────── */}
+            {/* ── SECTION 5: RELATED PRODUCTS ────────────────────── */}
             <section style={{ padding: isMobile ? "2.5rem 1.25rem" : "3.75rem 1.5rem", background: "#EBEBEB", borderTop: "1px solid #E6E6E6" }}>
                 <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                     <p style={label({ marginBottom: "0.375rem" })}>You May Also Like</p>
                     <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#111", marginBottom: "1.75rem", letterSpacing: "-0.01em", fontFamily: FM }}>Related Products</h2>
-                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(3,1fr)", gap: "1rem" }}>
-                        {related.map((p) => (
-                            <Link key={p.id} href={`/shop/${p.id}`} style={{ textDecoration: "none" }}>
-                                <div style={{ background: "#fff", overflow: "hidden", transition: "box-shadow 0.25s" }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.boxShadow = "0 6px 24px rgba(0,0,0,0.1)")}
-                                    onMouseLeave={(e) => (e.currentTarget.style.boxShadow = "none")}>
-                                    <div style={{ aspectRatio: "4/3", overflow: "hidden" }}>
-                                        <img src={p.images[0]} alt={p.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.4s", display: "block" }}
-                                            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-                                            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
-                                        />
-                                    </div>
-                                    <div style={{ padding: "1.25rem" }}>
-                                        <p style={{ fontSize: "0.92rem", fontWeight: 700, color: "#111", fontFamily: FM }}>{p.title}</p>
-                                        <p style={{ fontSize: "0.78rem", color: "#666", marginTop: "0.125rem", marginBottom: "0.625rem", fontFamily: FO }}>{p.subtitle}</p>
-                                        <p style={{ fontSize: "1.1rem", fontWeight: 800, color: "#111", fontFamily: FM }}>₹{p.price.toLocaleString("en-IN")}</p>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
+                    <p style={{ color: "#888", fontFamily: FO, fontSize: "0.875rem" }}>Browse more products in our <Link href="/shop" style={{ color: "#111", fontWeight: 700, textDecoration: "underline" }}>shop collection</Link>.</p>
                 </div>
             </section>
 

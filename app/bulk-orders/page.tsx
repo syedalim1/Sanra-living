@@ -88,25 +88,28 @@ export default function BulkOrdersPage() {
             return;
         }
         setLoading(true);
-
-        // ── SUPABASE INTEGRATION POINT ──────────────────────────────
-        // const { error } = await supabase.from("bulk_enquiries").insert([{
-        //   company_name: form.company,
-        //   contact_person: form.contact,
-        //   phone: form.phone,
-        //   email: form.email,
-        //   location: form.location,
-        //   product_interest: form.product,
-        //   quantity: form.quantity,
-        //   message: form.message,
-        //   created_at: new Date().toISOString(),
-        // }]);
-        // if (error) { setFormError("Something went wrong. Please try again."); setLoading(false); return; }
-        // ────────────────────────────────────────────────────────────
-
-        await new Promise((r) => setTimeout(r, 900)); // remove when Supabase is live
-        setLoading(false);
-        setSubmitted(true);
+        try {
+            const res = await fetch("/api/bulk-enquiry", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    companyName: form.company,
+                    contactPerson: form.contact,
+                    phone: form.phone,
+                    email: form.email,
+                    city: form.location,
+                    productInterest: form.product,
+                    quantity: form.quantity,
+                    message: form.message,
+                }),
+            });
+            if (!res.ok) throw new Error("API error");
+            setSubmitted(true);
+        } catch {
+            setFormError("Something went wrong. Please try again or email us directly.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (

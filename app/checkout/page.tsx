@@ -91,18 +91,106 @@ export default function CheckoutPage() {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    // ── Load Razorpay script lazily ─────────────────────────────────────
+    const loadRazorpay = () =>
+        new Promise<void>((resolve, reject) => {
+            if ((window as unknown as Record<string, unknown>)["Razorpay"]) { resolve(); return; }
+            const s = document.createElement("script");
+            s.src = "https://checkout.razorpay.com/v1/checkout.js";
+            s.onload = () => resolve();
+            s.onerror = () => reject(new Error("Razorpay SDK failed to load"));
+            document.body.appendChild(s);
+        });
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validate()) return;
         setSubmitting(true);
-        // Razorpay integration point – create order on server then trigger SDK
-        // For now: simulate success and redirect to confirmation
-        setTimeout(() => {
-            const orderId = `SL-${Math.floor(10000 + Math.random() * 90000)}`;
-            dispatch({ type: "CLEAR" });
-            router.push(`/order-confirmation?orderId=${orderId}&total=${totalPayable}&cod=${delivery === "cod" ? subtotal - codAdvance : 0}`);
-        }, 1400);
+
+        try {
+            // 1. Create order on server (handles both COD & prepaid)
+            const orderRes = await fetch("/api/razorpay/create-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    items: items.map((i) => ({ id: i.id, title: i.title, qty: i.qty, price: i.price })),
+                    subtotal,
+                    codAdvance,
+                    totalPayable,
+                    paymentMethod: delivery,
+                    shipping: form,
+                }),
+            });
+            const orderData = await orderRes.json();
+            if (!orderRes.ok) throw new Error(orderData.error ?? "Order creation failed");
+
+            // 2. COD – no Razorpay popup needed
+            if (orderData.cod) {
+                dispatch({ type: "CLEAR" });
+                router.push(
+                    `/order-confirmation?orderId=${orderData.orderNumber}&total=${totalPayable}&cod=${subtotal - codAdvance}`
+                );
+                return;
+            }
+
+            // 3. Prepaid – load SDK and open popup
+            await loadRazorpay();
+            const RazorpayClass = (window as unknown as { Razorpay: new (opts: Record<string, unknown>) => { open(): void } }).Razorpay;
+
+            const razorpayOptions = {
+                key: orderData.keyId,
+                amount: orderData.amount,
+                currency: orderData.currency,
+                name: "Sanra Living",
+                description: "Premium Steel Furniture",
+                order_id: orderData.rzpOrderId,
+                prefill: {
+                    name: form.name,
+                    email: form.email,
+                    contact: form.phone,
+                },
+                theme: { color: "#1C1C1C" },
+                handler: async (response: {
+                    razorpay_order_id: string;
+                    razorpay_payment_id: string;
+                    razorpay_signature: string;
+                }) => {
+                    // 4. Verify payment on server
+                    const verifyRes = await fetch("/api/razorpay/verify-payment", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            razorpayOrderId: response.razorpay_order_id,
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpaySignature: response.razorpay_signature,
+                            dbOrderId: orderData.dbOrderId,
+                            items: items.map((i) => ({ id: i.id, qty: i.qty })),
+                        }),
+                    });
+                    if (!verifyRes.ok) {
+                        alert("Payment verification failed. Please contact support with your payment ID: " + response.razorpay_payment_id);
+                        setSubmitting(false);
+                        return;
+                    }
+                    dispatch({ type: "CLEAR" });
+                    router.push(
+                        `/order-confirmation?orderId=${orderData.orderNumber}&total=${totalPayable}&cod=0`
+                    );
+                },
+                modal: {
+                    ondismiss: () => { setSubmitting(false); },
+                },
+            };
+
+            const rzp = new RazorpayClass(razorpayOptions);
+            rzp.open();
+        } catch (err) {
+            console.error(err);
+            alert("Something went wrong. Please try again.");
+            setSubmitting(false);
+        }
     };
+
 
     const inputStyle: React.CSSProperties = {
         width: "100%", padding: "0.75rem 1rem",
