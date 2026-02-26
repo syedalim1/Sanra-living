@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Script from "next/script";
 import { useRouter } from "next/navigation";
 import SiteHeader from "@/app/components/SiteHeader";
 import SiteFooter from "@/app/components/SiteFooter";
@@ -88,17 +89,24 @@ export default function CheckoutPage() {
             newErrors.pincode = "Enter a valid 6-digit pincode";
         }
         setErrors(newErrors);
+
+        // If there are errors, scroll to the top of the form
+        if (Object.keys(newErrors).length > 0) {
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
         return Object.keys(newErrors).length === 0;
     };
 
-    // ── Load Razorpay script lazily ─────────────────────────────────────
+    // ── Pre-load Razorpay script lazily ────────────────────────────────
+    // Using Next.js <Script> handles this, but we keep this as a fallback.
     const loadRazorpay = () =>
         new Promise<void>((resolve, reject) => {
-            if ((window as unknown as Record<string, unknown>)["Razorpay"]) { resolve(); return; }
+            if (typeof window !== "undefined" && (window as any).Razorpay) { resolve(); return; }
             const s = document.createElement("script");
             s.src = "https://checkout.razorpay.com/v1/checkout.js";
             s.onload = () => resolve();
-            s.onerror = () => reject(new Error("Razorpay SDK failed to load"));
+            s.onerror = () => reject(new Error("Razorpay SDK failed to load. Please disable ad blockers and try again."));
             document.body.appendChild(s);
         });
 
@@ -135,7 +143,7 @@ export default function CheckoutPage() {
 
             // 3. Prepaid – load SDK and open popup
             await loadRazorpay();
-            const RazorpayClass = (window as unknown as { Razorpay: new (opts: Record<string, unknown>) => { open(): void } }).Razorpay;
+            const RazorpayClass = (window as unknown as { Razorpay: new (opts: Record<string, unknown>) => { open(): void; on(event: string, callback: (res: any) => void): void } }).Razorpay;
 
             const razorpayOptions = {
                 key: orderData.keyId,
@@ -183,10 +191,14 @@ export default function CheckoutPage() {
             };
 
             const rzp = new RazorpayClass(razorpayOptions);
+            rzp.on("payment.failed", function (response: any) {
+                alert(`Payment failed: ${response.error.description}`);
+                setSubmitting(false);
+            });
             rzp.open();
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            alert("Something went wrong. Please try again.");
+            alert(err.message || "Something went wrong. Please try again.");
             setSubmitting(false);
         }
     };
@@ -232,6 +244,7 @@ export default function CheckoutPage() {
 
     return (
         <main style={{ background: "#F5F5F5", minHeight: "100vh", fontFamily: FO }}>
+            <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="lazyOnload" />
             <SiteHeader />
 
             {/* ── STEP INDICATOR ─────────────────────────────────── */}

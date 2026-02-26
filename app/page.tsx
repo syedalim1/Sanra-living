@@ -265,9 +265,7 @@ function WarrantyStrip() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────
-   SECTION 7 – LAUNCH NOTE
-───────────────────────────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────────────SECTION 7 – LAUNCH NOTE───────────────────────────────────────────────────────────── */
 function LaunchNote() {
   return (
     <div style={{ background: "#F0EFED", borderTop: "1px solid #E6E6E6", borderBottom: "1px solid #E6E6E6", padding: "2.5rem 0", textAlign: "center" }}>

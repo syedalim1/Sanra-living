@@ -24,9 +24,9 @@ export async function POST(req: NextRequest) {
 
         // 2. Determine amount to charge via Razorpay (in paise)
         //    COD → charge advance only. Prepaid → full amount.
-        const amountPaise = paymentMethod === "cod"
+        const amountPaise = Math.round(paymentMethod === "cod"
             ? (codAdvance ?? 149) * 100
-            : totalPayable * 100;
+            : totalPayable * 100);
 
         // 3. For COD we skip Razorpay and insert directly as pending
         if (paymentMethod === "cod") {

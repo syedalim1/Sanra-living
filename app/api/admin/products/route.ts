@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const {
             title, subtitle, price, category, finish,
-            stock_status, stock_qty, image_url, hover_image_url, is_new,
+            stock_status, stock_qty, image_url, hover_image_url,
+            is_new, images, description,
         } = body;
 
         if (!title || !price || !category) {
@@ -49,8 +50,10 @@ export async function POST(req: NextRequest) {
                 finish: finish ?? "Matte Black",
                 stock_status: stock_status ?? "In Stock",
                 stock_qty: stock_qty ? Number(stock_qty) : 99,
-                image_url: image_url ?? "",
-                hover_image_url: hover_image_url ?? "",
+                image_url: image_url ?? (images?.[0] ?? ""),
+                hover_image_url: hover_image_url ?? (images?.[1] ?? ""),
+                images: images ?? [],
+                description: description ?? "",
                 is_new: is_new ?? false,
                 is_active: true,
             })

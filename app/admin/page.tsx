@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import ProductEditModal from "./ProductEditModal";
 
 /* ── DESIGN TOKENS ──────────────────────────────────────────── */
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
@@ -61,7 +62,8 @@ interface Enquiry {
 interface Product {
     id: string; title: string; subtitle: string; price: number; category: string;
     finish: string; stock_status: string; stock_qty: number; image_url: string;
-    hover_image_url: string; is_new: boolean; is_active: boolean; created_at: string;
+    hover_image_url: string; images?: string[]; description?: string;
+    is_new: boolean; is_active: boolean; created_at: string;
 }
 
 type Tab = "orders" | "messages" | "enquiries" | "products";
@@ -123,9 +125,7 @@ export default function AdminPage() {
     const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
 
     // Product edit state
-    const [editingProduct, setEditingProduct] = useState<string | null>(null);
-    const [editVals, setEditVals] = useState<Partial<Product>>({});
-    const [savingProduct, setSavingProduct] = useState(false);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
     // Add product form
     const [showAddProduct, setShowAddProduct] = useState(false);
@@ -206,25 +206,6 @@ export default function AdminPage() {
             body: JSON.stringify({ is_active: !product.is_active }),
         });
         setProducts(prev => prev.map(p => p.id === product.id ? { ...p, is_active: !p.is_active } : p));
-    };
-
-    const startEdit = (product: Product) => {
-        setEditingProduct(product.id);
-        setEditVals({ price: product.price, stock_qty: product.stock_qty, stock_status: product.stock_status, title: product.title });
-    };
-
-    const saveEdit = async (productId: string) => {
-        setSavingProduct(true);
-        try {
-            await fetch(`/api/admin/products?id=${productId}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
-                body: JSON.stringify(editVals),
-            });
-            setProducts(prev => prev.map(p => p.id === productId ? { ...p, ...editVals } : p));
-            setEditingProduct(null);
-        } catch (err) { console.error(err); }
-        finally { setSavingProduct(false); }
     };
 
     const handleAddProduct = async (e: React.FormEvent) => {
@@ -619,42 +600,21 @@ export default function AdminPage() {
                                 </thead>
                                 <tbody>
                                     {products.map((product) => {
-                                        const isEditing = editingProduct === product.id;
                                         return (
                                             <tr key={product.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: product.is_active ? 1 : 0.5, transition: "opacity 0.2s" }}>
                                                 <Td>
-                                                    {isEditing ? (
-                                                        <input value={editVals.title ?? product.title} onChange={e => setEditVals(v => ({ ...v, title: e.target.value }))} style={{ ...inputStyle, minWidth: 140 }} />
-                                                    ) : (
-                                                        <>
-                                                            <p style={{ fontSize: "0.85rem", fontWeight: 700, color: C.text, fontFamily: FM }}>{product.title}</p>
-                                                            <p style={{ fontSize: "0.7rem", color: C.muted, fontFamily: FO }}>{product.subtitle}</p>
-                                                        </>
-                                                    )}
+                                                    <p style={{ fontSize: "0.85rem", fontWeight: 700, color: C.text, fontFamily: FM }}>{product.title}</p>
+                                                    <p style={{ fontSize: "0.7rem", color: C.muted, fontFamily: FO }}>{product.subtitle}</p>
                                                 </Td>
                                                 <Td><span style={{ fontSize: "0.78rem", color: C.muted }}>{product.category}</span></Td>
                                                 <Td>
-                                                    {isEditing ? (
-                                                        <input type="number" value={editVals.price ?? product.price} onChange={e => setEditVals(v => ({ ...v, price: Number(e.target.value) }))} style={{ ...inputStyle, width: 90 }} />
-                                                    ) : (
-                                                        <span style={{ fontWeight: 700, color: C.accent, fontFamily: FM, fontSize: "0.88rem" }}>{fmt(product.price)}</span>
-                                                    )}
+                                                    <span style={{ fontWeight: 700, color: C.accent, fontFamily: FM, fontSize: "0.88rem" }}>{fmt(product.price)}</span>
                                                 </Td>
                                                 <Td>
-                                                    {isEditing ? (
-                                                        <input type="number" value={editVals.stock_qty ?? product.stock_qty} onChange={e => setEditVals(v => ({ ...v, stock_qty: Number(e.target.value) }))} style={{ ...inputStyle, width: 80 }} />
-                                                    ) : (
-                                                        <span style={{ fontSize: "0.82rem", color: C.text }}>{product.stock_qty}</span>
-                                                    )}
+                                                    <span style={{ fontSize: "0.82rem", color: C.text }}>{product.stock_qty}</span>
                                                 </Td>
                                                 <Td>
-                                                    {isEditing ? (
-                                                        <select value={editVals.stock_status ?? product.stock_status} onChange={e => setEditVals(v => ({ ...v, stock_status: e.target.value }))} style={selectStyle}>
-                                                            {["In Stock", "Only 12 Left", "Only 3 Left", "New", "Limited", "Out of Stock"].map(s => <option key={s}>{s}</option>)}
-                                                        </select>
-                                                    ) : (
-                                                        <span style={{ fontSize: "0.78rem", color: C.muted }}>{product.stock_status}</span>
-                                                    )}
+                                                    <span style={{ fontSize: "0.78rem", color: C.muted }}>{product.stock_status}</span>
                                                 </Td>
                                                 <Td><span style={{ fontSize: "0.78rem", color: C.muted }}>{product.finish}</span></Td>
                                                 <Td>
@@ -664,25 +624,12 @@ export default function AdminPage() {
                                                 </Td>
                                                 <Td>
                                                     <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
-                                                        {isEditing ? (
-                                                            <>
-                                                                <button onClick={() => saveEdit(product.id)} disabled={savingProduct} style={{ padding: "0.35rem 0.75rem", background: C.green, border: "none", color: "#fff", fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                                                                    {savingProduct ? "…" : "Save"}
-                                                                </button>
-                                                                <button onClick={() => setEditingProduct(null)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: C.muted, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                                                                    Cancel
-                                                                </button>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <button onClick={() => startEdit(product)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: C.blue, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>
-                                                                    Edit
-                                                                </button>
-                                                                <button onClick={() => toggleProductActive(product)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: product.is_active ? C.red : C.green, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
-                                                                    {product.is_active ? "Hide" : "Publish"}
-                                                                </button>
-                                                            </>
-                                                        )}
+                                                        <button onClick={() => setEditingProduct(product)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: C.blue, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                                            Edit
+                                                        </button>
+                                                        <button onClick={() => toggleProductActive(product)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: product.is_active ? C.red : C.green, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+                                                            {product.is_active ? "Hide" : "Publish"}
+                                                        </button>
                                                     </div>
                                                 </Td>
                                             </tr>
@@ -694,6 +641,18 @@ export default function AdminPage() {
                                 </tbody>
                             </table>
                         </div>
+
+                        {editingProduct && (
+                            <ProductEditModal
+                                product={editingProduct}
+                                adminKey={adminKey}
+                                onClose={() => setEditingProduct(null)}
+                                onSaved={(updated) => {
+                                    setProducts(prev => prev.map(p => p.id === updated.id ? updated : p));
+                                    setEditingProduct(null);
+                                }}
+                            />
+                        )}
                     </div>
                 )}
 
