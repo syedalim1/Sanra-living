@@ -42,6 +42,22 @@ export const CATEGORIES = [
     "Balcony & Outdoor", "Modular", "CNC & Custom", "Commercial",
 ];
 
+export const COUPON_TYPES: Record<string, string> = {
+    percentage: "% Off",
+    flat: "₹ Off",
+};
+
+export const ACTION_TYPE_COLORS: Record<string, string> = {
+    order_status: "#3B82F6",
+    product_add: "#10B981",
+    product_edit: "#F59E0B",
+    product_delete: "#EF4444",
+    coupon_create: "#8B5CF6",
+    coupon_update: "#8B5CF6",
+    settings_update: "#6B7280",
+    bulk_action: "#F97316",
+};
+
 export const fmt = (n: number) => `₹${Number(n).toLocaleString("en-IN")}`;
 
 export const fmtDate = (s: string) =>

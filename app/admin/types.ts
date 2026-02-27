@@ -16,6 +16,7 @@ export interface Order {
     advance_paid: number;
     remaining_amount: number;
     razorpay_payment_id?: string;
+    admin_notes?: string;
     created_at: string;
     order_items?: {
         product_name: string;
@@ -53,6 +54,7 @@ export interface Product {
     title: string;
     subtitle: string;
     price: number;
+    compare_at_price?: number | null;
     category: string;
     finish: string;
     stock_status: string;
@@ -60,10 +62,79 @@ export interface Product {
     image_url: string;
     hover_image_url: string;
     images?: string[];
+    video_url?: string;
+    video_thumbnail?: string;
     description?: string;
+    weight_kg?: number | null;
+    dimensions?: string;
+    tags?: string[];
+    display_order?: number;
     is_new: boolean;
     is_active: boolean;
     created_at: string;
 }
 
-export type Tab = "dashboard" | "orders" | "messages" | "enquiries" | "products";
+export interface Coupon {
+    id: string;
+    code: string;
+    description: string;
+    discount_type: "percentage" | "flat";
+    discount_value: number;
+    min_order_amount: number;
+    max_discount: number | null;
+    max_uses: number;
+    used_count: number;
+    is_active: boolean;
+    starts_at: string;
+    expires_at: string | null;
+    created_at: string;
+}
+
+export interface Customer {
+    user_email: string;
+    user_phone: string;
+    city: string;
+    state: string;
+    total_orders: number;
+    total_spent: number;
+    last_order_date: string;
+}
+
+export interface DailyRevenue {
+    date: string;
+    revenue: number;
+    order_count: number;
+}
+
+export interface TopProduct {
+    product_name: string;
+    total_qty: number;
+    total_revenue: number;
+}
+
+export interface ActivityLogEntry {
+    id: string;
+    action_type: string;
+    description: string;
+    admin_email: string | null;
+    metadata: Record<string, unknown>;
+    created_at: string;
+}
+
+export interface StoreSetting {
+    key: string;
+    value: string;
+    updated_at: string;
+}
+
+export type Tab =
+    | "dashboard"
+    | "orders"
+    | "messages"
+    | "enquiries"
+    | "products"
+    | "coupons"
+    | "customers"
+    | "analytics"
+    | "activity"
+    | "settings";

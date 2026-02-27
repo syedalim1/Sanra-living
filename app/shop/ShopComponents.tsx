@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { optimizeImage } from "@/utils/cloudinary";
 
 /* ── FONTS ─────────────────────────────────────────────────── */
 export const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
@@ -109,7 +110,7 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
                 <StockBadge status={product.stock_status} />
                 <img
                     src={
-                        product.image_url ||
+                        optimizeImage(product.image_url, 600) ||
                         "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80"
                     }
                     alt={product.title}
@@ -126,8 +127,8 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
                 />
                 <img
                     src={
-                        product.hover_image_url ||
-                        product.image_url ||
+                        optimizeImage(product.hover_image_url, 600) ||
+                        optimizeImage(product.image_url, 600) ||
                         "https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?w=600&q=80"
                     }
                     alt=""

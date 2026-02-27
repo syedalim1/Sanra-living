@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import { optimizeImage } from "@/utils/cloudinary";
 
 /* ═══════════════════════════════════════════════════════════════
    TYPES
@@ -536,7 +537,7 @@ function FeaturedCollections() {
                 <div className="hp-product-img-wrap">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={product.image_url || "/images/FEATURED_PRODUCT.png"}
+                    src={optimizeImage(product.image_url, 600) || "/images/FEATURED_PRODUCT.png"}
                     alt={product.title}
                     style={{
                       width: "100%",

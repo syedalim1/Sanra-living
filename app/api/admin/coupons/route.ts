@@ -12,15 +12,15 @@ export async function GET(req: NextRequest) {
     }
     try {
         const { data, error } = await supabaseAdmin
-            .from("products")
+            .from("coupons")
             .select("*")
             .order("created_at", { ascending: false });
 
         if (error) throw error;
-        return NextResponse.json({ products: data ?? [] });
+        return NextResponse.json({ coupons: data ?? [] });
     } catch (err) {
-        console.error("[admin/products GET]", err);
-        return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
+        console.error("[admin/coupons GET]", err);
+        return NextResponse.json({ error: "Failed to fetch coupons" }, { status: 500 });
     }
 }
 
@@ -31,42 +31,36 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const {
-            title, subtitle, price, category, finish,
-            stock_status, stock_qty, image_url, hover_image_url,
-            is_new, images, description, video_url, video_thumbnail,
+            code, description, discount_type, discount_value,
+            min_order_amount, max_discount, max_uses, expires_at,
         } = body;
 
-        if (!title || !price || !category) {
-            return NextResponse.json({ error: "title, price, category are required" }, { status: 400 });
+        if (!code || !discount_value) {
+            return NextResponse.json({ error: "code and discount_value are required" }, { status: 400 });
         }
 
         const { data, error } = await supabaseAdmin
-            .from("products")
+            .from("coupons")
             .insert({
-                title,
-                subtitle: subtitle ?? "",
-                price: Number(price),
-                category,
-                finish: finish ?? "Matte Black",
-                stock_status: stock_status ?? "In Stock",
-                stock_qty: stock_qty ? Number(stock_qty) : 99,
-                image_url: image_url ?? (images?.[0] ?? ""),
-                hover_image_url: hover_image_url ?? (images?.[1] ?? ""),
-                images: images ?? [],
-                video_url: video_url ?? "",
-                video_thumbnail: video_thumbnail ?? "",
+                code: code.toUpperCase().trim(),
                 description: description ?? "",
-                is_new: is_new ?? false,
+                discount_type: discount_type ?? "percentage",
+                discount_value: Number(discount_value),
+                min_order_amount: Number(min_order_amount ?? 0),
+                max_discount: max_discount ? Number(max_discount) : null,
+                max_uses: Number(max_uses ?? 100),
+                used_count: 0,
                 is_active: true,
+                expires_at: expires_at || null,
             })
             .select()
             .single();
 
         if (error) throw error;
-        return NextResponse.json({ product: data }, { status: 201 });
+        return NextResponse.json({ coupon: data }, { status: 201 });
     } catch (err) {
-        console.error("[admin/products POST]", err);
-        return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+        console.error("[admin/coupons POST]", err);
+        return NextResponse.json({ error: "Failed to create coupon" }, { status: 500 });
     }
 }
 
@@ -81,15 +75,15 @@ export async function PATCH(req: NextRequest) {
 
         const body = await req.json();
         const { error } = await supabaseAdmin
-            .from("products")
+            .from("coupons")
             .update(body)
             .eq("id", id);
 
         if (error) throw error;
         return NextResponse.json({ success: true });
     } catch (err) {
-        console.error("[admin/products PATCH]", err);
-        return NextResponse.json({ error: "Failed to update product" }, { status: 500 });
+        console.error("[admin/coupons PATCH]", err);
+        return NextResponse.json({ error: "Failed to update coupon" }, { status: 500 });
     }
 }
 
@@ -103,14 +97,14 @@ export async function DELETE(req: NextRequest) {
         if (!id) return NextResponse.json({ error: "id is required" }, { status: 400 });
 
         const { error } = await supabaseAdmin
-            .from("products")
+            .from("coupons")
             .delete()
             .eq("id", id);
 
         if (error) throw error;
         return NextResponse.json({ success: true });
     } catch (err) {
-        console.error("[admin/products DELETE]", err);
-        return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
+        console.error("[admin/coupons DELETE]", err);
+        return NextResponse.json({ error: "Failed to delete coupon" }, { status: 500 });
     }
 }

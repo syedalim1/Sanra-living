@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { C, FM, FO, fmt, fmtDate, ORDER_STATUSES, STATUS_LABELS } from "../constants";
 import { Badge, Th, Td, inputStyle, selectStyle } from "../components/AdminUI";
+import InvoiceView from "../components/InvoiceView";
 import type { Order } from "../types";
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
     updatingOrder: string | null;
     updateOrderStatus: (orderId: string, status: string) => void;
     exportOrdersCsv: () => void;
+    onSaveNotes: (orderId: string, notes: string) => void;
 }
 
 export default function OrdersTab({
@@ -23,13 +25,25 @@ export default function OrdersTab({
     orderStatusFilter, setOrderStatusFilter,
     expandedOrder, setExpandedOrder,
     updatingOrder, updateOrderStatus, exportOrdersCsv,
+    onSaveNotes,
 }: Props) {
+    const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
+    const [notesDraft, setNotesDraft] = useState<Record<string, string>>({});
+    const [savingNotes, setSavingNotes] = useState<string | null>(null);
+
     const filtered = orders.filter(o => {
         const q = searchQuery.toLowerCase();
         const matchSearch = !q || o.order_number.toLowerCase().includes(q) || o.user_email.toLowerCase().includes(q) || o.user_phone.includes(q);
         const matchStatus = orderStatusFilter === "all" || o.order_status === orderStatusFilter;
         return matchSearch && matchStatus;
     });
+
+    const handleSaveNotes = async (order: Order) => {
+        const notes = notesDraft[order.id] ?? order.admin_notes ?? "";
+        setSavingNotes(order.id);
+        await onSaveNotes(order.id, notes);
+        setSavingNotes(null);
+    };
 
     return (
         <div style={{ overflowX: "auto" }}>
@@ -54,7 +68,7 @@ export default function OrdersTab({
                 <thead>
                     <tr>
                         <Th>Order #</Th><Th>Customer</Th><Th>Phone</Th><Th>Total</Th>
-                        <Th>Payment</Th><Th>Method</Th><Th>Order Status</Th><Th>Update Status</Th><Th>Date</Th>
+                        <Th>Payment</Th><Th>Method</Th><Th>Order Status</Th><Th>Update Status</Th><Th>Date</Th><Th>Actions</Th>
                     </tr>
                 </thead>
                 <tbody>
@@ -66,7 +80,10 @@ export default function OrdersTab({
                                 onMouseEnter={e => (e.currentTarget.style.background = "#1a1a1a")}
                                 onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                             >
-                                <Td><span style={{ fontWeight: 700, color: C.accent, fontFamily: FM, fontSize: "0.82rem" }}>{order.order_number}</span></Td>
+                                <Td>
+                                    <span style={{ fontWeight: 700, color: C.accent, fontFamily: FM, fontSize: "0.82rem" }}>{order.order_number}</span>
+                                    {order.admin_notes && <span style={{ color: C.blue, marginLeft: "0.3rem", fontSize: "0.72rem" }} title="Has notes">📝</span>}
+                                </Td>
                                 <Td><span style={{ fontSize: "0.82rem", color: C.text }}>{order.user_email}</span></Td>
                                 <Td><span style={{ fontSize: "0.8rem", color: C.muted }}>{order.user_phone}</span></Td>
                                 <Td><span style={{ fontWeight: 700, fontSize: "0.85rem", fontFamily: FM }}>{fmt(order.total_amount)}</span></Td>
@@ -84,11 +101,16 @@ export default function OrdersTab({
                                     </select>
                                 </Td>
                                 <Td><span style={{ fontSize: "0.72rem", color: C.muted, whiteSpace: "nowrap" }}>{fmtDate(order.created_at)}</span></Td>
+                                <Td onClick={e => e.stopPropagation()}>
+                                    <button onClick={() => setInvoiceOrder(order)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: C.text, fontSize: "0.62rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                        🖨 Invoice
+                                    </button>
+                                </Td>
                             </tr>
 
                             {expandedOrder === order.id && (
                                 <tr>
-                                    <td colSpan={9} style={{ background: "#111", padding: "1.25rem 1.5rem 1.5rem", borderBottom: `1px solid ${C.border}` }}>
+                                    <td colSpan={10} style={{ background: "#111", padding: "1.25rem 1.5rem 1.5rem", borderBottom: `1px solid ${C.border}` }}>
                                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: "1.5rem", marginBottom: "1.25rem" }}>
                                             {/* Shipping */}
                                             <div>
@@ -130,6 +152,30 @@ export default function OrdersTab({
                                             </div>
                                         </div>
 
+                                        {/* Admin Notes */}
+                                        <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: "1rem", marginBottom: "1.25rem" }}>
+                                            <p style={{ fontSize: "0.58rem", color: C.muted, fontFamily: FM, letterSpacing: "0.18em", textTransform: "uppercase", marginBottom: "0.5rem" }}>📝 Admin Notes (internal)</p>
+                                            <textarea
+                                                value={notesDraft[order.id] ?? order.admin_notes ?? ""}
+                                                onChange={e => setNotesDraft(d => ({ ...d, [order.id]: e.target.value }))}
+                                                rows={3}
+                                                placeholder="Add internal notes about this order…"
+                                                style={{
+                                                    background: "#0F0F0F", border: `1px solid ${C.border}`, color: C.text,
+                                                    fontSize: "0.82rem", fontFamily: FO, borderRadius: 6,
+                                                    padding: "0.75rem 1rem", width: "100%", boxSizing: "border-box",
+                                                    resize: "vertical", lineHeight: 1.6,
+                                                }}
+                                            />
+                                            <button
+                                                onClick={() => handleSaveNotes(order)}
+                                                disabled={savingNotes === order.id}
+                                                style={{ marginTop: "0.5rem", padding: "0.5rem 1.25rem", background: C.accent, color: "#111", fontWeight: 900, fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase", border: "none", cursor: "pointer", borderRadius: 4, fontFamily: FM, opacity: savingNotes === order.id ? 0.7 : 1 }}
+                                            >
+                                                {savingNotes === order.id ? "Saving…" : "Save Notes"}
+                                            </button>
+                                        </div>
+
                                         {/* Items List */}
                                         {order.order_items && order.order_items.length > 0 && (
                                             <div style={{ borderTop: `1px solid ${C.border}`, paddingTop: "1rem" }}>
@@ -153,10 +199,15 @@ export default function OrdersTab({
                         </React.Fragment>
                     ))}
                     {orders.length === 0 && (
-                        <tr><td colSpan={9} style={{ padding: "5rem", textAlign: "center", color: C.muted, fontFamily: FO }}>No orders yet.</td></tr>
+                        <tr><td colSpan={10} style={{ padding: "5rem", textAlign: "center", color: C.muted, fontFamily: FO }}>No orders yet.</td></tr>
                     )}
                 </tbody>
             </table>
+
+            {/* Invoice Modal */}
+            {invoiceOrder && (
+                <InvoiceView order={invoiceOrder} onClose={() => setInvoiceOrder(null)} />
+            )}
         </div>
     );
 }

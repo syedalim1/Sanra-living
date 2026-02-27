@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import SiteHeader from "@/app/components/SiteHeader";
 import SiteFooter from "@/app/components/SiteFooter";
 import { useCart } from "@/app/context/CartContext";
+import { optimizeImage, imgThumb, optimizeVideo } from "@/utils/cloudinary";
 
 /* ── FONTS ──────────────────────────────────────────────────── */
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
@@ -37,6 +38,8 @@ interface DbProduct {
     image_url: string;
     hover_image_url: string;
     images?: string[];
+    video_url?: string;
+    video_thumbnail?: string;
     description?: string;
     is_new: boolean;
 }
@@ -132,7 +135,7 @@ export default function ProductDetailPage() {
             "@type": "Product",
             name: dbProduct.title,
             description: dbProduct.description ?? `${dbProduct.title} – Premium steel furniture by SANRA LIVING.`,
-            image: dbProduct.image_url,
+            image: optimizeImage(dbProduct.image_url, 800),
             brand: { "@type": "Brand", name: "SANRA LIVING" },
             offers: {
                 "@type": "Offer",
@@ -299,7 +302,7 @@ export default function ProductDetailPage() {
                                 onMouseLeave={() => setZoomed(false)}
                             >
                                 <img
-                                    src={product.images[activeImg]}
+                                    src={optimizeImage(product.images[activeImg], 800)}
                                     alt={product.title}
                                     style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.45s ease", transform: zoomed ? "scale(1.09)" : "scale(1)", display: "block" }}
                                 />
@@ -356,7 +359,7 @@ export default function ProductDetailPage() {
                                             transform: i === activeImg ? "scale(1)" : "scale(0.97)",
                                         }}
                                     >
-                                        <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                                        <img src={imgThumb(img)} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                                     </div>
                                 ))}
                             </div>
@@ -482,6 +485,43 @@ export default function ProductDetailPage() {
                     </div>
                 </div>
             </section>
+
+            {/* ── PRODUCT VIDEO (AUTOPLAY) ─────────────────────────── */}
+            {product.video_url && (
+                <section style={{ background: "#000", padding: isMobile ? "0" : "2rem 1.5rem" }}>
+                    <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative" }}>
+                        <video
+                            src={optimizeVideo(product.video_url, isMobile ? 480 : 1080)}
+                            poster={product.video_thumbnail || undefined}
+                            autoPlay
+                            muted
+                            loop
+                            playsInline
+                            preload="metadata"
+                            style={{
+                                width: "100%",
+                                maxHeight: isMobile ? "50vh" : "65vh",
+                                objectFit: "cover",
+                                display: "block",
+                            }}
+                        />
+                        {/* Overlay labels */}
+                        <div style={{
+                            position: "absolute", bottom: isMobile ? "0.75rem" : "1.5rem",
+                            left: isMobile ? "0.75rem" : "1.5rem",
+                            display: "flex", alignItems: "center", gap: "0.625rem",
+                        }}>
+                            <div style={{
+                                background: "rgba(0,0,0,0.65)", backdropFilter: "blur(8px)",
+                                padding: "0.4rem 0.875rem", borderRadius: 2,
+                                display: "flex", alignItems: "center", gap: "0.4rem",
+                            }}>
+                                <span style={{ fontSize: "0.65rem", fontWeight: 800, color: "#fff", letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: FM }}>🎬 Product Showcase</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {/* ── SECTION 2: KEY FEATURES ──────────────────────────── */}
             <section style={{ background: "#EBEBEB", borderTop: "1px solid #E6E6E6", borderBottom: "1px solid #E6E6E6", padding: "2rem 1.5rem" }}>
