@@ -77,12 +77,15 @@ export default function SiteFooter() {
                     <div style={{ gridColumn: "span 2" }} className="sl-footer-brand">
                         <div style={{ fontSize: "1rem", fontWeight: 900, letterSpacing: "0.1em", color: "#fff", textTransform: "uppercase", marginBottom: "0.25rem" }}>SANRA LIVING</div>
                         <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.22em", color: "#666", textTransform: "uppercase", marginBottom: "1.25rem" }}>Engineered Steel Living</div>
-                        <p style={{ fontSize: "0.84rem", color: "#777", fontFamily: FO, lineHeight: 1.8, maxWidth: 240, marginBottom: "1.5rem" }}>
-                            Premium steel furniture designed for modern homes. Built to last. Backed by a 10-year structural warranty.
+                        <p style={{ fontSize: "0.84rem", color: "#777", fontFamily: FO, lineHeight: 1.8, maxWidth: 280, marginBottom: "1.25rem" }}>
+                            Premium steel furniture brand owned and operated by <strong style={{ color: "#ccc" }}>Indian Make Steel Industries</strong>.
                         </p>
-                        <a href="mailto:support@sanraliving.com" style={{ fontSize: "0.78rem", color: "#555", fontFamily: FO, textDecoration: "none" }}>
-                            support@sanraliving.com
-                        </a>
+                        <div style={{ fontSize: "0.75rem", color: "#555", fontFamily: FO, lineHeight: 1.9 }}>
+                            <p style={{ margin: "0 0 0.25rem" }}><span style={{ color: "#777" }}>GSTIN:</span> 33FAXPM0581G1ZC</p>
+                            <p style={{ margin: "0 0 0.25rem", maxWidth: 240 }}>NO.K-6, SIDCO, Kurichi, SIDCO Industrial Estate, Coimbatore, Tamil Nadu – 641021</p>
+                            <p style={{ margin: "0 0 0.25rem" }}>📞 9585745303 / 8300904920</p>
+                            <p style={{ margin: 0 }}>✉ <a href="mailto:hello@sanraliving.com" style={{ color: "#777", textDecoration: "none" }}>hello@sanraliving.com</a></p>
+                        </div>
                     </div>
 
                     {/* Col 2 – Shop */}
@@ -103,10 +106,11 @@ export default function SiteFooter() {
                         {COL_LEGAL.map((l) => <FooterLink key={l.href} href={l.href}>{l.label}</FooterLink>)}
                         <div style={{ marginTop: "2rem" }}>
                             <ColHead>Contact</ColHead>
-                            <p style={{ fontSize: "0.82rem", color: "#aaa", fontFamily: FO, lineHeight: 1.7, margin: 0 }}>
-                                support@sanraliving.com<br />
-                                <span style={{ fontSize: "0.75rem", color: "#555" }}>Response: 24–48 Working Hours</span>
-                            </p>
+                            <div style={{ fontSize: "0.82rem", color: "#aaa", fontFamily: FO, lineHeight: 1.7 }}>
+                                <p style={{ margin: "0 0 0.25rem" }}>hello@sanraliving.com</p>
+                                <p style={{ margin: "0 0 0.25rem" }}>9585745303 / 8300904920</p>
+                                <p style={{ margin: 0, fontSize: "0.75rem", color: "#555" }}>Response: 24–48 Working Hours</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -116,19 +120,30 @@ export default function SiteFooter() {
                     <div style={{ marginBottom: "1.5rem" }}>
                         <div style={{ fontSize: "1rem", fontWeight: 900, letterSpacing: "0.1em", color: "#fff", textTransform: "uppercase", marginBottom: "0.25rem" }}>SANRA LIVING</div>
                         <div style={{ fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.22em", color: "#555", textTransform: "uppercase", marginBottom: "0.875rem" }}>Engineered Steel Living</div>
-                        <p style={{ fontSize: "0.84rem", color: "#666", fontFamily: FO, lineHeight: 1.8, margin: 0 }}>Premium steel furniture for modern homes.</p>
+                        <p style={{ fontSize: "0.78rem", color: "#666", fontFamily: FO, lineHeight: 1.8, margin: "0 0 0.5rem" }}>A brand of <strong style={{ color: "#aaa" }}>Indian Make Steel Industries</strong></p>
+                        <p style={{ fontSize: "0.72rem", color: "#555", fontFamily: FO, margin: 0 }}>GSTIN: 33FAXPM0581G1ZC</p>
                     </div>
                     <AccordionSection title="Shop" links={COL_SHOP} />
                     <AccordionSection title="Support" links={COL_SUPPORT} />
                     <AccordionSection title="Legal" links={COL_LEGAL} />
                     <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)", padding: "1rem 0" }}>
                         <p style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: "#fff", fontFamily: FM, marginBottom: "0.5rem" }}>Contact</p>
-                        <p style={{ fontSize: "0.82rem", color: "#777", fontFamily: FO, margin: 0 }}>support@sanraliving.com</p>
+                        <div style={{ fontSize: "0.82rem", color: "#777", fontFamily: FO, lineHeight: 1.8 }}>
+                            <p style={{ margin: "0 0 0.2rem" }}>hello@sanraliving.com</p>
+                            <p style={{ margin: 0 }}>9585745303 / 8300904920</p>
+                        </div>
                     </div>
                 </div>
 
                 {/* ── BOTTOM STRIP ──────────────────────────────────── */}
-                <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: "clamp(2.5rem, 5vw, 4rem)", padding: "1.5rem 0", display: "flex", flexWrap: "wrap", gap: "0.75rem", justifyContent: "space-between", alignItems: "center" }}>
+                {/* ── LEGAL DISCLOSURE (all viewports) ──────────────── */}
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: "clamp(2rem, 4vw, 3rem)", paddingTop: "1.5rem" }}>
+                    <p style={{ fontSize: "0.75rem", color: "#555", fontFamily: FO, lineHeight: 1.8, maxWidth: 600, margin: "0 0 0.5rem" }}>
+                        All GST invoices and billing are issued under <strong style={{ color: "#888" }}>Indian Make Steel Industries</strong> in compliance with Indian tax regulations.
+                    </p>
+                </div>
+
+                <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", marginTop: "1rem", padding: "1.5rem 0", display: "flex", flexWrap: "wrap", gap: "0.75rem", justifyContent: "space-between", alignItems: "center" }}>
                     <p style={{ fontSize: "0.7rem", color: "#444", fontFamily: FM, letterSpacing: "0.05em", margin: 0 }}>
                         © {new Date().getFullYear()} SANRA LIVING. All Rights Reserved.
                     </p>

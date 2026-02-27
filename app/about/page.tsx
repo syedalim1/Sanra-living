@@ -258,8 +258,40 @@ export default function AboutPage() {
                 </div>
             </section>
 
+            {/* ── LEGAL & BUSINESS INFORMATION ──────────────────── */}
+            <section style={{ background: "#fff", padding: "clamp(3rem, 8vw, 5rem) 1.5rem" }}>
+                <div style={{ maxWidth: 900, margin: "0 auto" }}>
+                    <Label>Compliance</Label>
+                    <h2 style={{ fontSize: "clamp(1.5rem, 3vw, 2rem)", fontWeight: 900, color: "#111", letterSpacing: "-0.02em", fontFamily: FM, marginBottom: "2rem" }}>
+                        Legal &amp; Business Information
+                    </h2>
+                    <p style={{ fontSize: "0.9375rem", color: "#444", lineHeight: 1.9, fontFamily: FO, marginBottom: "1.5rem" }}>
+                        SANRA LIVING is a premium steel furniture brand operated under <strong style={{ color: "#111" }}>Indian Make Steel Industries</strong>, a GST-registered manufacturing business based in Coimbatore, Tamil Nadu, India.
+                    </p>
+                    <p style={{ fontSize: "0.9375rem", color: "#444", lineHeight: 1.9, fontFamily: FO, marginBottom: "2rem" }}>
+                        Indian Make Steel Industries is the legal billing entity responsible for manufacturing, taxation, invoicing, compliance, and financial operations.
+                    </p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", padding: "1.5rem 1.75rem", background: "#F5F5F5", borderLeft: "3px solid #1C1C1C", maxWidth: 400 }}>
+                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                            <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#888", fontFamily: FM, minWidth: 100 }}>Brand Name</span>
+                            <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#111", fontFamily: FM }}>SANRA LIVING</span>
+                        </div>
+                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                            <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#888", fontFamily: FM, minWidth: 100 }}>Legal Entity</span>
+                            <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#111", fontFamily: FM }}>Indian Make Steel Industries</span>
+                        </div>
+                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                            <span style={{ fontSize: "0.82rem", fontWeight: 700, color: "#888", fontFamily: FM, minWidth: 100 }}>GSTIN</span>
+                            <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#111", fontFamily: FM }}>33FAXPM0581G1ZC</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <Divider />
+
             {/* ── SECTION 7: CTA ────────────────────────────────────── */}
-            <section style={{ background: "#fff", padding: "clamp(3rem, 8vw, 5rem) 1.5rem", textAlign: "center" }}>
+            <section style={{ background: "#F5F5F5", padding: "clamp(3rem, 8vw, 5rem) 1.5rem", textAlign: "center" }}>
                 <div style={{ maxWidth: 480, margin: "0 auto" }}>
                     <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.22em", color: "#888", textTransform: "uppercase", fontFamily: FM, marginBottom: "1.25rem" }}>
                         Explore Our Collection

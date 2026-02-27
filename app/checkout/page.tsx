@@ -437,6 +437,9 @@ export default function CheckoutPage() {
                                 <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "1rem", alignItems: "center" }}>
                                     <span style={{ fontSize: "0.7rem", color: "#aaa", fontFamily: FO }}>🔒 Secured by Razorpay</span>
                                 </div>
+                                <p style={{ fontSize: "0.72rem", color: "#999", fontFamily: FO, textAlign: "center", marginTop: "0.75rem", lineHeight: 1.6 }}>
+                                    All invoices will be issued under <strong style={{ color: "#777" }}>Indian Make Steel Industries (GSTIN: 33FAXPM0581G1ZC)</strong>.
+                                </p>
 
                                 <div style={{ textAlign: "center", marginTop: "1rem" }}>
                                     <Link href="/cart" style={{ fontSize: "0.75rem", color: "#888", fontFamily: FO, textDecoration: "underline" }}>

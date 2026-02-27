@@ -179,11 +179,56 @@ export default function ContactPage() {
                         <div style={{ height: 1, background: "#E6E6E6", marginBottom: "2rem" }} />
 
                         <InfoBlock
-                            title="Manufacturing Unit"
+                            title="Brand Name"
                             lines={[
-                                "Operated under:",
-                                <strong key="imsi" style={{ color: "#1C1C1C" }}>Indian Make Steel Industries</strong>,
-                                <span key="addr" style={{ color: "#999", fontSize: "0.85rem" }}>Address available on request</span>,
+                                <strong key="brand" style={{ color: "#1C1C1C" }}>SANRA LIVING</strong>,
+                            ]}
+                        />
+
+                        <div style={{ height: 1, background: "#E6E6E6", marginBottom: "2rem" }} />
+
+                        <InfoBlock
+                            title="Legal Business Name"
+                            lines={[
+                                <strong key="entity" style={{ color: "#1C1C1C" }}>Indian Make Steel Industries</strong>,
+                            ]}
+                        />
+
+                        <div style={{ height: 1, background: "#E6E6E6", marginBottom: "2rem" }} />
+
+                        <InfoBlock
+                            title="GSTIN"
+                            lines={[
+                                <strong key="gstin" style={{ color: "#1C1C1C" }}>33FAXPM0581G1ZC</strong>,
+                            ]}
+                        />
+
+                        <div style={{ height: 1, background: "#E6E6E6", marginBottom: "2rem" }} />
+
+                        <InfoBlock
+                            title="Registered Address"
+                            lines={[
+                                "NO.K-6, SIDCO, Kurichi,",
+                                "SIDCO Industrial Estate,",
+                                "Coimbatore, Tamil Nadu – 641021, India",
+                            ]}
+                        />
+
+                        <div style={{ height: 1, background: "#E6E6E6", marginBottom: "2rem" }} />
+
+                        <InfoBlock
+                            title="Phone"
+                            lines={[
+                                "9585745303 / 8300904920",
+                            ]}
+                        />
+
+                        <div style={{ height: 1, background: "#E6E6E6", marginBottom: "2rem" }} />
+
+                        <InfoBlock
+                            title="Email"
+                            lines={[
+                                <a key="email" href="mailto:hello@sanraliving.com" style={{ color: "#1C1C1C", fontWeight: 700, textDecoration: "none" }}>hello@sanraliving.com</a>,
                             ]}
                         />
                     </div>

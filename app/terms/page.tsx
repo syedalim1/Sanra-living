@@ -43,7 +43,8 @@ const TOC_SECTIONS = [
     { id: "s8", label: "08 — Intellectual Property" },
     { id: "s9", label: "09 — Limitation of Liability" },
     { id: "s10", label: "10 — Governing Law" },
-    { id: "s11", label: "11 — Contact" },
+    { id: "s11", label: "11 — Billing & Taxation" },
+    { id: "s12", label: "12 — Contact" },
 ];
 
 export default function TermsPage() {
@@ -265,11 +266,27 @@ export default function TermsPage() {
                 </div>
             </section>
 
-            {/* SECTION 11 – CONTACT (dark) */}
+            {/* SECTION 11 – BILLING & TAXATION */}
+            <section style={{ background: "#fff", padding: "clamp(2.5rem, 6vw, 4rem) 1.5rem" }}>
+                <div style={{ maxWidth: 720, margin: "0 auto" }}>
+                    <Label>Section 11</Label>
+                    <SectionHeading id="s11">Billing &amp; Taxation</SectionHeading>
+                    <BodyText>
+                        All products sold under the brand <strong style={{ color: "#111" }}>SANRA LIVING</strong> are legally invoiced and taxed under <strong style={{ color: "#111" }}>Indian Make Steel Industries (GSTIN: 33FAXPM0581G1ZC)</strong> in accordance with Indian GST regulations.
+                    </BodyText>
+                    <BodyText>
+                        All invoices, receipts, and tax documents will bear the name and GSTIN of Indian Make Steel Industries as the billing entity.
+                    </BodyText>
+                </div>
+            </section>
+
+            <Divider />
+
+            {/* SECTION 12 – CONTACT (dark) */}
             <section style={{ background: "#1C1C1C", padding: "clamp(3rem, 7vw, 5rem) 1.5rem", textAlign: "center" }}>
                 <div style={{ maxWidth: 480, margin: "0 auto" }}>
-                    <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.22em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", fontFamily: FM, marginBottom: "1.25rem" }} id="s11">
-                        Section 11
+                    <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.22em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", fontFamily: FM, marginBottom: "1.25rem" }} id="s12">
+                        Section 12
                     </p>
                     <h2 style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em", fontFamily: FM, marginBottom: "0.875rem" }}>
                         Contact

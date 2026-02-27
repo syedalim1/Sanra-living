@@ -58,6 +58,9 @@ export default function PrivacyPolicyPage() {
                     <p style={{ fontSize: "0.9375rem", color: "#666", lineHeight: 1.9, maxWidth: 520, margin: "0 auto 1rem", fontFamily: FO }}>
                         Your privacy is important to us. This policy explains how SANRA LIVING collects, uses, and protects your information.
                     </p>
+                    <p style={{ fontSize: "0.82rem", color: "#888", lineHeight: 1.8, maxWidth: 520, margin: "0 auto 1rem", fontFamily: FO }}>
+                        This website www.sanraliving.com is owned and operated by <strong style={{ color: "#555" }}>Indian Make Steel Industries</strong> under the brand <strong style={{ color: "#555" }}>SANRA LIVING</strong>.
+                    </p>
                     <p style={{ fontSize: "0.72rem", color: "#bbb", fontFamily: FM, letterSpacing: "0.1em" }}>Effective Date: 24 February 2025</p>
                 </div>
             </section>
