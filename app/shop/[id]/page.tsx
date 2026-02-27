@@ -205,7 +205,7 @@ export default function ProductDetailPage() {
 
     const handleWhatsApp = () => {
         const msg = encodeURIComponent(`Hi! I'm interested in the *${product.title}* (₹${product.price.toLocaleString("en-IN")}). Can you share more details?`);
-        window.open(`https://wa.me/919999999999?text=${msg}`, "_blank");
+        window.open(`https://wa.me/8300904920?text=${msg}`, "_blank");
     };
 
     const label = (extra?: object) => ({

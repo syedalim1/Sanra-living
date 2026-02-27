@@ -68,7 +68,7 @@ alter table public.store_settings enable row level security;
 
 -- Seed default settings
 insert into public.store_settings (key, value) values
-    ('whatsapp_number', '919876543210'),
+    ('whatsapp_number', '918300904920'),
     ('shipping_charges', '149'),
     ('free_shipping_threshold', '2999'),
     ('business_hours', 'Mon–Sat: 10 AM – 7 PM'),

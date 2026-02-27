@@ -29,6 +29,50 @@ interface Errors {
     [key: string]: string;
 }
 
+/* ── Shared styles (module-level so they are stable references) ── */
+const inputStyle: React.CSSProperties = {
+    width: "100%", padding: "0.75rem 1rem",
+    border: "1px solid #E0E0E0", borderRadius: 0,
+    fontSize: "0.9rem", fontFamily: FO, color: "#1C1C1C",
+    background: "#FAFAFA", outline: "none", boxSizing: "border-box",
+};
+
+const errStyle: React.CSSProperties = {
+    fontSize: "0.72rem", color: "#C0392B", fontFamily: FO, marginTop: "0.25rem",
+};
+
+const labelStyle: React.CSSProperties = {
+    fontSize: "0.72rem", fontWeight: 700, color: "#333", fontFamily: FM,
+    letterSpacing: "0.06em", marginBottom: "0.35rem", display: "block",
+};
+
+/* ── Field component OUTSIDE CheckoutPage to prevent remounting on every render ── */
+function Field({
+    name, label, required, placeholder, type = "text", half,
+    form, errors, handleChange,
+}: {
+    name: keyof FormState; label: string; required?: boolean;
+    placeholder?: string; type?: string; half?: boolean;
+    form: FormState;
+    errors: Errors;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => void;
+}) {
+    return (
+        <div style={{ gridColumn: half ? "span 1" : "span 2" }}>
+            <label style={labelStyle} htmlFor={name}>
+                {label} {required && <span style={{ color: "#C0392B" }}>*</span>}
+            </label>
+            <input
+                type={type} id={name} name={name}
+                value={String(form[name])} onChange={handleChange}
+                placeholder={placeholder}
+                style={{ ...inputStyle, borderColor: errors[name] ? "#C0392B" : "#E0E0E0" }}
+            />
+            {errors[name] && <p style={errStyle}>{errors[name]}</p>}
+        </div>
+    );
+}
+
 const INDIAN_STATES = [
     "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
     "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand", "Karnataka",
@@ -206,41 +250,7 @@ export default function CheckoutPage() {
     };
 
 
-    const inputStyle: React.CSSProperties = {
-        width: "100%", padding: "0.75rem 1rem",
-        border: "1px solid #E0E0E0", borderRadius: 0,
-        fontSize: "0.9rem", fontFamily: FO, color: "#1C1C1C",
-        background: "#FAFAFA", outline: "none", boxSizing: "border-box",
-    };
 
-    const errStyle: React.CSSProperties = {
-        fontSize: "0.72rem", color: "#C0392B", fontFamily: FO, marginTop: "0.25rem",
-    };
-
-    const labelStyle: React.CSSProperties = {
-        fontSize: "0.72rem", fontWeight: 700, color: "#333", fontFamily: FM,
-        letterSpacing: "0.06em", marginBottom: "0.35rem", display: "block",
-    };
-
-    const Field = ({
-        name, label, required, placeholder, type = "text", half,
-    }: {
-        name: keyof FormState; label: string; required?: boolean;
-        placeholder?: string; type?: string; half?: boolean;
-    }) => (
-        <div style={{ gridColumn: half ? "span 1" : "span 2" }}>
-            <label style={labelStyle} htmlFor={name}>
-                {label} {required && <span style={{ color: "#C0392B" }}>*</span>}
-            </label>
-            <input
-                type={type} id={name} name={name}
-                value={String(form[name])} onChange={handleChange}
-                placeholder={placeholder}
-                style={{ ...inputStyle, borderColor: errors[name] ? "#C0392B" : "#E0E0E0" }}
-            />
-            {errors[name] && <p style={errStyle}>{errors[name]}</p>}
-        </div>
-    );
 
     if (items.length === 0) return null;
 
@@ -292,22 +302,22 @@ export default function CheckoutPage() {
                                     Shipping Details
                                 </p>
                                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                                    <Field name="name" label="Full Name" required placeholder="Your full name" />
-                                    <Field name="phone" label="Phone Number" required placeholder="+91 98765 43210" type="tel" half />
-                                    <Field name="email" label="Email Address" required placeholder="you@example.com" type="email" half />
-                                    <Field name="address1" label="Address Line 1" required placeholder="Door no., Street, Area" />
-                                    <Field name="address2" label="Address Line 2" placeholder="Landmark, Locality (optional)" />
-                                    <Field name="city" label="City" required placeholder="City" half />
+                                    <Field name="name" label="Full Name" required placeholder="Your full name" form={form} errors={errors} handleChange={handleChange} />
+                                    <Field name="phone" label="Phone Number" required placeholder="+91 98765 43210" type="tel" half form={form} errors={errors} handleChange={handleChange} />
+                                    <Field name="email" label="Email Address" required placeholder="you@example.com" type="email" half form={form} errors={errors} handleChange={handleChange} />
+                                    <Field name="address1" label="Address Line 1" required placeholder="Door no., Street, Area" form={form} errors={errors} handleChange={handleChange} />
+                                    <Field name="address2" label="Address Line 2" placeholder="Landmark, Locality (optional)" form={form} errors={errors} handleChange={handleChange} />
+                                    <Field name="city" label="City" required placeholder="City" half form={form} errors={errors} handleChange={handleChange} />
                                     <div>
                                         <label style={labelStyle}>State <span style={{ color: "#C0392B" }}>*</span></label>
                                         <select name="state" value={form.state} onChange={handleChange}
-                                            style={{ ...inputStyle, cursor: "pointer", borderColor: errors.state ? "#C0392B" : "#E0E0E0" }}>
+                                            style={{ ...inputStyle, cursor: "pointer", borderColor: errors.state ? "#C0392B" : "#E0E0E0", appearance: "auto" }}>
                                             <option value="">Select State…</option>
                                             {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                                         </select>
                                         {errors.state && <p style={errStyle}>{errors.state}</p>}
                                     </div>
-                                    <Field name="pincode" label="Pincode" required placeholder="600001" half />
+                                    <Field name="pincode" label="Pincode" required placeholder="600001" half form={form} errors={errors} handleChange={handleChange} />
                                 </div>
 
                                 <label style={{ display: "flex", alignItems: "center", gap: "0.625rem", marginTop: "1.25rem", cursor: "pointer" }}>

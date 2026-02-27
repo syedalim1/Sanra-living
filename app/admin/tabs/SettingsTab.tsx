@@ -11,7 +11,7 @@ interface Props {
 }
 
 const SETTING_LABELS: Record<string, { label: string; description: string; type: "text" | "number" | "textarea" }> = {
-    whatsapp_number: { label: "WhatsApp Number", description: "Include country code (e.g. 919876543210)", type: "text" },
+    whatsapp_number: { label: "WhatsApp Number", description: "Include country code (e.g. 918300904920)", type: "text" },
     shipping_charges: { label: "Shipping Charges (₹)", description: "Default shipping fee for orders", type: "number" },
     free_shipping_threshold: { label: "Free Shipping Above (₹)", description: "Orders above this amount get free shipping", type: "number" },
     business_hours: { label: "Business Hours", description: "Displayed in footer and contact page", type: "text" },

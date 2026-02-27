@@ -31,6 +31,52 @@ const priceRanges = ["All", "Under ₹2,000", "₹2,000 – ₹5,000", "₹5,000
 const finishes = ["All", "Matte Black", "Graphite Grey"];
 const assemblyTypes = ["All", "Self Assembly", "Pre-assembled"];
 
+/* ── FilterPanel OUTSIDE CategoryPage to prevent input remount on state change ── */
+function FilterPanel({
+    selectedPrice, setSelectedPrice,
+    selectedFinish, setSelectedFinish,
+    selectedAssembly, setSelectedAssembly,
+    extraFilterValues, setExtraFilterValues,
+    extraFilters,
+    onReset,
+}: {
+    selectedPrice: string; setSelectedPrice: (v: string) => void;
+    selectedFinish: string; setSelectedFinish: (v: string) => void;
+    selectedAssembly: string; setSelectedAssembly: (v: string) => void;
+    extraFilterValues: Record<string, string>;
+    setExtraFilterValues: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    extraFilters?: CategoryFilterDef[];
+    onReset: () => void;
+}) {
+    return (
+        <>
+            <FilterSection title="Price Range" options={priceRanges} selected={selectedPrice} onSelect={setSelectedPrice} />
+            <FilterSection title="Finish" options={finishes} selected={selectedFinish} onSelect={setSelectedFinish} />
+            <FilterSection title="Assembly" options={assemblyTypes} selected={selectedAssembly} onSelect={setSelectedAssembly} />
+            {extraFilters?.map((ef) => (
+                <FilterSection
+                    key={ef.key}
+                    title={ef.title}
+                    options={["All", ...ef.options]}
+                    selected={extraFilterValues[ef.key] ?? "All"}
+                    onSelect={(v) => setExtraFilterValues((prev) => ({ ...prev, [ef.key]: v }))}
+                />
+            ))}
+            <button
+                onClick={onReset}
+                style={{
+                    width: "100%", padding: "0.625rem", fontSize: "0.68rem", fontWeight: 700,
+                    letterSpacing: "0.18em", textTransform: "uppercase", cursor: "pointer",
+                    marginTop: "0.5rem", border: "1.5px solid #ddd", background: "transparent",
+                    color: "#666", fontFamily: FM, transition: "border-color 0.2s, color 0.2s",
+                }}
+            >
+                Clear Filters
+            </button>
+        </>
+    );
+}
+
 /* ═══════════════════════════════════════════════════════════════
    CATEGORY PAGE COMPONENT
 ═══════════════════════════════════════════════════════════════ */
@@ -123,33 +169,7 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
         setExtraFilterValues(resetExtras);
     };
 
-    const FilterPanel = () => (
-        <>
-            <FilterSection title="Price Range" options={priceRanges} selected={selectedPrice} onSelect={setSelectedPrice} />
-            <FilterSection title="Finish" options={finishes} selected={selectedFinish} onSelect={setSelectedFinish} />
-            <FilterSection title="Assembly" options={assemblyTypes} selected={selectedAssembly} onSelect={setSelectedAssembly} />
-            {config.extraFilters?.map((ef) => (
-                <FilterSection
-                    key={ef.key}
-                    title={ef.title}
-                    options={["All", ...ef.options]}
-                    selected={extraFilterValues[ef.key] ?? "All"}
-                    onSelect={(v) => setExtraFilterValues((prev) => ({ ...prev, [ef.key]: v }))}
-                />
-            ))}
-            <button
-                onClick={resetFilters}
-                style={{
-                    width: "100%", padding: "0.625rem", fontSize: "0.68rem", fontWeight: 700,
-                    letterSpacing: "0.18em", textTransform: "uppercase", cursor: "pointer",
-                    marginTop: "0.5rem", border: "1.5px solid #ddd", background: "transparent",
-                    color: "#666", fontFamily: FM, transition: "border-color 0.2s, color 0.2s",
-                }}
-            >
-                Clear Filters
-            </button>
-        </>
-    );
+
 
     return (
         <main style={{ background: C.bg, minHeight: "100vh", fontFamily: FO }}>
@@ -201,7 +221,14 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 <h3 style={{ fontSize: "0.62rem", fontWeight: 900, letterSpacing: "0.28em", textTransform: "uppercase", color: C.black, fontFamily: FM, paddingBottom: "0.875rem", borderBottom: `2px solid ${C.black}`, marginBottom: "1.5rem" }}>
                                     Filters
                                 </h3>
-                                <FilterPanel />
+                                <FilterPanel
+                                    selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
+                                    selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
+                                    selectedAssembly={selectedAssembly} setSelectedAssembly={setSelectedAssembly}
+                                    extraFilterValues={extraFilterValues} setExtraFilterValues={setExtraFilterValues}
+                                    extraFilters={config.extraFilters}
+                                    onReset={resetFilters}
+                                />
                             </div>
 
                             {/* Back to shop */}
@@ -346,7 +373,14 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 </button>
                             </div>
                             <div style={{ padding: "1.5rem" }}>
-                                <FilterPanel />
+                                <FilterPanel
+                                    selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
+                                    selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
+                                    selectedAssembly={selectedAssembly} setSelectedAssembly={setSelectedAssembly}
+                                    extraFilterValues={extraFilterValues} setExtraFilterValues={setExtraFilterValues}
+                                    extraFilters={config.extraFilters}
+                                    onReset={resetFilters}
+                                />
                                 <button
                                     onClick={() => setFilterDrawerOpen(false)}
                                     style={{
