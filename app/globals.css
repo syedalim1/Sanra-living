@@ -350,3 +350,205 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #999;
 }
+
+/* ══════════════════════════════════════════════════════════════
+   HOMEPAGE – Category Architecture Cards
+══════════════════════════════════════════════════════════════ */
+.hp-cat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.625rem;
+  padding: 2rem 1.25rem 1.75rem;
+  background: #fff;
+  border: 1px solid #EBEBEB;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.hp-cat-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #1C1C1C;
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.hp-cat-card:hover {
+  border-color: #ccc;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+.hp-cat-card:hover::after {
+  transform: scaleX(1);
+}
+
+.hp-cat-icon {
+  width: 52px;
+  height: 52px;
+  background: #F5F5F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #1C1C1C;
+  transition: all 0.3s ease;
+}
+
+.hp-cat-card:hover .hp-cat-icon {
+  background: #1C1C1C;
+  color: #fff;
+}
+
+.hp-cat-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #111;
+}
+
+.hp-cat-desc {
+  font-size: 0.75rem;
+  color: #888;
+  line-height: 1.5;
+}
+
+.hp-cat-arrow {
+  font-size: 1rem;
+  color: #ccc;
+  transition: all 0.3s ease;
+  margin-top: 0.25rem;
+}
+
+.hp-cat-card:hover .hp-cat-arrow {
+  color: #1C1C1C;
+  transform: translateX(4px);
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HOMEPAGE – Design Philosophy Cards
+══════════════════════════════════════════════════════════════ */
+.hp-philosophy-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 2.5rem 2rem;
+  background: #1C1C1C;
+  transition: background 0.3s ease;
+}
+
+.hp-philosophy-card:hover {
+  background: #242424;
+}
+
+.hp-philosophy-icon {
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HOMEPAGE – Featured Product Cards
+══════════════════════════════════════════════════════════════ */
+.hp-product-card {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #EBEBEB;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.hp-product-card:hover {
+  border-color: #ccc;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+.hp-product-img-wrap {
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: #E9E9E7;
+}
+
+.hp-product-img-wrap img {
+  transition: transform 0.5s ease;
+}
+
+.hp-product-card:hover .hp-product-img-wrap img {
+  transform: scale(1.04);
+}
+
+.hp-product-info {
+  padding: 1rem 1.125rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hp-product-category {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.hp-product-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111;
+  line-height: 1.35;
+}
+
+.hp-product-price {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1C1C1C;
+  margin-top: 0.25rem;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   HOMEPAGE – Trust Block Cards
+══════════════════════════════════════════════════════════════ */
+.hp-trust-card {
+  padding: 2rem 1.75rem;
+  background: #fff;
+  border: 1px solid #E6E6E6;
+  transition: all 0.3s ease;
+}
+
+.hp-trust-card:hover {
+  border-color: #ccc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+}
+
+.hp-trust-icon {
+  width: 48px;
+  height: 48px;
+  background: #F5F5F5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-bottom: 1.25rem;
+}
+
+/* ══════════════════════════════════════════════════════════════
+   Pulse Animation for Loading States
+══════════════════════════════════════════════════════════════ */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
