@@ -66,7 +66,9 @@ interface Product {
     is_new: boolean; is_active: boolean; created_at: string;
 }
 
-type Tab = "orders" | "messages" | "enquiries" | "products";
+type Tab = "dashboard" | "orders" | "messages" | "enquiries" | "products";
+
+const CATEGORIES = ["Seating", "Tables", "Storage", "Bedroom", "Workspace", "Balcony & Outdoor", "Modular", "CNC & Custom", "Commercial"];
 
 /* ── REUSABLE COMPONENTS ─────────────────────────────────────── */
 function Badge({ status }: { status: string }) {
@@ -113,7 +115,7 @@ export default function AdminPage() {
     const [pw, setPw] = useState("");
     const [pwError, setPwError] = useState("");
     const [adminKey, setAdminKey] = useState("");
-    const [tab, setTab] = useState<Tab>("orders");
+    const [tab, setTab] = useState<Tab>("dashboard");
 
     const [orders, setOrders] = useState<Order[]>([]);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -123,6 +125,12 @@ export default function AdminPage() {
     const [loading, setLoading] = useState(false);
     const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
     const [updatingOrder, setUpdatingOrder] = useState<string | null>(null);
+    const [lastRefreshed, setLastRefreshed] = useState<Date | null>(null);
+
+    // Search & filter state
+    const [searchQuery, setSearchQuery] = useState("");
+    const [orderStatusFilter, setOrderStatusFilter] = useState("all");
+    const [productCategoryFilter, setProductCategoryFilter] = useState("all");
 
     // Product edit state
     const [editingProduct, setEditingProduct] = useState<Product | null>(null);
@@ -130,11 +138,12 @@ export default function AdminPage() {
     // Add product form
     const [showAddProduct, setShowAddProduct] = useState(false);
     const [newProduct, setNewProduct] = useState({
-        title: "", subtitle: "", price: "", category: "Entryway Storage",
+        title: "", subtitle: "", price: "", category: "Seating",
         finish: "Matte Black", stock_status: "In Stock", stock_qty: "99",
         image_url: "", hover_image_url: "", is_new: false,
     });
     const [addingProduct, setAddingProduct] = useState(false);
+    const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
     /* ── AUTH ─────────────────────────────────────────────────── */
     useEffect(() => {
@@ -163,9 +172,19 @@ export default function AdminPage() {
     /* ── DATA FETCHING ───────────────────────────────────────── */
     const fetchData = useCallback(async (t: Tab) => {
         setLoading(true);
+        setSearchQuery("");
         try {
             const headers = { "x-admin-key": adminKey };
-            if (t === "orders") {
+            if (t === "dashboard") {
+                const [o, m, e, p] = await Promise.all([
+                    fetch("/api/admin/orders", { headers }).then(r => r.json()),
+                    fetch("/api/admin/messages", { headers }).then(r => r.json()),
+                    fetch("/api/admin/enquiries", { headers }).then(r => r.json()),
+                    fetch("/api/admin/products", { headers }).then(r => r.json()),
+                ]);
+                setOrders(o.orders ?? []); setMessages(m.messages ?? []);
+                setEnquiries(e.enquiries ?? []); setProducts(p.products ?? []);
+            } else if (t === "orders") {
                 const res = await fetch("/api/admin/orders", { headers });
                 setOrders((await res.json()).orders ?? []);
             } else if (t === "messages") {
@@ -178,6 +197,7 @@ export default function AdminPage() {
                 const res = await fetch("/api/admin/products", { headers });
                 setProducts((await res.json()).products ?? []);
             }
+            setLastRefreshed(new Date());
         } catch (err) { console.error(err); }
         finally { setLoading(false); }
     }, [adminKey]);
@@ -208,6 +228,35 @@ export default function AdminPage() {
         setProducts(prev => prev.map(p => p.id === product.id ? { ...p, is_active: !p.is_active } : p));
     };
 
+    const deleteProduct = async (id: string) => {
+        await fetch(`/api/admin/products?id=${id}`, {
+            method: "DELETE",
+            headers: { "x-admin-key": adminKey },
+        });
+        setProducts(prev => prev.filter(p => p.id !== id));
+        setDeleteConfirm(null);
+    };
+
+    const duplicateProduct = async (product: Product) => {
+        const dup = { title: `${product.title} (Copy)`, subtitle: product.subtitle, price: product.price, category: product.category, finish: product.finish, stock_status: product.stock_status, stock_qty: product.stock_qty, image_url: product.image_url, hover_image_url: product.hover_image_url, is_new: false };
+        await fetch("/api/admin/products", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+            body: JSON.stringify(dup),
+        });
+        fetchData("products");
+    };
+
+    /* ── CSV EXPORT ──────────────────────────────────────────── */
+    const exportOrdersCsv = () => {
+        const headers = ["Order #", "Email", "Phone", "Total", "Payment", "Method", "Status", "City", "State", "Date"];
+        const rows = orders.map(o => [o.order_number, o.user_email, o.user_phone, o.total_amount, o.payment_status, o.payment_method, o.order_status, o.city, o.state, o.created_at]);
+        const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv" });
+        const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+        a.download = `sanra-orders-${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    };
+
     const handleAddProduct = async (e: React.FormEvent) => {
         e.preventDefault();
         setAddingProduct(true);
@@ -219,7 +268,7 @@ export default function AdminPage() {
             });
             if (!res.ok) throw new Error("Failed");
             setShowAddProduct(false);
-            setNewProduct({ title: "", subtitle: "", price: "", category: "Entryway Storage", finish: "Matte Black", stock_status: "In Stock", stock_qty: "99", image_url: "", hover_image_url: "", is_new: false });
+            setNewProduct({ title: "", subtitle: "", price: "", category: "Seating", finish: "Matte Black", stock_status: "In Stock", stock_qty: "99", image_url: "", hover_image_url: "", is_new: false });
             fetchData("products");
         } catch (err) { console.error(err); }
         finally { setAddingProduct(false); }
@@ -280,6 +329,10 @@ export default function AdminPage() {
                         <span style={{ fontSize: "0.78rem", color: C.muted, fontFamily: FM }}>Admin Dashboard</span>
                     </div>
                     <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+                        {lastRefreshed && <span style={{ fontSize: "0.62rem", color: "#444", fontFamily: FO }}>Updated {lastRefreshed.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>}
+                        <a href="/" target="_blank" rel="noopener" style={{ fontSize: "0.7rem", color: C.muted, fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", border: `1px solid ${C.border}`, padding: "0.4rem 0.875rem", borderRadius: 4 }}>
+                            ↗ Live Site
+                        </a>
                         <button onClick={() => fetchData(tab)} style={{ fontSize: "0.7rem", color: C.muted, background: "none", border: `1px solid ${C.border}`, cursor: "pointer", fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase", padding: "0.4rem 0.875rem", borderRadius: 4 }}>
                             ↻ Refresh
                         </button>
@@ -302,16 +355,16 @@ export default function AdminPage() {
                 </div>
 
                 {/* ── TABS ── */}
-                <div style={{ display: "flex", gap: 0, marginBottom: "1.5rem", borderBottom: `1px solid ${C.border}` }}>
-                    {(["orders", "messages", "enquiries", "products"] as Tab[]).map((t) => (
+                <div style={{ display: "flex", gap: 0, marginBottom: "1.5rem", borderBottom: `1px solid ${C.border}`, overflowX: "auto" }}>
+                    {(["dashboard", "orders", "messages", "enquiries", "products"] as Tab[]).map((t) => (
                         <button key={t} onClick={() => setTab(t)} style={{
                             padding: "0.8rem 1.25rem", background: "none", border: "none", cursor: "pointer",
                             fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: FM,
                             color: tab === t ? C.accent : C.muted,
                             borderBottom: tab === t ? `2px solid ${C.accent}` : "2px solid transparent",
-                            transition: "all 0.15s", marginBottom: -1,
+                            transition: "all 0.15s", marginBottom: -1, whiteSpace: "nowrap",
                         }}>
-                            {t}
+                            {t === "dashboard" ? "⊞ Dashboard" : t}
                         </button>
                     ))}
                 </div>
@@ -323,9 +376,124 @@ export default function AdminPage() {
                     </div>
                 )}
 
+                {/* ══════════════════════ DASHBOARD TAB ═══════════════════════ */}
+                {!loading && tab === "dashboard" && (() => {
+                    const now = new Date();
+                    const today = orders.filter(o => new Date(o.created_at).toDateString() === now.toDateString());
+                    const week = orders.filter(o => (now.getTime() - new Date(o.created_at).getTime()) < 7 * 86400000);
+                    const month = orders.filter(o => new Date(o.created_at).getMonth() === now.getMonth() && new Date(o.created_at).getFullYear() === now.getFullYear());
+                    const todayRev = today.filter(o => o.payment_status === "paid").reduce((s, o) => s + o.total_amount, 0);
+                    const weekRev = week.filter(o => o.payment_status === "paid").reduce((s, o) => s + o.total_amount, 0);
+                    const monthRev = month.filter(o => o.payment_status === "paid").reduce((s, o) => s + o.total_amount, 0);
+                    const statusCounts = ORDER_STATUSES.map(s => ({ status: s, count: orders.filter(o => o.order_status === s).length })).filter(s => s.count > 0);
+                    const lowStock = products.filter(p => p.is_active && p.stock_qty <= 5);
+                    const recent = [...orders].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()).slice(0, 5);
+
+                    return (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                            {/* Revenue Row */}
+                            <div>
+                                <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted, fontFamily: FM, marginBottom: "0.75rem" }}>Revenue (Paid)</p>
+                                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "0.75rem" }}>
+                                    <StatCard label="Today" value={fmt(todayRev)} sub={`${today.length} orders`} color={C.green} />
+                                    <StatCard label="This Week" value={fmt(weekRev)} sub={`${week.length} orders`} color={C.green} />
+                                    <StatCard label="This Month" value={fmt(monthRev)} sub={`${month.length} orders`} color={C.green} />
+                                    <StatCard label="All Time" value={fmt(totalRevenue)} sub={`${paidOrders.length} paid`} color={C.accent} />
+                                </div>
+                            </div>
+
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "1.5rem" }}>
+                                {/* Order Status Distribution */}
+                                <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem 1.5rem" }}>
+                                    <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted, fontFamily: FM, marginBottom: "1rem" }}>Order Status Distribution</p>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                                        {statusCounts.map(({ status, count }) => (
+                                            <div key={status} style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                                                <span style={{ width: 90, fontSize: "0.72rem", fontWeight: 600, color: C.muted, fontFamily: FM, textTransform: "capitalize" }}>{STATUS_LABELS[status]}</span>
+                                                <div style={{ flex: 1, height: 8, background: "#1a1a1a", borderRadius: 4, overflow: "hidden" }}>
+                                                    <div style={{ width: `${(count / orders.length) * 100}%`, height: "100%", background: STATUS_COLORS[status] ?? "#555", borderRadius: 4, transition: "width 0.5s" }} />
+                                                </div>
+                                                <span style={{ fontSize: "0.78rem", fontWeight: 700, color: C.text, fontFamily: FM, minWidth: 24, textAlign: "right" }}>{count}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* Low Stock Alerts */}
+                                <div style={{ background: C.card, border: `1px solid ${lowStock.length > 0 ? "#F97316" + "44" : C.border}`, borderRadius: 10, padding: "1.25rem 1.5rem" }}>
+                                    <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: lowStock.length > 0 ? C.orange : C.muted, fontFamily: FM, marginBottom: "1rem" }}>
+                                        ⚠ Low Stock Alerts ({lowStock.length})
+                                    </p>
+                                    {lowStock.length === 0 ? (
+                                        <p style={{ fontSize: "0.82rem", color: C.green, fontFamily: FO }}>✓ All products are well stocked.</p>
+                                    ) : (
+                                        <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+                                            {lowStock.map(p => (
+                                                <div key={p.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.5rem 0.75rem", background: "#111", borderRadius: 6 }}>
+                                                    <span style={{ fontSize: "0.82rem", color: C.text, fontFamily: FO }}>{p.title}</span>
+                                                    <span style={{ fontSize: "0.78rem", fontWeight: 700, color: p.stock_qty <= 2 ? C.red : C.orange, fontFamily: FM }}>{p.stock_qty} left</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Recent Orders */}
+                            <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem 1.5rem" }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                                    <p style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted, fontFamily: FM }}>Recent Orders</p>
+                                    <button onClick={() => setTab("orders")} style={{ fontSize: "0.65rem", color: C.accent, background: "none", border: "none", cursor: "pointer", fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase" }}>View All →</button>
+                                </div>
+                                {recent.length === 0 ? (
+                                    <p style={{ fontSize: "0.82rem", color: C.muted, fontFamily: FO }}>No orders yet.</p>
+                                ) : (
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "0.375rem" }}>
+                                        {recent.map(o => (
+                                            <div key={o.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "0.625rem 0.875rem", background: "#111", borderRadius: 6, gap: "1rem" }}>
+                                                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", minWidth: 0 }}>
+                                                    <span style={{ fontWeight: 700, color: C.accent, fontFamily: FM, fontSize: "0.78rem", flexShrink: 0 }}>{o.order_number}</span>
+                                                    <span style={{ fontSize: "0.78rem", color: C.muted, fontFamily: FO, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{o.user_email}</span>
+                                                </div>
+                                                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", flexShrink: 0 }}>
+                                                    <span style={{ fontWeight: 700, fontSize: "0.82rem", fontFamily: FM }}>{fmt(o.total_amount)}</span>
+                                                    <Badge status={o.order_status} />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    );
+                })()}
+
                 {/* ══════════════════════ ORDERS TAB ════════════════════════ */}
                 {!loading && tab === "orders" && (
                     <div style={{ overflowX: "auto" }}>
+                        {/* Search / Filter / Export */}
+                        <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.25rem", flexWrap: "wrap", alignItems: "center" }}>
+                            <input
+                                placeholder="Search orders (email, phone, order #)…"
+                                value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                                style={{ ...inputStyle, maxWidth: 320, padding: "0.5rem 0.875rem" }}
+                            />
+                            <select value={orderStatusFilter} onChange={e => setOrderStatusFilter(e.target.value)} style={{ ...selectStyle, maxWidth: 180, padding: "0.5rem 0.875rem" }}>
+                                <option value="all">All Statuses</option>
+                                {ORDER_STATUSES.map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
+                            </select>
+                            <button onClick={exportOrdersCsv} style={{ padding: "0.5rem 1rem", background: "transparent", border: `1px solid ${C.border}`, color: C.green, fontSize: "0.68rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                                ↓ Export CSV
+                            </button>
+                            <span style={{ fontSize: "0.72rem", color: C.muted, fontFamily: FO, marginLeft: "auto" }}>
+                                {orders.filter(o => {
+                                    const q = searchQuery.toLowerCase();
+                                    const matchSearch = !q || o.order_number.toLowerCase().includes(q) || o.user_email.toLowerCase().includes(q) || o.user_phone.includes(q);
+                                    const matchStatus = orderStatusFilter === "all" || o.order_status === orderStatusFilter;
+                                    return matchSearch && matchStatus;
+                                }).length} orders
+                            </span>
+                        </div>
                         <table style={{ width: "100%", borderCollapse: "collapse" }}>
                             <thead>
                                 <tr>
@@ -341,7 +509,12 @@ export default function AdminPage() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {orders.map((order) => (
+                                {orders.filter(o => {
+                                    const q = searchQuery.toLowerCase();
+                                    const matchSearch = !q || o.order_number.toLowerCase().includes(q) || o.user_email.toLowerCase().includes(q) || o.user_phone.includes(q);
+                                    const matchStatus = orderStatusFilter === "all" || o.order_status === orderStatusFilter;
+                                    return matchSearch && matchStatus;
+                                }).map((order) => (
                                     <>
                                         <tr
                                             key={order.id}
@@ -448,8 +621,9 @@ export default function AdminPage() {
                 {/* ══════════════════════ MESSAGES TAB ══════════════════════ */}
                 {!loading && tab === "messages" && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                        <input placeholder="Search messages (name, email, subject)…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ ...inputStyle, maxWidth: 360, padding: "0.5rem 0.875rem", marginBottom: "0.25rem" }} />
                         {messages.length === 0 && <p style={{ color: C.muted, fontFamily: FO, padding: "5rem", textAlign: "center" }}>No messages yet.</p>}
-                        {messages.map((msg) => (
+                        {messages.filter(m => { const q = searchQuery.toLowerCase(); return !q || m.full_name.toLowerCase().includes(q) || m.email.toLowerCase().includes(q) || (m.subject ?? "").toLowerCase().includes(q); }).map((msg) => (
                             <div key={msg.id} style={{ background: C.card, border: `1px solid ${C.border}`, padding: "1.25rem 1.5rem", borderRadius: 10 }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem", marginBottom: "0.875rem" }}>
                                     <div>
@@ -459,12 +633,16 @@ export default function AdminPage() {
                                     <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", flexWrap: "wrap" }}>
                                         {msg.subject && <span style={{ fontSize: "0.62rem", fontWeight: 700, padding: "0.2rem 0.6rem", background: `${C.blue}22`, color: C.blue, borderRadius: 4, fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase" }}>{msg.subject}</span>}
                                         <span style={{ fontSize: "0.72rem", color: C.muted, fontFamily: FO }}>{fmtDate(msg.created_at)}</span>
-                                        <a
-                                            href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject ?? "Your Enquiry — SANRA LIVING™")}&body=${encodeURIComponent(`Hi ${msg.full_name},\n\nThank you for reaching out to SANRA LIVING™.\n\n`)}`}
-                                            style={{ display: "inline-block", padding: "0.35rem 0.875rem", background: C.accentDim, border: `1px solid ${C.accent}`, color: C.accent, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, borderRadius: 4, letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}
-                                        >
+                                        <a href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject ?? "Your Enquiry — SANRA LIVING™")}&body=${encodeURIComponent(`Hi ${msg.full_name},\n\nThank you for reaching out to SANRA LIVING™.\n\n`)}`}
+                                            style={{ display: "inline-block", padding: "0.35rem 0.875rem", background: C.accentDim, border: `1px solid ${C.accent}`, color: C.accent, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, borderRadius: 4, letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}>
                                             ✉ Reply
                                         </a>
+                                        {msg.phone && (
+                                            <a href={`https://wa.me/${msg.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${msg.full_name}, regarding your message to SANRA LIVING™...`)}`} target="_blank" rel="noopener"
+                                                style={{ display: "inline-block", padding: "0.35rem 0.875rem", background: "#25D36622", border: "1px solid #25D366", color: "#25D366", fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, borderRadius: 4, letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}>
+                                                WhatsApp
+                                            </a>
+                                        )}
                                     </div>
                                 </div>
                                 <p style={{ fontSize: "0.875rem", color: "#ccc", fontFamily: FO, lineHeight: 1.75, whiteSpace: "pre-wrap" }}>{msg.message}</p>
@@ -476,8 +654,9 @@ export default function AdminPage() {
                 {/* ══════════════════════ ENQUIRIES TAB ═════════════════════ */}
                 {!loading && tab === "enquiries" && (
                     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                        <input placeholder="Search enquiries (company, person, product)…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ ...inputStyle, maxWidth: 360, padding: "0.5rem 0.875rem", marginBottom: "0.25rem" }} />
                         {enquiries.length === 0 && <p style={{ color: C.muted, fontFamily: FO, padding: "5rem", textAlign: "center" }}>No bulk enquiries yet.</p>}
-                        {enquiries.map((enq) => (
+                        {enquiries.filter(e => { const q = searchQuery.toLowerCase(); return !q || (e.company_name ?? "").toLowerCase().includes(q) || e.contact_person.toLowerCase().includes(q) || (e.product_interest ?? "").toLowerCase().includes(q); }).map((enq) => (
                             <div key={enq.id} style={{ background: C.card, border: `1px solid ${C.border}`, padding: "1.25rem 1.5rem", borderRadius: 10 }}>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1rem" }}>
                                     <div>
@@ -521,10 +700,15 @@ export default function AdminPage() {
                 {/* ══════════════════════ PRODUCTS TAB ═════════════════════ */}
                 {!loading && tab === "products" && (
                     <div>
-                        <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "1rem" }}>
+                        <div style={{ display: "flex", gap: "0.75rem", marginBottom: "1rem", flexWrap: "wrap", alignItems: "center" }}>
+                            <input placeholder="Search products…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} style={{ ...inputStyle, maxWidth: 280, padding: "0.5rem 0.875rem" }} />
+                            <select value={productCategoryFilter} onChange={e => setProductCategoryFilter(e.target.value)} style={{ ...selectStyle, maxWidth: 180, padding: "0.5rem 0.875rem" }}>
+                                <option value="all">All Categories</option>
+                                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                            </select>
                             <button
                                 onClick={() => setShowAddProduct(v => !v)}
-                                style={{ padding: "0.7rem 1.5rem", background: showAddProduct ? "transparent" : C.accent, color: showAddProduct ? C.muted : "#111", fontWeight: 900, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", border: `1px solid ${showAddProduct ? C.border : C.accent}`, cursor: "pointer", borderRadius: 6, fontFamily: FM }}
+                                style={{ padding: "0.7rem 1.5rem", background: showAddProduct ? "transparent" : C.accent, color: showAddProduct ? C.muted : "#111", fontWeight: 900, fontSize: "0.72rem", letterSpacing: "0.12em", textTransform: "uppercase", border: `1px solid ${showAddProduct ? C.border : C.accent}`, cursor: "pointer", borderRadius: 6, fontFamily: FM, marginLeft: "auto" }}
                             >
                                 {showAddProduct ? "✕ Cancel" : "+ Add Product"}
                             </button>
@@ -555,7 +739,7 @@ export default function AdminPage() {
                                     <div>
                                         <label style={{ display: "block", fontSize: "0.6rem", fontWeight: 700, color: C.muted, fontFamily: FM, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: "0.4rem" }}>Category *</label>
                                         <select value={newProduct.category} onChange={(e) => setNewProduct(p => ({ ...p, category: e.target.value }))} style={{ ...selectStyle, width: "100%", boxSizing: "border-box", padding: "0.625rem 0.875rem" }}>
-                                            {["Entryway Storage", "Study Desks", "Wall Storage", "Bedroom", "Living Room", "Other"].map(c => <option key={c}>{c}</option>)}
+                                            {CATEGORIES.map(c => <option key={c}>{c}</option>)}
                                         </select>
                                     </div>
                                     <div>
@@ -599,7 +783,12 @@ export default function AdminPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {products.map((product) => {
+                                    {products.filter(p => {
+                                        const q = searchQuery.toLowerCase();
+                                        const matchSearch = !q || p.title.toLowerCase().includes(q) || p.category.toLowerCase().includes(q);
+                                        const matchCat = productCategoryFilter === "all" || p.category === productCategoryFilter;
+                                        return matchSearch && matchCat;
+                                    }).map((product) => {
                                         return (
                                             <tr key={product.id} style={{ borderBottom: `1px solid ${C.border}`, opacity: product.is_active ? 1 : 0.5, transition: "opacity 0.2s" }}>
                                                 <Td>
@@ -630,6 +819,19 @@ export default function AdminPage() {
                                                         <button onClick={() => toggleProductActive(product)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: product.is_active ? C.red : C.green, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
                                                             {product.is_active ? "Hide" : "Publish"}
                                                         </button>
+                                                        <button onClick={() => duplicateProduct(product)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: C.purple, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                                            Copy
+                                                        </button>
+                                                        {deleteConfirm === product.id ? (
+                                                            <>
+                                                                <button onClick={() => deleteProduct(product.id)} style={{ padding: "0.35rem 0.75rem", background: C.red, border: "none", color: "#fff", fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>Confirm</button>
+                                                                <button onClick={() => setDeleteConfirm(null)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: C.muted, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4 }}>✕</button>
+                                                            </>
+                                                        ) : (
+                                                            <button onClick={() => setDeleteConfirm(product.id)} style={{ padding: "0.35rem 0.75rem", background: "transparent", border: `1px solid ${C.border}`, color: C.red, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, cursor: "pointer", borderRadius: 4, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                                                Del
+                                                            </button>
+                                                        )}
                                                     </div>
                                                 </Td>
                                             </tr>

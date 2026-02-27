@@ -129,7 +129,7 @@ const categoryPillars = [
         <path d="M8 24v4M24 24v4M6 16v8h20v-8M10 16V8a2 2 0 012-2h8a2 2 0 012 2v8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    href: "/shop?category=Seating",
+    href: "/shop/seating",
   },
   {
     name: "Tables",
@@ -140,7 +140,7 @@ const categoryPillars = [
         <path d="M7 15v12M25 15v12M4 12h24" strokeLinecap="round" />
       </svg>
     ),
-    href: "/shop?category=Tables",
+    href: "/shop/tables",
   },
   {
     name: "Storage",
@@ -151,7 +151,7 @@ const categoryPillars = [
         <path d="M5 12h22M5 20h22M16 4v24" strokeLinecap="round" />
       </svg>
     ),
-    href: "/shop?category=Storage",
+    href: "/shop/storage",
   },
   {
     name: "Bedroom",
@@ -163,7 +163,7 @@ const categoryPillars = [
         <path d="M4 19h24" strokeLinecap="round" />
       </svg>
     ),
-    href: "/shop?category=Bedroom",
+    href: "/shop/bedroom",
   },
   {
     name: "Workspace",
@@ -174,7 +174,7 @@ const categoryPillars = [
         <path d="M8 13v12M24 13v12M12 13v6h8v-6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    href: "/shop?category=Workspace",
+    href: "/shop/workspace",
   },
   {
     name: "Balcony & Outdoor",
@@ -185,7 +185,7 @@ const categoryPillars = [
         <path d="M16 15v6M10 28l2-7h8l2 7M6 28h20" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    href: "/shop?category=Outdoor",
+    href: "/shop/balcony-outdoor",
   },
   {
     name: "Modular Systems",
@@ -198,7 +198,7 @@ const categoryPillars = [
         <rect x="18" y="18" width="10" height="10" rx="1.5" strokeDasharray="3 2" />
       </svg>
     ),
-    href: "/shop?category=Modular",
+    href: "/shop/modular",
   },
   {
     name: "CNC & Custom",
@@ -210,7 +210,7 @@ const categoryPillars = [
         <circle cx="16" cy="16" r="2" fill="currentColor" stroke="none" />
       </svg>
     ),
-    href: "/shop?category=CNC",
+    href: "/shop/cnc-decor",
   },
 ];
 
