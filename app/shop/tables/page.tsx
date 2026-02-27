@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import CategoryPage from "../CategoryPage";
+
+export const metadata: Metadata = {
+    title: "Modern Steel Tables in India – Dining, Coffee, Study & Work Desks",
+    description: "Premium steel tables including dining tables, coffee tables, study desks, laptop tables & TV unit frames. Precision-crafted with powder-coated finishes. Delivered across India.",
+    alternates: { canonical: "/shop/tables" },
+    openGraph: { title: "Steel Tables – SANRA LIVING", description: "Dining, coffee, study & work tables in premium steel.", url: "/shop/tables" },
+};
 
 export default function TablesPage() {
     return (

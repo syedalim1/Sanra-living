@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useCart } from "@/app/context/CartContext";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
 const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
@@ -121,6 +122,18 @@ export default function SiteHeader() {
                         <button className="sl-desktop-only" aria-label="Search" style={{ background: "none", border: "none", cursor: "pointer", color: "#333", display: "flex", padding: "0.25rem" }}>
                             <SearchIcon />
                         </button>
+
+                        {/* Auth */}
+                        <SignedOut>
+                            <SignInButton mode="modal">
+                                <button style={{ background: "none", border: "1px solid #ddd", cursor: "pointer", color: "#333", fontSize: "0.68rem", fontWeight: 700, fontFamily: FM, letterSpacing: "0.1em", textTransform: "uppercase", padding: "0.4rem 0.875rem", borderRadius: 4, whiteSpace: "nowrap" }}>
+                                    Login
+                                </button>
+                            </SignInButton>
+                        </SignedOut>
+                        <SignedIn>
+                            <UserButton afterSignOutUrl="/" />
+                        </SignedIn>
 
                         {/* Cart */}
                         <Link href="/cart" aria-label="Cart" style={{ color: "#1C1C1C", position: "relative", display: "flex", alignItems: "center" }}>

@@ -1,4 +1,12 @@
+import type { Metadata } from "next";
 import CategoryPage from "../CategoryPage";
+
+export const metadata: Metadata = {
+    title: "Steel Storage Racks & Shelves in India – Shoe Rack, Book Shelf & More",
+    description: "Premium steel shoe racks, utility racks, wall shelves, console tables, book shelves, plant stands & organizers. Multiple tier options with modern industrial design. Delivered across India.",
+    alternates: { canonical: "/shop/storage" },
+    openGraph: { title: "Steel Storage – SANRA LIVING", description: "Shoe racks, wall shelves, organizers & utility racks in premium steel.", url: "/shop/storage" },
+};
 
 export default function StoragePage() {
     return (

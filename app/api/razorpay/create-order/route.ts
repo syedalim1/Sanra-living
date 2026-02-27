@@ -14,81 +14,36 @@ export async function POST(req: NextRequest) {
             items,
             subtotal,
             codAdvance,
-            totalPayable,
-            paymentMethod, // "prepaid" | "cod"
+            totalPayable,     // full order value (= subtotal)
+            amountPayableNow, // what Razorpay charges: 20% for COD, 100% for prepaid
+            paymentMethod,    // "prepaid" | "cod"
             shipping,
         } = body;
 
         // 1. Generate unique order number
         const orderNumber = `SL-${Date.now().toString().slice(-8)}`;
 
-        // 2. Determine amount to charge via Razorpay (in paise)
-        //    COD → charge advance only. Prepaid → full amount.
-        const amountPaise = Math.round(paymentMethod === "cod"
-            ? (codAdvance ?? 149) * 100
-            : totalPayable * 100);
+        // 2. Charge via Razorpay:
+        //    COD  → charge only the 20% advance (amountPayableNow)
+        //    Prepaid → charge full amount
+        const amountPaise = Math.round((amountPayableNow ?? totalPayable) * 100);
 
-        // 3. For COD we skip Razorpay and insert directly as pending
-        if (paymentMethod === "cod") {
-            const { data: order, error } = await supabaseAdmin
-                .from("orders")
-                .insert({
-                    order_number: orderNumber,
-                    user_email: shipping.email,
-                    user_phone: shipping.phone,
-                    shipping_address: `${shipping.address1}${shipping.address2 ? ", " + shipping.address2 : ""}`,
-                    city: shipping.city,
-                    state: shipping.state,
-                    pincode: shipping.pincode,
-                    payment_method: "cod",
-                    total_amount: totalPayable,
-                    advance_paid: codAdvance,
-                    remaining_amount: subtotal - codAdvance,
-                    payment_status: "pending",
-                    order_status: "processing",
-                })
-                .select()
-                .single();
-
-            if (error) throw error;
-
-            // Insert order items
-            const orderItems = items.map((item: {
-                id: number; title: string; qty: number; price: number;
-            }) => ({
-                order_id: order.id,
-                product_id: String(item.id),
-                product_name: item.title,
-                quantity: item.qty,
-                unit_price: item.price,
-                total_price: item.price * item.qty,
-            }));
-            await supabaseAdmin.from("order_items").insert(orderItems);
-
-            // Insert initial status log
-            await supabaseAdmin.from("order_status_logs").insert({
-                order_id: order.id,
-                status: "processing",
-            });
-
-            return NextResponse.json({
-                orderId: order.id,
-                orderNumber,
-                cod: true,
-                totalPayable,
-                remaining: subtotal - codAdvance,
-            });
-        }
-
-        // 4. Prepaid — create Razorpay order
+        // 3. Create Razorpay order (both COD advance and prepaid go through Razorpay)
         const rzpOrder = await razorpay.orders.create({
             amount: amountPaise,
             currency: "INR",
             receipt: orderNumber,
-            notes: { shipping_name: shipping.name },
+            notes: {
+                shipping_name: shipping.name,
+                payment_type: paymentMethod === "cod" ? "cod_advance_20pct" : "prepaid_full",
+            },
         });
 
-        // 5. Insert DB order with "pending" status (will be confirmed after payment)
+        // 4. Insert DB order — pending until payment verified
+        const orderTotal = totalPayable ?? subtotal;
+        const advance = paymentMethod === "cod" ? (codAdvance ?? 0) : orderTotal;
+        const remaining = orderTotal - advance;
+
         const { data: order, error } = await supabaseAdmin
             .from("orders")
             .insert({
@@ -99,12 +54,12 @@ export async function POST(req: NextRequest) {
                 city: shipping.city,
                 state: shipping.state,
                 pincode: shipping.pincode,
-                payment_method: "prepaid",
-                total_amount: totalPayable,
-                advance_paid: totalPayable,
-                remaining_amount: 0,
-                payment_status: "pending",
-                order_status: "processing",
+                payment_method: paymentMethod,  // "cod" or "prepaid"
+                total_amount: orderTotal,
+                advance_paid: advance,
+                remaining_amount: remaining,
+                payment_status: "pending",       // → "paid" after verify-payment
+                order_status: "processing",      // → confirmed after verify-payment
                 razorpay_payment_id: rzpOrder.id, // store rzp order id temporarily
             })
             .select()
@@ -112,7 +67,7 @@ export async function POST(req: NextRequest) {
 
         if (error) throw error;
 
-        // Insert order items
+        // 5. Insert order items
         const orderItems = items.map((item: {
             id: number; title: string; qty: number; price: number;
         }) => ({

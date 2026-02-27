@@ -109,6 +109,42 @@ export default function ProductDetailPage() {
         })();
     }, [id]);
 
+    /* ── Dynamic SEO: title + LD+JSON ─────── */
+    useEffect(() => {
+        if (!dbProduct) return;
+        // Dynamic page title
+        document.title = `${dbProduct.title} – ${dbProduct.category} | SANRA LIVING`;
+        // Meta description
+        const descMeta = document.querySelector('meta[name="description"]');
+        const descText = `${dbProduct.title} – Premium ${dbProduct.finish} steel ${dbProduct.category.toLowerCase()} by SANRA LIVING. ${dbProduct.description?.slice(0, 120) ?? "Powder-coated, dismantlable design."}. Buy online with state-wise delivery across India.`;
+        if (descMeta) descMeta.setAttribute("content", descText);
+        else {
+            const m = document.createElement("meta");
+            m.name = "description"; m.content = descText;
+            document.head.appendChild(m);
+        }
+        // LD+JSON Product schema
+        const schemaId = "product-schema";
+        let el = document.getElementById(schemaId);
+        if (!el) { el = document.createElement("script"); el.id = schemaId; el.setAttribute("type", "application/ld+json"); document.head.appendChild(el); }
+        el.textContent = JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: dbProduct.title,
+            description: dbProduct.description ?? `${dbProduct.title} – Premium steel furniture by SANRA LIVING.`,
+            image: dbProduct.image_url,
+            brand: { "@type": "Brand", name: "SANRA LIVING" },
+            offers: {
+                "@type": "Offer",
+                price: dbProduct.price,
+                priceCurrency: "INR",
+                availability: dbProduct.stock_qty > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+                url: `https://www.sanraliving.com/shop/${id}`,
+            },
+        });
+        return () => { const s = document.getElementById(schemaId); s?.remove(); };
+    }, [dbProduct, id]);
+
     /* ── Build image array ─────────────────── */
     const buildImages = (p: DbProduct): string[] => {
         if (p.images && p.images.length > 0) return p.images;

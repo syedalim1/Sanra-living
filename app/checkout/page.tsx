@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Script from "next/script";
 import { useRouter } from "next/navigation";
+import { useUser, SignInButton, SignedIn, SignedOut } from "@clerk/nextjs";
 import SiteHeader from "@/app/components/SiteHeader";
 import SiteFooter from "@/app/components/SiteFooter";
 import { useCart } from "@/app/context/CartContext";
@@ -40,6 +41,7 @@ const INDIAN_STATES = [
 export default function CheckoutPage() {
     const { items, subtotal, dispatch } = useCart();
     const router = useRouter();
+    const { isSignedIn, user } = useUser();
 
     const [delivery, setDelivery] = useState<DeliveryMode>("prepaid");
     const [form, setForm] = useState<FormState>({
@@ -51,14 +53,24 @@ export default function CheckoutPage() {
     const [errors, setErrors] = useState<Errors>({});
     const [submitting, setSubmitting] = useState(false);
 
-    const codAdvance = delivery === "cod" ? (subtotal > 5000 ? 299 : 149) : 0;
-    const shipping = delivery === "prepaid" ? 0 : 99;
-    const totalPayable = subtotal + codAdvance + shipping;
+    // COD advance = 20% of subtotal (paid now via Razorpay to confirm order)
+    const codAdvance = delivery === "cod" ? Math.round(subtotal * 0.2) : 0;
+    // Total order value (same either way — subtotal)
+    const orderTotal = subtotal;
+    // Amount charged via Razorpay: for COD → 20% advance; for prepaid → full amount
+    const amountPayableNow = delivery === "cod" ? codAdvance : subtotal;
 
     // Redirect to cart if empty
     useEffect(() => {
         if (items.length === 0) router.replace("/cart");
     }, [items, router]);
+
+    // Auto-fill email from Clerk
+    useEffect(() => {
+        if (isSignedIn && user?.primaryEmailAddress?.emailAddress && !form.email) {
+            setForm(prev => ({ ...prev, email: user.primaryEmailAddress!.emailAddress }));
+        }
+    }, [isSignedIn, user]);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -89,17 +101,13 @@ export default function CheckoutPage() {
             newErrors.pincode = "Enter a valid 6-digit pincode";
         }
         setErrors(newErrors);
-
-        // If there are errors, scroll to the top of the form
         if (Object.keys(newErrors).length > 0) {
             window.scrollTo({ top: 0, behavior: "smooth" });
         }
-
         return Object.keys(newErrors).length === 0;
     };
 
-    // ── Pre-load Razorpay script lazily ────────────────────────────────
-    // Using Next.js <Script> handles this, but we keep this as a fallback.
+    // Load Razorpay SDK
     const loadRazorpay = () =>
         new Promise<void>((resolve, reject) => {
             if (typeof window !== "undefined" && (window as any).Razorpay) { resolve(); return; }
@@ -116,15 +124,16 @@ export default function CheckoutPage() {
         setSubmitting(true);
 
         try {
-            // 1. Create order on server (handles both COD & prepaid)
+            // 1. Create order on server
             const orderRes = await fetch("/api/razorpay/create-order", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     items: items.map((i) => ({ id: i.id, title: i.title, qty: i.qty, price: i.price })),
                     subtotal,
-                    codAdvance,
-                    totalPayable,
+                    codAdvance,        // 20% for COD, 0 for prepaid
+                    totalPayable: orderTotal,  // always just the subtotal (item total)
+                    amountPayableNow,  // razorpay charges this: 20% for COD, 100% for prepaid
                     paymentMethod: delivery,
                     shipping: form,
                 }),
@@ -132,16 +141,7 @@ export default function CheckoutPage() {
             const orderData = await orderRes.json();
             if (!orderRes.ok) throw new Error(orderData.error ?? "Order creation failed");
 
-            // 2. COD – no Razorpay popup needed
-            if (orderData.cod) {
-                dispatch({ type: "CLEAR" });
-                router.push(
-                    `/order-confirmation?orderId=${orderData.orderNumber}&total=${totalPayable}&cod=${subtotal - codAdvance}`
-                );
-                return;
-            }
-
-            // 3. Prepaid – load SDK and open popup
+            // 2. Open Razorpay for both prepaid AND COD advance
             await loadRazorpay();
             const RazorpayClass = (window as unknown as { Razorpay: new (opts: Record<string, unknown>) => { open(): void; on(event: string, callback: (res: any) => void): void } }).Razorpay;
 
@@ -150,7 +150,9 @@ export default function CheckoutPage() {
                 amount: orderData.amount,
                 currency: orderData.currency,
                 name: "Sanra Living",
-                description: "Premium Steel Furniture",
+                description: delivery === "cod"
+                    ? `20% Advance — Remaining ₹${(orderTotal - codAdvance).toLocaleString("en-IN")} at delivery`
+                    : "Premium Steel Furniture — Full Payment",
                 order_id: orderData.rzpOrderId,
                 prefill: {
                     name: form.name,
@@ -163,7 +165,7 @@ export default function CheckoutPage() {
                     razorpay_payment_id: string;
                     razorpay_signature: string;
                 }) => {
-                    // 4. Verify payment on server
+                    // 3. Verify payment and mark order as Processing
                     const verifyRes = await fetch("/api/razorpay/verify-payment", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -176,13 +178,13 @@ export default function CheckoutPage() {
                         }),
                     });
                     if (!verifyRes.ok) {
-                        alert("Payment verification failed. Please contact support with your payment ID: " + response.razorpay_payment_id);
+                        alert("Payment verification failed. Please contact support with payment ID: " + response.razorpay_payment_id);
                         setSubmitting(false);
                         return;
                     }
                     dispatch({ type: "CLEAR" });
                     router.push(
-                        `/order-confirmation?orderId=${orderData.orderNumber}&total=${totalPayable}&cod=0`
+                        `/order-confirmation?orderId=${orderData.orderNumber}&total=${orderTotal}&cod=${delivery === "cod" ? orderTotal - codAdvance : 0}`
                     );
                 },
                 modal: {
@@ -331,8 +333,8 @@ export default function CheckoutPage() {
                                         {
                                             value: "cod" as DeliveryMode,
                                             title: "Cash on Delivery (COD)",
-                                            desc: `Pay a token advance of ₹${subtotal > 5000 ? 299 : 149} now. Remaining amount paid at delivery.`,
-                                            badge: `+₹${subtotal > 5000 ? 299 : 149} advance`,
+                                            desc: `Pay 20% advance (${fmt(Math.round(subtotal * 0.2))}) online now to confirm your order. Remaining ${fmt(subtotal - Math.round(subtotal * 0.2))} paid at delivery.`,
+                                            badge: `20% Advance`,
                                         },
                                     ].map((opt) => (
                                         <div
@@ -400,16 +402,25 @@ export default function CheckoutPage() {
 
                                 <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
                                     <SummaryRow label="Subtotal" value={fmt(subtotal)} />
-                                    <SummaryRow label="Shipping" value={delivery === "prepaid" ? "Free" : fmt(shipping)} muted={delivery === "prepaid"} />
-                                    {delivery === "cod" && <SummaryRow label={`COD Advance`} value={fmt(codAdvance)} />}
+                                    <SummaryRow label="Shipping" value="Free" muted />
+                                    {delivery === "cod" && <SummaryRow label="COD Advance (20%)" value={fmt(codAdvance)} />}
                                 </div>
 
                                 <div style={{ height: 1, background: "#E6E6E6", margin: "1rem 0" }} />
 
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "1.5rem" }}>
-                                    <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "#111", fontFamily: FM }}>Total Payable Now</p>
-                                    <p style={{ fontSize: "1.2rem", fontWeight: 900, color: "#111", fontFamily: FM }}>{fmt(totalPayable)}</p>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "0.5rem" }}>
+                                    <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "#111", fontFamily: FM }}>
+                                        {delivery === "cod" ? "Pay Now (Advance)" : "Total Payable"}
+                                    </p>
+                                    <p style={{ fontSize: "1.2rem", fontWeight: 900, color: "#111", fontFamily: FM }}>{fmt(amountPayableNow)}</p>
                                 </div>
+
+                                {delivery === "cod" && (
+                                    <p style={{ fontSize: "0.75rem", color: "#888", fontFamily: FO, marginBottom: "1.25rem", lineHeight: 1.6 }}>
+                                        + {fmt(orderTotal - codAdvance)} remaining at delivery
+                                    </p>
+                                )}
+                                {delivery !== "cod" && <div style={{ marginBottom: "1.25rem" }} />}
 
                                 <button type="submit" disabled={submitting} style={{
                                     width: "100%", padding: "1rem",
@@ -420,14 +431,8 @@ export default function CheckoutPage() {
                                     cursor: submitting ? "not-allowed" : "pointer",
                                     fontFamily: FM, transition: "background 0.2s",
                                 }}>
-                                    {submitting ? "Processing…" : "Pay Securely"}
+                                    {submitting ? "Processing…" : delivery === "cod" ? `Pay Advance ${fmt(amountPayableNow)}` : "Pay Securely"}
                                 </button>
-
-                                {delivery === "cod" && (
-                                    <p style={{ fontSize: "0.72rem", color: "#888", fontFamily: FO, marginTop: "0.75rem", textAlign: "center", lineHeight: 1.6 }}>
-                                        Remaining {fmt(subtotal - codAdvance)} payable at delivery.
-                                    </p>
-                                )}
 
                                 <div style={{ display: "flex", justifyContent: "center", gap: "0.5rem", marginTop: "1rem", alignItems: "center" }}>
                                     <span style={{ fontSize: "0.7rem", color: "#aaa", fontFamily: FO }}>🔒 Secured by Razorpay</span>

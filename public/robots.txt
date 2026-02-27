@@ -1,0 +1,8 @@
+# https://www.sanraliving.com/robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://www.sanraliving.com/sitemap.xml
