@@ -97,6 +97,7 @@ export default function ProductDetailPage() {
             m.name = "description"; m.content = descText;
             document.head.appendChild(m);
         }
+        /* ── Product Schema ── */
         const schemaId = "product-schema";
         let el = document.getElementById(schemaId);
         if (!el) { el = document.createElement("script"); el.id = schemaId; el.setAttribute("type", "application/ld+json"); document.head.appendChild(el); }
@@ -106,16 +107,69 @@ export default function ProductDetailPage() {
             name: dbProduct.title,
             description: dbProduct.description ?? `${dbProduct.title} – Premium steel furniture by SANRA LIVING.`,
             image: optimizeImage(dbProduct.image_url, 800),
+            sku: dbProduct.id,
             brand: { "@type": "Brand", name: "SANRA LIVING" },
+            manufacturer: {
+                "@type": "Organization",
+                name: "Indian Make Steel Industries",
+                url: "https://www.sanraliving.com",
+            },
+            material: "Powder Coated Mild Steel",
+            color: dbProduct.finish,
+            category: dbProduct.category,
+            itemCondition: "https://schema.org/NewCondition",
             offers: {
                 "@type": "Offer",
                 price: dbProduct.price,
                 priceCurrency: "INR",
                 availability: dbProduct.stock_qty > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
                 url: `https://www.sanraliving.com/shop/${id}`,
+                seller: { "@type": "Organization", name: "SANRA LIVING", url: "https://www.sanraliving.com" },
+                priceValidUntil: new Date(Date.now() + 90 * 86400000).toISOString().split("T")[0],
+                itemCondition: "https://schema.org/NewCondition",
+                shippingDetails: {
+                    "@type": "OfferShippingDetails",
+                    shippingDestination: { "@type": "DefinedRegion", addressCountry: "IN" },
+                    deliveryTime: {
+                        "@type": "ShippingDeliveryTime",
+                        handlingTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+                        transitTime: { "@type": "QuantitativeValue", minValue: 3, maxValue: 10, unitCode: "DAY" },
+                    },
+                },
+                hasMerchantReturnPolicy: {
+                    "@type": "MerchantReturnPolicy",
+                    applicableCountry: "IN",
+                    returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+                    merchantReturnDays: 10,
+                    returnMethod: "https://schema.org/ReturnByMail",
+                },
             },
+            additionalProperty: [
+                { "@type": "PropertyValue", name: "Frame Thickness", value: "1.2 mm" },
+                { "@type": "PropertyValue", name: "Warranty", value: "10 Year Structural Warranty" },
+                { "@type": "PropertyValue", name: "Assembly", value: "Self-Assembly (15-20 min)" },
+            ],
         });
-        return () => { const s = document.getElementById(schemaId); s?.remove(); };
+
+        /* ── Breadcrumb Schema ── */
+        const bcId = "pdp-breadcrumb-schema";
+        let bcEl = document.getElementById(bcId);
+        if (!bcEl) { bcEl = document.createElement("script"); bcEl.id = bcId; bcEl.setAttribute("type", "application/ld+json"); document.head.appendChild(bcEl); }
+        bcEl.textContent = JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://www.sanraliving.com" },
+                { "@type": "ListItem", position: 2, name: "Shop", item: "https://www.sanraliving.com/shop" },
+                { "@type": "ListItem", position: 3, name: dbProduct.category, item: `https://www.sanraliving.com/shop` },
+                { "@type": "ListItem", position: 4, name: dbProduct.title, item: `https://www.sanraliving.com/shop/${id}` },
+            ],
+        });
+
+        return () => {
+            document.getElementById(schemaId)?.remove();
+            document.getElementById(bcId)?.remove();
+        };
     }, [dbProduct, id]);
 
     /* ── Build image array ── */

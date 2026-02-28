@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
 const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
@@ -11,6 +11,9 @@ const faqs = [
     { q: "Is the steel rust resistant?", a: "Yes. All products use a premium powder-coat finish applied over treated mild steel, providing strong resistance to humidity and corrosion under normal indoor use." },
     { q: "What does the 10 Year Warranty cover?", a: "The structural warranty covers the primary steel frame against manufacturing defects and structural failure under normal use. It does not cover surface scratches, misuse, or improper installation." },
     { q: "Can I return the product?", a: "Yes — within 10 days of delivery. An unboxing video is mandatory for all replacement and return requests. Products must be in original packaging." },
+    { q: "Do you provide GST invoices?", a: "Yes. All orders are billed under Indian Make Steel Industries (GSTIN: 33FAXPM0581G1ZC). A proper GST invoice is issued with every purchase." },
+    { q: "What finishes are available?", a: "We currently offer Matte Black and Graphite Grey powder-coated finishes. Custom finishes may be available for bulk orders — contact us for details." },
+    { q: "Do you ship across India?", a: "Yes. We deliver pan-India with state-wise optimized shipping. Tamil Nadu: 3–5 days, Kerala: 4–7 days, Rest of India: 6–10 days." },
 ];
 
 interface Props {
@@ -19,6 +22,34 @@ interface Props {
 
 export default function ProductFAQ({ isMobile }: Props) {
     const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+    /* ── Inject FAQPage structured data for Google rich snippets ── */
+    useEffect(() => {
+        const schemaId = "faq-schema";
+        let el = document.getElementById(schemaId);
+        if (!el) {
+            el = document.createElement("script");
+            el.id = schemaId;
+            el.setAttribute("type", "application/ld+json");
+            document.head.appendChild(el);
+        }
+        el.textContent = JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqs.map((faq) => ({
+                "@type": "Question",
+                name: faq.q,
+                acceptedAnswer: {
+                    "@type": "Answer",
+                    text: faq.a,
+                },
+            })),
+        });
+        return () => {
+            const s = document.getElementById(schemaId);
+            s?.remove();
+        };
+    }, []);
 
     const label = (extra?: object) => ({
         fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em",
@@ -29,7 +60,7 @@ export default function ProductFAQ({ isMobile }: Props) {
         <section style={{ padding: isMobile ? "2.5rem 1.25rem" : "3.75rem 1.5rem", background: "#fff" }}>
             <div style={{ maxWidth: 720, margin: "0 auto" }}>
                 <p style={label({ marginBottom: "0.375rem" })}>Common Questions</p>
-                <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#111", marginBottom: "2rem", letterSpacing: "-0.01em", fontFamily: FM }}>FAQ</h2>
+                <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#111", marginBottom: "2rem", letterSpacing: "-0.01em", fontFamily: FM }}>Frequently Asked Questions</h2>
                 <div style={{ display: "flex", flexDirection: "column" }}>
                     {faqs.map((faq, i) => (
                         <div key={i} style={{ borderTop: "1px solid #E6E6E6" }}>

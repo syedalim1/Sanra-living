@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
+import WhatsAppFloat from "./components/WhatsAppFloat";
 import { optimizeImage } from "@/utils/cloudinary";
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1104,7 +1105,57 @@ export default function Homepage() {
         </div>
       </section>
 
+      {/* ── TRUST BADGES STRIP ─────────────────────────────── */}
+      <section style={{ background: "#1C1C1C", borderTop: "1px solid #333" }}>
+        <div
+          style={{
+            maxWidth: 1200,
+            margin: "0 auto",
+            padding: "1.75rem 1.5rem",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: "1.5rem",
+            alignItems: "center",
+          }}
+        >
+          {[
+            { icon: "🛡️", text: "10 Year Warranty" },
+            { icon: "🏭", text: "Manufacturer Direct" },
+            { icon: "📄", text: "GST Invoice" },
+            { icon: "🔒", text: "Secure Payment" },
+            { icon: "🚚", text: "Pan India Shipping" },
+            { icon: "🔧", text: "Customization Available" },
+          ].map((badge) => (
+            <div
+              key={badge.text}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0 0.5rem",
+              }}
+            >
+              <span style={{ fontSize: "1.1rem" }}>{badge.icon}</span>
+              <span
+                style={{
+                  fontSize: "0.72rem",
+                  fontWeight: 700,
+                  color: "rgba(255,255,255,0.7)",
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {badge.text}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <SiteFooter />
+      <WhatsAppFloat />
     </div>
   );
 }
