@@ -10,6 +10,7 @@ const categories = [
 const staticPages = [
     "/", "/shop", "/contact", "/track-order",
     "/about", "/warranty", "/terms", "/refund-policy",
+    "/bulk-orders", "/shipping-policy", "/privacy-policy",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

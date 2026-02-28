@@ -4,5 +4,44 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /api/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-confirmation
 
+# Googlebot – full access (no crawl delay)
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-confirmation
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+Disallow: /admin
+Disallow: /api/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-confirmation
+Crawl-delay: 5
+
+# Block AI scrapers from content
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+# Sitemap
 Sitemap: https://www.sanraliving.com/sitemap.xml
