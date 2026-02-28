@@ -46,7 +46,10 @@ const SearchIcon = () => (
 export default function SiteHeader() {
     const [scrolled, setScrolled] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const { totalItems } = useCart();
+
+    useEffect(() => { setMounted(true); }, []);
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 10);
@@ -138,7 +141,7 @@ export default function SiteHeader() {
                         {/* Cart */}
                         <Link href="/cart" aria-label="Cart" style={{ color: "#1C1C1C", position: "relative", display: "flex", alignItems: "center" }}>
                             <CartIcon />
-                            {totalItems > 0 && (
+                            {mounted && totalItems > 0 && (
                                 <span style={{
                                     position: "absolute", top: -6, right: -6,
                                     width: 16, height: 16, background: "#1C1C1C", color: "#fff",
