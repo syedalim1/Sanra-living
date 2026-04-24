@@ -8,10 +8,6 @@ import WhatsAppFloat from "./components/WhatsAppFloat";
 /* ── Homepage Sections ── */
 import HeroSection from "./components/home/HeroSection";
 import CategoryArchitecture from "./components/home/CategoryArchitecture";
-import DesignPhilosophy from "./components/home/DesignPhilosophy";
-import FeaturedCollections from "./components/home/FeaturedCollections";
-import ModularExpansion from "./components/home/ModularExpansion";
-import CommercialSolutions from "./components/home/CommercialSolutions";
 import TrustBlock from "./components/home/TrustBlock";
 
 /* ═══════════════════════════════════════════════════════════════
@@ -23,10 +19,6 @@ export default function Homepage() {
       <SiteHeader />
       <HeroSection />
       <CategoryArchitecture />
-      <DesignPhilosophy />
-      <FeaturedCollections />
-      <ModularExpansion />
-      <CommercialSolutions />
       <TrustBlock />
 
       {/* ── SEO CONTENT SECTION ─────────────────────────────── */}
@@ -47,7 +39,7 @@ export default function Homepage() {
               lineHeight: 1.3,
             }}
           >
-            Modern Steel Furniture for Every Space
+            Steel Chairs & Tables – Direct from Manufacturer
           </h2>
           <p
             style={{
@@ -57,13 +49,11 @@ export default function Homepage() {
               marginBottom: "2rem",
             }}
           >
-            From affordable steel furniture to ultra-luxury signature
-            collections, SANRA LIVING delivers multiple models, styles, sizes
-            and price ranges. We specialize in powder-coated steel furniture
-            designed for durability, elegance and long-term performance. Our
-            collection includes modern shoe racks, tables, chairs, balcony
-            furniture, modular storage systems and designer industrial furniture
-            crafted with high-quality steel and premium finishes.
+            SANRA LIVING delivers high-quality steel chairs, tables, and
+            furniture sets direct from our factory. We specialize in Jindal pipe
+            steel furniture with strong welding, powder-coated finish, and
+            long-lasting durability. Available for both retail and bulk orders
+            across India.
           </p>
 
           <h2
@@ -75,32 +65,7 @@ export default function Homepage() {
               lineHeight: 1.3,
             }}
           >
-            State-Wise Shipping Across India
-          </h2>
-          <p
-            style={{
-              fontSize: "0.95rem",
-              color: "#555",
-              lineHeight: 1.8,
-              marginBottom: "2rem",
-            }}
-          >
-            We offer optimized state-wise shipping including Tamil Nadu, Kerala
-            and all major Indian states. Safe packaging, parcel-friendly designs
-            and reliable delivery ensure damage-free transportation of your
-            premium steel furniture.
-          </p>
-
-          <h2
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 800,
-              color: "#111",
-              marginBottom: "1rem",
-              lineHeight: 1.3,
-            }}
-          >
-            Custom &amp; Bulk Steel Furniture Solutions
+            Bulk & Custom Steel Furniture
           </h2>
           <p
             style={{
@@ -109,11 +74,10 @@ export default function Homepage() {
               lineHeight: 1.8,
             }}
           >
-            We provide custom steel furniture manufacturing and bulk supply
-            solutions for interior designers, office projects and reseller
-            partners across India. Whether you need a single bespoke piece or
-            large-volume orders, SANRA LIVING delivers premium quality with
-            competitive pricing.
+            We provide bulk supply solutions for hotels, hostels, offices, and
+            institutions. Contact us directly on WhatsApp for custom orders,
+            bulk pricing, and fast delivery across Tamil Nadu, Kerala, and all
+            major Indian states.
           </p>
         </div>
       </section>
@@ -136,7 +100,6 @@ export default function Homepage() {
             { icon: "🛡️", text: "10 Year Warranty" },
             { icon: "🏭", text: "Manufacturer Direct" },
             { icon: "📄", text: "GST Invoice" },
-            { icon: "🔒", text: "Secure Payment" },
             { icon: "🚚", text: "Pan India Shipping" },
             { icon: "🔧", text: "Customization Available" },
           ].map((badge) => (

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Montserrat, Outfit } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
-import { CartProvider } from "@/app/context/CartContext";
+
 import Script from "next/script";
 
 const inter = Inter({
@@ -215,9 +215,7 @@ export default function RootLayout({
           />
         </head>
         <body className={`${inter.variable} ${montserrat.variable} ${outfit.variable} antialiased`}>
-          <CartProvider>
             {children}
-          </CartProvider>
         </body>
       </html>
     </ClerkProvider>

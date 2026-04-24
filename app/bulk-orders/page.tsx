@@ -1,327 +1,113 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
 import SiteHeader from "@/app/components/SiteHeader";
 import SiteFooter from "@/app/components/SiteFooter";
+import WhatsAppFloat from "@/app/components/WhatsAppFloat";
 
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
 const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
 
-const Label = ({ children }: { children: React.ReactNode }) => (
-    <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#888", fontFamily: FM, marginBottom: "1.25rem" }}>
-        {children}
-    </p>
-);
-
-const Divider = () => (
-    <div style={{ height: 1, background: "#E6E6E6", margin: "0 auto", maxWidth: 900 }} />
-);
-
-const SectionHeading = ({ children }: { children: React.ReactNode }) => (
-    <h2 style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)", fontWeight: 900, color: "#111", letterSpacing: "-0.02em", fontFamily: FM, marginBottom: "1.5rem" }}>
-        {children}
-    </h2>
-);
-
-const BodyText = ({ children }: { children: React.ReactNode }) => (
-    <p style={{ fontSize: "0.9375rem", color: "#444", lineHeight: 1.85, fontFamily: FO, marginBottom: "0.875rem" }}>{children}</p>
-);
-
-const BulletItem = ({ children }: { children: React.ReactNode }) => (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: "0.875rem", marginBottom: "0.75rem" }}>
-        <div style={{ width: 5, height: 5, background: "#1C1C1C", flexShrink: 0, marginTop: "0.55rem" }} />
-        <p style={{ fontSize: "0.9375rem", color: "#444", lineHeight: 1.8, fontFamily: FO, margin: 0 }}>{children}</p>
-    </div>
-);
-
-/* ── FORM FIELD ───────────────────────────────────────────── */
-function Field({
-    label, type = "text", placeholder, value, onChange, required = false, span = false,
-}: {
-    label: string; type?: string; placeholder?: string;
-    value: string; onChange: (v: string) => void;
-    required?: boolean; span?: boolean;
-}) {
-    return (
-        <div style={{ gridColumn: span ? "1 / -1" : undefined }}>
-            <label style={{ display: "block", fontSize: "0.72rem", fontWeight: 700, color: "#555", fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: "0.5rem" }}>
-                {label}{required && <span style={{ color: "#c0392b", marginLeft: "0.2rem" }}>*</span>}
-            </label>
-            {type === "textarea" ? (
-                <textarea
-                    rows={4}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder={placeholder}
-                    style={{ width: "100%", padding: "0.875rem 1rem", border: "1.5px solid #E6E6E6", fontSize: "0.9rem", fontFamily: FO, color: "#111", outline: "none", background: "#fff", resize: "vertical", boxSizing: "border-box" }}
-                />
-            ) : (
-                <input
-                    type={type}
-                    value={value}
-                    onChange={(e) => onChange(e.target.value)}
-                    placeholder={placeholder}
-                    style={{ width: "100%", padding: "0.875rem 1rem", border: "1.5px solid #E6E6E6", fontSize: "0.9rem", fontFamily: FO, color: "#111", outline: "none", background: "#fff", boxSizing: "border-box" }}
-                />
-            )}
-        </div>
-    );
-}
-
-/* ── PAGE ─────────────────────────────────────────────────── */
 export default function BulkOrdersPage() {
-    const [form, setForm] = useState({
-        company: "", contact: "", phone: "", email: "",
-        location: "", product: "", quantity: "", message: "",
-    });
-    const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [formError, setFormError] = useState("");
-
-    const set = (key: keyof typeof form) => (val: string) => setForm((f) => ({ ...f, [key]: val }));
-
-    const handleSubmit = async () => {
-        setFormError("");
-        if (!form.company || !form.contact || !form.phone || !form.email) {
-            setFormError("Please fill in all required fields.");
-            return;
-        }
-        setLoading(true);
-        try {
-            const res = await fetch("/api/bulk-enquiry", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    companyName: form.company,
-                    contactPerson: form.contact,
-                    phone: form.phone,
-                    email: form.email,
-                    city: form.location,
-                    productInterest: form.product,
-                    quantity: form.quantity,
-                    message: form.message,
-                }),
-            });
-            if (!res.ok) throw new Error("API error");
-            setSubmitted(true);
-        } catch {
-            setFormError("Something went wrong. Please try again or email us directly.");
-        } finally {
-            setLoading(false);
-        }
-    };
+    const waLink = "https://wa.me/8300904920?text=Hi!%20I%20need%20bulk%20order%20pricing%20for%20steel%20furniture.";
 
     return (
         <main style={{ background: "#F5F5F5", minHeight: "100vh", fontFamily: FO }}>
-
             <SiteHeader />
 
             {/* HERO */}
-            <section style={{ background: "#fff", borderBottom: "1px solid #E6E6E6", padding: "clamp(3.5rem, 8vw, 6rem) 1.5rem", textAlign: "center" }}>
-                <div style={{ maxWidth: 680, margin: "0 auto" }}>
-                    <Label>Institutional & Trade Supply</Label>
-                    <h1 style={{ fontSize: "clamp(1.75rem, 4.5vw, 3rem)", fontWeight: 900, color: "#111", lineHeight: 1.1, letterSpacing: "-0.025em", fontFamily: FM, marginBottom: "1rem" }}>
-                        Bulk &amp; Institutional Orders
+            <section style={{ background: "#fff", borderBottom: "1px solid #E6E6E6", padding: "clamp(4rem, 10vw, 7rem) 1.5rem", textAlign: "center" }}>
+                <div style={{ maxWidth: 640, margin: "0 auto" }}>
+                    <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.22em", textTransform: "uppercase", color: "#888", fontFamily: FM, marginBottom: "1.25rem" }}>
+                        For Hotels, Hostels & Institutions
+                    </p>
+                    <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 900, color: "#111", lineHeight: 1.1, letterSpacing: "-0.025em", fontFamily: FM, marginBottom: "1.25rem" }}>
+                        Bulk Orders Available
                     </h1>
-                    <p style={{ fontSize: "1rem", color: "#666", lineHeight: 1.9, maxWidth: 520, margin: "0 auto", fontFamily: FO }}>
-                        Premium steel furniture solutions for large-scale requirements.
+                    <p style={{ fontSize: "1.0625rem", color: "#555", lineHeight: 1.8, maxWidth: 500, margin: "0 auto 2.5rem", fontFamily: FO }}>
+                        Contact us directly for bulk pricing and custom orders. We manufacture steel chairs, tables, and furniture sets for large-scale requirements.
+                    </p>
+
+                    {/* WhatsApp CTA */}
+                    <a
+                        href={waLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            display: "inline-flex", alignItems: "center", gap: "0.625rem",
+                            padding: "1.125rem 2.5rem",
+                            background: "#25D366", color: "#fff",
+                            fontWeight: 700, fontSize: "0.9rem",
+                            letterSpacing: "0.08em", textTransform: "uppercase",
+                            textDecoration: "none", fontFamily: FM,
+                            borderRadius: 4,
+                            transition: "background 0.2s, transform 0.2s",
+                        }}
+                    >
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                        </svg>
+                        Chat on WhatsApp
+                    </a>
+
+                    <p style={{ fontSize: "0.78rem", color: "#999", fontFamily: FO, marginTop: "1.25rem" }}>
+                        📞 Or call: 9585745303 / 8300904920
                     </p>
                 </div>
             </section>
 
-            {/* SECTION 1 – INTRODUCTION */}
-            <section style={{ background: "#fff", padding: "clamp(2.5rem, 6vw, 4rem) 1.5rem" }}>
-                <div style={{ maxWidth: 720, margin: "0 auto" }}>
-                    <Label>Section 01</Label>
-                    <SectionHeading>Introduction</SectionHeading>
-                    <BodyText>
-                        SANRA LIVING offers bulk supply solutions for residential projects, offices, institutions, and commercial spaces.
-                    </BodyText>
-                    <BodyText>
-                        Backed by manufacturing expertise, we provide <strong style={{ color: "#111" }}>consistent quality</strong>, structural durability, and scalable production capabilities — all with the <strong style={{ color: "#111" }}>Direct Manufacturer Advantage</strong>.
-                    </BodyText>
-                </div>
-            </section>
-
-            <Divider />
-
-            {/* SECTION 2 – WHO WE SERVE */}
-            <section style={{ background: "#F5F5F5", padding: "clamp(2.5rem, 6vw, 4rem) 1.5rem" }}>
-                <div style={{ maxWidth: 720, margin: "0 auto" }}>
-                    <Label>Section 02</Label>
-                    <SectionHeading>Who We Serve</SectionHeading>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 1, background: "#E6E6E6" }}>
-                        {[
-                            { icon: "🏢", label: "Corporate Offices" },
-                            { icon: "🏫", label: "Schools & Colleges" },
-                            { icon: "🏠", label: "Builders & Developers" },
-                            { icon: "🛏", label: "Hostels & PG Spaces" },
-                        ].map((item) => (
-                            <div key={item.label} style={{ background: "#fff", padding: "2rem 1.5rem", textAlign: "center" }}>
-                                <span style={{ fontSize: "2rem", display: "block", marginBottom: "0.75rem" }}>{item.icon}</span>
-                                <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "#111", fontFamily: FM, margin: 0 }}>{item.label}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <Divider />
-
-            {/* SECTION 3 – WHY CHOOSE SANRA LIVING */}
-            <section style={{ background: "#fff", padding: "clamp(2.5rem, 6vw, 4rem) 1.5rem" }}>
-                <div style={{ maxWidth: 720, margin: "0 auto" }}>
-                    <Label>Section 03</Label>
-                    <SectionHeading>Why Choose SANRA LIVING for Bulk</SectionHeading>
-                    <BulletItem>Structural-grade steel fabrication — built for durability, not just aesthetics</BulletItem>
-                    <BulletItem>Customisable dimensions based on design feasibility</BulletItem>
-                    <BulletItem>Batch production with consistency across every unit</BulletItem>
-                    <BulletItem>Direct Manufacturer Advantage — no middlemen, no unnecessary markups</BulletItem>
-                    <BulletItem>Pan India logistics support with consolidated delivery options</BulletItem>
-                </div>
-            </section>
-
-            <Divider />
-
-            {/* SECTION 4 – PRODUCTION CAPACITY */}
-            <section style={{ background: "#F5F5F5", padding: "clamp(2.5rem, 6vw, 4rem) 1.5rem" }}>
-                <div style={{ maxWidth: 720, margin: "0 auto" }}>
-                    <Label>Section 04</Label>
-                    <SectionHeading>Production Capacity</SectionHeading>
-                    <BodyText>
-                        Our production process allows controlled batch manufacturing with strict quality checks at each stage.
-                    </BodyText>
-                    <div style={{ padding: "1.25rem 1.5rem", background: "#fff", borderLeft: "3px solid #1C1C1C" }}>
-                        <p style={{ fontSize: "0.9rem", color: "#444", fontFamily: FO, lineHeight: 1.8, margin: 0 }}>
-                            For large orders, lead time will be shared after requirement evaluation. We do not make capacity commitments before reviewing your project scope.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <Divider />
-
-            {/* SECTION 5 – CUSTOMISATION POLICY */}
-            <section style={{ background: "#fff", padding: "clamp(2.5rem, 6vw, 4rem) 1.5rem" }}>
-                <div style={{ maxWidth: 720, margin: "0 auto" }}>
-                    <Label>Section 05</Label>
-                    <SectionHeading>Customisation Policy</SectionHeading>
-                    <BodyText>Customisation may be available for the following, subject to design feasibility and minimum order quantity:</BodyText>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 1, background: "#E6E6E6" }}>
-                        {[
-                            { icon: "📐", label: "Size Adjustments", desc: "Dimensional changes based on your space requirements." },
-                            { icon: "🎨", label: "Finish Options", desc: "Powder coat colour selection from available palette." },
-                            { icon: "🔧", label: "Bulk-Specific Modifications", desc: "Structural tweaks evaluated on a case-by-case basis." },
-                        ].map((item) => (
-                            <div key={item.label} style={{ background: "#fff", padding: "1.5rem 1.25rem" }}>
-                                <span style={{ fontSize: "1.25rem", display: "block", marginBottom: "0.625rem" }}>{item.icon}</span>
-                                <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "#111", fontFamily: FM, marginBottom: "0.375rem" }}>{item.label}</p>
-                                <p style={{ fontSize: "0.78rem", color: "#777", fontFamily: FO, lineHeight: 1.7, margin: 0 }}>{item.desc}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            <Divider />
-
-            {/* SECTION 6 – BULK ENQUIRY FORM */}
-            <section style={{ background: "#F5F5F5", padding: "clamp(2.5rem, 6vw, 4rem) 1.5rem" }}>
+            {/* WHY BULK */}
+            <section style={{ background: "#F5F5F5", padding: "clamp(3rem, 7vw, 4.5rem) 1.5rem" }}>
                 <div style={{ maxWidth: 700, margin: "0 auto" }}>
-                    <Label>Section 06</Label>
-                    <SectionHeading>Bulk Enquiry Form</SectionHeading>
-
-                    {submitted ? (
-                        /* SUCCESS STATE */
-                        <div style={{ background: "#fff", border: "1px solid #E6E6E6", padding: "3rem 2rem", textAlign: "center" }}>
-                            <div style={{ width: 48, height: 48, background: "#1C1C1C", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.25rem" }}>
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                    <path d="M4 10l4 4 8-8" stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
-                                </svg>
+                    <h2 style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)", fontWeight: 900, color: "#111", letterSpacing: "-0.02em", fontFamily: FM, marginBottom: "1.5rem", textAlign: "center" }}>
+                        Why Choose SANRA LIVING for Bulk
+                    </h2>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                        {[
+                            { icon: "🏭", title: "Direct from Factory", desc: "No middlemen. Best pricing." },
+                            { icon: "🔧", title: "Custom Orders", desc: "Size & finish customization available." },
+                            { icon: "🚚", title: "Pan India Delivery", desc: "Shipping across all states." },
+                            { icon: "📄", title: "GST Invoice", desc: "Proper billing for businesses." },
+                        ].map((item) => (
+                            <div key={item.title} style={{ background: "#fff", padding: "1.5rem 1.25rem", border: "1px solid #E6E6E6" }}>
+                                <span style={{ fontSize: "1.5rem", display: "block", marginBottom: "0.75rem" }}>{item.icon}</span>
+                                <p style={{ fontSize: "0.88rem", fontWeight: 700, color: "#111", fontFamily: FM, marginBottom: "0.375rem" }}>{item.title}</p>
+                                <p style={{ fontSize: "0.82rem", color: "#666", fontFamily: FO, lineHeight: 1.6, margin: 0 }}>{item.desc}</p>
                             </div>
-                            <h3 style={{ fontSize: "1.1rem", fontWeight: 900, color: "#111", fontFamily: FM, marginBottom: "0.625rem" }}>Enquiry Submitted</h3>
-                            <p style={{ fontSize: "0.9rem", color: "#666", fontFamily: FO, lineHeight: 1.8, maxWidth: 380, margin: "0 auto 1.5rem" }}>
-                                Thank you. Our team will review your requirements and respond within <strong style={{ color: "#111" }}>24–48 working hours</strong>.
-                            </p>
-                            <button
-                                onClick={() => { setSubmitted(false); setForm({ company: "", contact: "", phone: "", email: "", location: "", product: "", quantity: "", message: "" }); }}
-                                style={{ fontSize: "0.78rem", fontWeight: 700, color: "#888", fontFamily: FM, background: "none", border: "none", cursor: "pointer", textDecoration: "underline" }}
-                            >
-                                Submit another enquiry
-                            </button>
-                        </div>
-                    ) : (
-                        /* FORM */
-                        <div style={{ background: "#fff", border: "1px solid #E6E6E6", padding: "clamp(1.75rem, 4vw, 2.5rem)" }}>
-                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "1.25rem", marginBottom: "1.25rem" }}>
-                                <Field label="Company Name" placeholder="Your company or project name" value={form.company} onChange={set("company")} required />
-                                <Field label="Contact Person" placeholder="Your full name" value={form.contact} onChange={set("contact")} required />
-                                <Field label="Phone Number" type="tel" placeholder="+91 XXXXX XXXXX" value={form.phone} onChange={set("phone")} required />
-                                <Field label="Email Address" type="email" placeholder="you@company.com" value={form.email} onChange={set("email")} required />
-                                <Field label="City / State" placeholder="e.g. Chennai, Tamil Nadu" value={form.location} onChange={set("location")} />
-                                <Field label="Product Interested In" placeholder="e.g. Steel Shelving, Study Desks" value={form.product} onChange={set("product")} />
-                                <Field label="Quantity Required" placeholder="e.g. 50 units" value={form.quantity} onChange={set("quantity")} />
-                                <Field label="Message / Project Details" type="textarea" placeholder="Brief description of your project, requirement, or timeline..." value={form.message} onChange={set("message")} span />
-                            </div>
-
-                            {formError && (
-                                <p style={{ fontSize: "0.82rem", color: "#c0392b", fontFamily: FO, marginBottom: "1rem", padding: "0.625rem 0.875rem", background: "#fdf2f2", borderLeft: "3px solid #c0392b" }}>
-                                    {formError}
-                                </p>
-                            )}
-
-                            <button
-                                onClick={handleSubmit}
-                                disabled={loading}
-                                style={{
-                                    width: "100%",
-                                    padding: "1rem",
-                                    background: loading ? "#555" : "#1C1C1C",
-                                    color: "#fff",
-                                    fontWeight: 700,
-                                    fontSize: "0.82rem",
-                                    letterSpacing: "0.14em",
-                                    textTransform: "uppercase",
-                                    fontFamily: FM,
-                                    border: "none",
-                                    cursor: loading ? "not-allowed" : "pointer",
-                                    transition: "background 0.2s",
-                                }}
-                            >
-                                {loading ? "Submitting..." : "Submit Bulk Enquiry"}
-                            </button>
-
-                            <p style={{ fontSize: "0.75rem", color: "#bbb", fontFamily: FO, marginTop: "0.875rem", textAlign: "center" }}>
-                                Fields marked <span style={{ color: "#c0392b" }}>*</span> are required. We do not share your details with third parties.
-                            </p>
-                        </div>
-                    )}
+                        ))}
+                    </div>
                 </div>
             </section>
 
-            {/* SECTION 7 – CONTACT NOTE */}
+            {/* BOTTOM CTA */}
             <section style={{ background: "#1C1C1C", padding: "clamp(3rem, 7vw, 5rem) 1.5rem", textAlign: "center" }}>
                 <div style={{ maxWidth: 480, margin: "0 auto" }}>
-                    <p style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.22em", color: "rgba(255,255,255,0.3)", textTransform: "uppercase", fontFamily: FM, marginBottom: "1.25rem" }}>
-                        Urgent Enquiries
-                    </p>
-                    <h2 style={{ fontSize: "clamp(1.1rem, 2.5vw, 1.5rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em", fontFamily: FM, marginBottom: "0.875rem" }}>
-                        Contact Our Team Directly
+                    <h2 style={{ fontSize: "clamp(1.25rem, 2.5vw, 1.75rem)", fontWeight: 900, color: "#fff", letterSpacing: "-0.02em", fontFamily: FM, marginBottom: "1rem" }}>
+                        Ready to Order in Bulk?
                     </h2>
-                    <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", fontFamily: FO, lineHeight: 1.8, marginBottom: "1.25rem" }}>
-                        For urgent enquiries, reach out to us directly and we will get back to you as a priority.
+                    <p style={{ fontSize: "0.9rem", color: "rgba(255,255,255,0.5)", fontFamily: FO, lineHeight: 1.8, marginBottom: "1.5rem" }}>
+                        Send us your requirements on WhatsApp and we&apos;ll get back with pricing quickly.
                     </p>
-                    <a href="mailto:support@sanraliving.com" style={{ fontSize: "1rem", fontWeight: 700, color: "#fff", fontFamily: FM, display: "block", marginBottom: "0.5rem", textDecoration: "none" }}>
-                        support@sanraliving.com
+                    <a
+                        href={waLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                            display: "inline-flex", alignItems: "center", gap: "0.5rem",
+                            padding: "1rem 2.5rem",
+                            background: "#25D366", color: "#fff",
+                            fontWeight: 700, fontSize: "0.85rem",
+                            letterSpacing: "0.1em", textTransform: "uppercase",
+                            textDecoration: "none", fontFamily: FM,
+                            borderRadius: 4,
+                        }}
+                    >
+                        💬 Chat on WhatsApp
                     </a>
-                    <p style={{ fontSize: "0.78rem", color: "rgba(255,255,255,0.3)", fontFamily: FO }}>
-                        Response time: 24–48 working hours.
-                    </p>
                 </div>
             </section>
 
             <SiteFooter />
+            <WhatsAppFloat />
         </main>
     );
 }
