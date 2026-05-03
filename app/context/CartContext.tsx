@@ -4,7 +4,7 @@ import React, { createContext, useContext, useReducer, useEffect } from "react";
 
 /* ── TYPES ───────────────────────────────────────────────────── */
 export interface CartItem {
-    id: number;
+    id: string;          // FIX: string (DB returns UUID/string ids)
     title: string;
     subtitle: string;
     finish: string;
@@ -20,8 +20,8 @@ interface CartState {
 
 type CartAction =
     | { type: "ADD"; payload: CartItem }
-    | { type: "REMOVE"; payload: { id: number; finish: string } }
-    | { type: "UPDATE_QTY"; payload: { id: number; finish: string; qty: number } }
+    | { type: "REMOVE"; payload: { id: string; finish: string } }
+    | { type: "UPDATE_QTY"; payload: { id: string; finish: string; qty: number } }
     | { type: "CLEAR" };
 
 /* ── REDUCER ─────────────────────────────────────────────────── */
@@ -87,7 +87,6 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         }
     });
 
-    // Persist to localStorage on every change
     useEffect(() => {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }, [state]);
