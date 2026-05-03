@@ -8,10 +8,9 @@ const categories = [
 ];
 
 const staticPages = [
-    "/", "/shop", "/contact", "/track-order",
-    "/about", "/warranty", "/terms", "/refund-policy",
+    "/", "/shop", "/contact", 
+    "/warranty", "/terms", "/refund-policy",
     "/bulk-orders", "/shipping-policy", "/privacy-policy",
-    "/blog",
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

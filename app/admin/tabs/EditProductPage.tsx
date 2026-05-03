@@ -1,10 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { C, FM, FO, CATEGORIES } from "../constants";
 import ImageUploader from "../components/ImageUploader";
 import VideoUploader from "../components/VideoUploader";
 import type { Product } from "../types";
+
+interface AplusBlock {
+    title: string;
+    description: string;
+    image_url: string;
+}
 
 interface Props {
     product: Product;
@@ -43,8 +49,63 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
         is_active: product.is_active,
     });
 
+    /* ── A+ Content State ── */
+    const [aplusBlocks, setAplusBlocks] = useState<AplusBlock[]>([]);
+    const [aplusLoading, setAplusLoading] = useState(true);
+    const [aplusSaving, setAplusSaving] = useState(false);
+    const [aplusError, setAplusError] = useState("");
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const res = await fetch(`/api/admin/aplus?product_id=${product.id}`, {
+                    headers: { "x-admin-key": adminKey },
+                });
+                const data = await res.json();
+                if (data.blocks?.length > 0) {
+                    setAplusBlocks(data.blocks.map((b: AplusBlock) => ({
+                        title: b.title, description: b.description, image_url: b.image_url,
+                    })));
+                }
+            } catch { /* silent */ }
+            finally { setAplusLoading(false); }
+        })();
+    }, [product.id, adminKey]);
+
+    const addAplusBlock = () => {
+        setAplusBlocks(prev => [...prev, { title: "", description: "", image_url: "" }]);
+    };
+
+    const updateAplusBlock = (index: number, field: keyof AplusBlock, value: string) => {
+        setAplusBlocks(prev => prev.map((b, i) => i === index ? { ...b, [field]: value } : b));
+    };
+
+    const removeAplusBlock = (index: number) => {
+        setAplusBlocks(prev => prev.filter((_, i) => i !== index));
+    };
+
+    const saveAplusContent = async () => {
+        if (aplusBlocks.length > 0 && aplusBlocks.length < 5) {
+            setAplusError("Minimum 5 A+ blocks required. Add more or remove all.");
+            return;
+        }
+        setAplusSaving(true);
+        setAplusError("");
+        try {
+            const res = await fetch("/api/admin/aplus", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+                body: JSON.stringify({ product_id: product.id, blocks: aplusBlocks }),
+            });
+            if (!res.ok) throw new Error("Failed to save A+ content");
+            setAplusError("");
+        } catch (err) {
+            setAplusError(err instanceof Error ? err.message : "Failed to save");
+        } finally { setAplusSaving(false); }
+    };
+
     const inp: React.CSSProperties = {
-        background: "#0F0F0F", border: `1px solid ${C.border}`, color: C.text,
+        background: "#fff", border: `1px solid ${C.border}`, color: C.text,
         fontSize: "0.85rem", fontFamily: FO, borderRadius: 6,
         padding: "0.75rem 1rem", width: "100%", boxSizing: "border-box",
     };
@@ -269,6 +330,74 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                         <input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="Add tag" onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())} style={{ ...inp, flex: 1, fontSize: "0.82rem" }} />
                         <button type="button" onClick={addTag} style={{ padding: "0 1.25rem", background: "transparent", border: `1px solid ${C.accent}`, color: C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>+ Tag</button>
                     </div>
+                </section>
+
+                {/* A+ CONTENT */}
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                        <div>
+                            <p style={sectionTitle}>A+ Content</p>
+                            <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginTop: "-0.5rem" }}>
+                                Add rich content blocks displayed below the product. Minimum 5 blocks required.
+                            </p>
+                        </div>
+                        <button type="button" onClick={addAplusBlock} style={{ padding: "0.5rem 1.25rem", background: C.accent, color: "#fff", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, border: "none", whiteSpace: "nowrap" }}>
+                            + Add Block
+                        </button>
+                    </div>
+
+                    {aplusError && (
+                        <div style={{ background: `${C.red}15`, border: `1px solid ${C.red}44`, padding: "0.6rem 1rem", borderRadius: 6, marginBottom: "1rem", fontSize: "0.8rem", color: C.red, fontFamily: FO }}>
+                            {aplusError}
+                        </div>
+                    )}
+
+                    {aplusLoading ? (
+                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, padding: "2rem 0", textAlign: "center" }}>Loading A+ content…</p>
+                    ) : aplusBlocks.length === 0 ? (
+                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, padding: "2rem 0", textAlign: "center" }}>No A+ blocks yet. Click &quot;+ Add Block&quot; to start.</p>
+                    ) : (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                            {aplusBlocks.map((block, i) => (
+                                <div key={i} style={{ background: "#fafafa", border: `1px solid ${C.border}`, borderRadius: 8, padding: "1.25rem" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
+                                        <span style={{ fontSize: "0.7rem", fontWeight: 700, color: C.muted, fontFamily: FM, letterSpacing: "0.1em", textTransform: "uppercase" }}>Block {i + 1}</span>
+                                        <button type="button" onClick={() => removeAplusBlock(i)} style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: "0.75rem", fontWeight: 700, fontFamily: FM }}>✕ Remove</button>
+                                    </div>
+                                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                                        <div>
+                                            <label style={lbl}>Title</label>
+                                            <input value={block.title} onChange={e => updateAplusBlock(i, "title", e.target.value)} placeholder="e.g. Heavy Duty Steel Frame" style={inp} />
+                                        </div>
+                                        <div>
+                                            <label style={lbl}>Description</label>
+                                            <textarea value={block.description} onChange={e => updateAplusBlock(i, "description", e.target.value)} rows={2} placeholder="Short description for this feature…" style={{ ...inp, resize: "vertical" }} />
+                                        </div>
+                                        <div>
+                                            <label style={lbl}>Image URL</label>
+                                            <input value={block.image_url} onChange={e => updateAplusBlock(i, "image_url", e.target.value)} placeholder="https://..." style={inp} />
+                                            {block.image_url && (
+                                                <div style={{ marginTop: "0.5rem", width: 120, height: 80, borderRadius: 6, overflow: "hidden", background: "#eee" }}>
+                                                    <img src={block.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {aplusBlocks.length > 0 && (
+                        <div style={{ marginTop: "1rem", display: "flex", gap: "0.75rem", alignItems: "center" }}>
+                            <button type="button" onClick={saveAplusContent} disabled={aplusSaving} style={{ padding: "0.65rem 1.5rem", background: C.green, color: "#fff", fontWeight: 700, fontSize: "0.75rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: aplusSaving ? "not-allowed" : "pointer", borderRadius: 6, fontFamily: FM, border: "none", opacity: aplusSaving ? 0.7 : 1 }}>
+                                {aplusSaving ? "Saving…" : `Save A+ Content (${aplusBlocks.length} blocks)`}
+                            </button>
+                            <span style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO }}>
+                                {aplusBlocks.length < 5 ? `⚠ Need ${5 - aplusBlocks.length} more block(s)` : "✓ Ready to save"}
+                            </span>
+                        </div>
+                    )}
                 </section>
 
                 {/* DANGER ZONE */}

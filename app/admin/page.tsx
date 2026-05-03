@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 import { C, FM, FO, fmt, ADMIN_EMAIL, ORDER_STATUSES } from "./constants";
-import { StatCard } from "./components/AdminUI";
 import DashboardTab from "./tabs/DashboardTab";
 import OrdersTab from "./tabs/OrdersTab";
 import MessagesTab from "./tabs/MessagesTab";
@@ -265,20 +264,12 @@ export default function AdminPage() {
                         {lastRefreshed && <span style={{ fontSize: "0.62rem", color: "#444", fontFamily: FO }}>Updated {lastRefreshed.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>}
                         <a href="/" target="_blank" rel="noopener" style={{ fontSize: "0.7rem", color: C.muted, fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", border: `1px solid ${C.border}`, padding: "0.4rem 0.875rem", borderRadius: 4 }}>↗ Site</a>
                         <button onClick={() => fetchData(tab)} style={{ fontSize: "0.7rem", color: C.muted, background: "none", border: `1px solid ${C.border}`, cursor: "pointer", fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase", padding: "0.4rem 0.875rem", borderRadius: 4 }}>↻</button>
-                        <UserButton afterSignOutUrl="/" />
+                        <UserButton />
                     </div>
                 </div>
             </header>
 
             <div style={{ maxWidth: 1400, margin: "0 auto", padding: "2rem 1.5rem" }}>
-                {/* Stats */}
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
-                    <StatCard label="Total Orders" value={orders.length} sub={`${pendingOrders} pending`} />
-                    <StatCard label="Revenue (Paid)" value={fmt(totalRevenue)} color={C.green} sub={`${paidOrders.length} paid`} />
-                    <StatCard label="Enquiries" value={enquiries.length} />
-                    <StatCard label="Messages" value={messages.length} />
-                    <StatCard label="Products Live" value={liveProducts} sub={`of ${products.length}`} />
-                </div>
 
                 {/* Tabs with Badges */}
                 <div style={{ display: "flex", gap: 0, marginBottom: "1.5rem", borderBottom: `1px solid ${C.border}`, overflowX: "auto" }}>

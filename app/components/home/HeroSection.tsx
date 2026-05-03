@@ -2,111 +2,105 @@
 
 import React from "react";
 import Link from "next/link";
+import { FM, FO } from "../../shop/ShopComponents";
 
 export default function HeroSection() {
-    const waLink = "https://wa.me/8300904920?text=Hi!%20I%20want%20to%20know%20the%20price%20of%20your%20steel%20furniture.";
-
     return (
         <section
             className="sl-hero"
             style={{
-                backgroundImage: "url('/images/HERO_BACKGROUND.png')",
+                position: "relative",
+                backgroundImage: "url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
+                minHeight: "80vh",
             }}
         >
-            <div className="sl-hero-overlay" />
-            <div className="sl-container sl-hero-content" style={{ width: "100%" }}>
+            <div className="sl-hero-overlay" style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.3)" }} />
+            <div className="sl-container sl-hero-content" style={{ position: "relative", zIndex: 1, width: "100%", paddingBottom: "4rem" }}>
                 <div
-                    className="flex flex-col items-center md:items-start text-center md:text-left"
-                    style={{ maxWidth: 700, gap: "1.75rem" }}
+                    className="flex flex-col items-start text-left"
+                    style={{ maxWidth: 650, gap: "1.5rem" }}
                 >
-                    {/* Label */}
-                    <div className="flex items-center" style={{ gap: "0.75rem" }}>
-                        <div
-                            style={{
-                                width: "2.5rem",
-                                height: "1.5px",
-                                background: "rgba(255,255,255,0.5)",
-                            }}
-                        />
-                        <span
-                            style={{
-                                fontSize: "0.7rem",
-                                fontWeight: 700,
-                                letterSpacing: "0.22em",
-                                color: "rgba(255,255,255,0.65)",
-                                textTransform: "uppercase",
-                            }}
-                        >
-                            Direct from Manufacturer
-                        </span>
-                    </div>
-
-                    {/* Headline */}
                     <h1
                         style={{
-                            fontSize: "clamp(2.25rem, 5.5vw, 3.75rem)",
+                            fontSize: "clamp(2.5rem, 6vw, 4rem)",
                             fontWeight: 900,
-                            lineHeight: 1.08,
-                            letterSpacing: "-0.025em",
+                            lineHeight: 1,
+                            letterSpacing: "-0.02em",
                             color: "#ffffff",
+                            fontFamily: FM,
+                            textShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: "0.25rem"
                         }}
                     >
-                        Steel Chairs & Tables
-                        <br />
-                        <span style={{ color: "rgba(255,255,255,0.85)" }}>
-                            Direct from Manufacturer.
-                        </span>
+                        <span>Premium Steel Living.</span>
+                        <span style={{ fontWeight: 400, fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}>Built to Last.</span>
                     </h1>
 
-                    {/* Subtext */}
-                    <p
-                        style={{
-                            fontSize: "1.125rem",
-                            lineHeight: 1.7,
-                            color: "rgba(255,255,255,0.8)",
-                            maxWidth: "520px",
-                        }}
-                    >
-                        Strong. Long-lasting. Bulk & Retail Available.
-                    </p>
-
-                    {/* CTAs */}
-                    <div
-                        className="flex flex-col sm:flex-row"
-                        style={{ gap: "1rem", width: "100%", maxWidth: "460px" }}
-                    >
-                        <a
-                            href={waLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                    <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexWrap: "wrap" }}>
+                        <Link
+                            href="/shop"
                             style={{
-                                flex: 1,
                                 display: "inline-flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                gap: "0.5rem",
-                                padding: "1rem 2rem",
-                                background: "#25D366",
-                                color: "#fff",
-                                fontWeight: 700,
-                                fontSize: "0.875rem",
-                                letterSpacing: "0.04em",
+                                padding: "1.25rem 3rem",
+                                background: "#fff",
+                                color: "#111",
+                                fontWeight: 800,
+                                fontSize: "1rem",
+                                letterSpacing: "0.1em",
                                 textTransform: "uppercase",
                                 textDecoration: "none",
-                                borderRadius: 4,
-                                transition: "background 0.2s, transform 0.2s",
+                                fontFamily: FM,
+                                transition: "all 0.2s ease",
+                                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "#f0f0f0";
+                                e.currentTarget.style.transform = "translateY(-2px)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = "#fff";
+                                e.currentTarget.style.transform = "translateY(0)";
                             }}
                         >
-                            Get Price on WhatsApp 🔥
-                        </a>
+                            Shop Products
+                        </Link>
                         <Link
                             href="/shop"
-                            className="sl-btn sl-btn-outline-white"
-                            style={{ flex: 1 }}
+                            style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "1.25rem 3rem",
+                                background: "rgba(0,0,0,0.4)",
+                                color: "#fff",
+                                fontWeight: 800,
+                                fontSize: "1rem",
+                                letterSpacing: "0.1em",
+                                textTransform: "uppercase",
+                                textDecoration: "none",
+                                fontFamily: FM,
+                                transition: "all 0.2s ease",
+                                border: "2px solid rgba(255,255,255,0.8)",
+                                backdropFilter: "blur(4px)",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "rgba(255,255,255,0.15)";
+                                e.currentTarget.style.borderColor = "#fff";
+                                e.currentTarget.style.transform = "translateY(-2px)";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = "rgba(0,0,0,0.4)";
+                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
+                                e.currentTarget.style.transform = "translateY(0)";
+                            }}
                         >
-                            View Products
+                            View Best Sellers
                         </Link>
                     </div>
                 </div>

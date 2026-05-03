@@ -7,82 +7,46 @@ import WhatsAppFloat from "./components/WhatsAppFloat";
 
 /* ── Homepage Sections ── */
 import HeroSection from "./components/home/HeroSection";
-import CategoryArchitecture from "./components/home/CategoryArchitecture";
-import TrustBlock from "./components/home/TrustBlock";
+import CategoryGrid from "./components/home/CategoryGrid";
+import FeaturedProducts from "./components/home/FeaturedProducts";
+import CollectionShowcase from "./components/home/CollectionShowcase";
+import ApplicationShowcase from "./components/home/ApplicationShowcase";
 
 /* ═══════════════════════════════════════════════════════════════
    PAGE EXPORT
 ═══════════════════════════════════════════════════════════════ */
 export default function Homepage() {
   return (
-    <div>
+    <div style={{ background: "#f5f5f5", minHeight: "100vh" }}>
       <SiteHeader />
+      
+      {/* 1. Hero Banner */}
       <HeroSection />
-      <CategoryArchitecture />
-      <TrustBlock />
 
-      {/* ── SEO CONTENT SECTION ─────────────────────────────── */}
-      <section
-        style={{
-          background: "#FAFAF8",
-          padding: "4rem 1.5rem",
-          borderTop: "1px solid #eee",
-        }}
-      >
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
-          <h2
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 800,
-              color: "#111",
-              marginBottom: "1rem",
-              lineHeight: 1.3,
-            }}
-          >
-            Steel Chairs & Tables – Direct from Manufacturer
-          </h2>
-          <p
-            style={{
-              fontSize: "0.95rem",
-              color: "#555",
-              lineHeight: 1.8,
-              marginBottom: "2rem",
-            }}
-          >
-            SANRA LIVING delivers high-quality steel chairs, tables, and
-            furniture sets direct from our factory. We specialize in Jindal pipe
-            steel furniture with strong welding, powder-coated finish, and
-            long-lasting durability. Available for both retail and bulk orders
-            across India.
-          </p>
+      {/* 2. Visual Categories */}
+      <CategoryGrid />
 
-          <h2
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 800,
-              color: "#111",
-              marginBottom: "1rem",
-              lineHeight: 1.3,
-            }}
-          >
-            Bulk & Custom Steel Furniture
-          </h2>
-          <p
-            style={{
-              fontSize: "0.95rem",
-              color: "#555",
-              lineHeight: 1.8,
-            }}
-          >
-            We provide bulk supply solutions for hotels, hostels, offices, and
-            institutions. Contact us directly on WhatsApp for custom orders,
-            bulk pricing, and fast delivery across Tamil Nadu, Kerala, and all
-            major Indian states.
-          </p>
-        </div>
-      </section>
+      {/* 3. Best Sellers Carousel */}
+      <FeaturedProducts 
+        title="Best Sellers" 
+        filterBy="bestseller" 
+        limit={12} 
+      />
 
-      {/* ── TRUST BADGES STRIP ─────────────────────────────── */}
+      {/* 4. New Arrivals Carousel */}
+      <FeaturedProducts 
+        title="New Arrivals" 
+        filterBy="new" 
+        limit={12} 
+      />
+
+      {/* 5. Price-based Collections */}
+      <CollectionShowcase />
+
+      {/* 6. Application/Space Showcase */}
+      <ApplicationShowcase />
+
+      {/* 7. TRUST BADGES STRIP (Why SANRA) */}
       <section style={{ background: "#1C1C1C", borderTop: "1px solid #333" }}>
         <div
           style={{
@@ -97,11 +61,10 @@ export default function Homepage() {
           }}
         >
           {[
-            { icon: "🛡️", text: "10 Year Warranty" },
-            { icon: "🏭", text: "Manufacturer Direct" },
-            { icon: "📄", text: "GST Invoice" },
-            { icon: "🚚", text: "Pan India Shipping" },
-            { icon: "🔧", text: "Customization Available" },
+            { icon: "🛡️", text: "Strong Steel Build" },
+            { icon: "✨", text: "Rust Resistant" },
+            { icon: "⏳", text: "Long Lasting" },
+            { icon: "🔧", text: "Low Maintenance" },
           ].map((badge) => (
             <div
               key={badge.text}
@@ -128,6 +91,47 @@ export default function Homepage() {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* 8. WhatsApp / Bulk CTA section */}
+      <section style={{ padding: "4rem 1.5rem", background: "#f0f0f0", textAlign: "center" }}>
+          <div style={{ maxWidth: 800, margin: "0 auto" }}>
+              <h2 style={{ fontSize: "2rem", fontWeight: 900, color: "#111", fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", marginBottom: "1rem" }}>
+                  Need Bulk Orders or Custom Quotes?
+              </h2>
+              <p style={{ fontSize: "1rem", color: "#555", marginBottom: "2rem", fontFamily: "var(--font-outfit), Outfit, Inter, sans-serif" }}>
+                  Get special pricing for commercial spaces, offices, and bulk home purchases directly via WhatsApp.
+              </p>
+              <a 
+                  href="https://wa.me/8300904920" 
+                  style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      padding: "1rem 2rem",
+                      background: "#25D366",
+                      color: "#fff",
+                      fontWeight: 800,
+                      fontSize: "1.1rem",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.05em",
+                      textDecoration: "none",
+                      borderRadius: "0.5rem",
+                      fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif",
+                      transition: "transform 0.2s ease, background 0.2s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#1da851";
+                      e.currentTarget.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#25D366";
+                      e.currentTarget.style.transform = "translateY(0)";
+                  }}
+              >
+                  Contact on WhatsApp
+              </a>
+          </div>
       </section>
 
       <SiteFooter />

@@ -4,19 +4,20 @@ export const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
 export const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
 
 export const C = {
-    bg: "#0A0A0A",
-    panel: "#141414",
-    card: "#1A1A1A",
-    border: "#252525",
-    accent: "#F0C040",
-    accentDim: "#F0C04018",
-    text: "#EDEDEA",
-    muted: "#777",
+    bg: "#F5F5F5",
+    panel: "#fff",
+    card: "#fff",
+    border: "#E6E6E6",
+    accent: "#111",
+    accentDim: "#11111118",
+    text: "#111",
+    muted: "#888",
     green: "#10B981",
     red: "#EF4444",
     blue: "#3B82F6",
     orange: "#F97316",
     purple: "#8B5CF6",
+    black: "#111",
 };
 
 export const ADMIN_EMAIL = "syedsyed3777@gmail.com";

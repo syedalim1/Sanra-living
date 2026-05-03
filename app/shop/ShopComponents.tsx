@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { optimizeImage } from "@/utils/cloudinary";
 
@@ -75,9 +76,20 @@ export function StockBadge({ status }: { status: string }) {
 }
 
 /* ── PRODUCT CARD ──────────────────────────────────────────── */
-export function ProductCard({ product, index }: { product: Product; index: number }) {
+export function ProductCard({ product, index, badge, buttonText = "View Details" }: { product: Product; index: number; badge?: string; buttonText?: string }) {
     const [hovered, setHovered] = useState(false);
     const priceDisplay = `₹${product.price.toLocaleString("en-IN")}`;
+    const router = useRouter();
+
+    const handleCardClick = () => {
+        router.push(`/shop/${product.id}`);
+    };
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        // Placeholder for Add to Cart logic
+        console.log("Added to cart:", product.id);
+    };
 
     return (
         <motion.div
@@ -86,16 +98,17 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
             transition={{ duration: 0.45, delay: index * 0.06 }}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
+            onClick={handleCardClick}
             style={{
                 background: C.white,
                 display: "flex",
                 flexDirection: "column",
                 cursor: "pointer",
                 boxShadow: hovered
-                    ? "0 8px 32px rgba(0,0,0,0.12)"
+                    ? "0 12px 48px rgba(0,0,0,0.15)"
                     : "0 2px 12px rgba(0,0,0,0.06)",
                 transition: "box-shadow 0.3s ease, transform 0.3s ease",
-                transform: hovered ? "translateY(-2px)" : "translateY(0)",
+                transform: hovered ? "translateY(-6px)" : "translateY(0)",
             }}
         >
             {/* Image Area */}
@@ -107,7 +120,11 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
                     background: "#F5F5F3",
                 }}
             >
-                <StockBadge status={product.stock_status} />
+                {badge ? (
+                    <StockBadge status={badge} />
+                ) : (
+                    <StockBadge status={product.stock_status} />
+                )}
                 <img
                     src={
                         optimizeImage(product.image_url, 600) ||
@@ -122,7 +139,8 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
                         height: "100%",
                         objectFit: "cover",
                         opacity: hovered ? 0 : 1,
-                        transition: "opacity 0.6s ease",
+                        transition: "opacity 0.6s ease, transform 0.6s ease",
+                        transform: hovered ? "scale(1.03)" : "scale(1)",
                     }}
                 />
                 <img
@@ -140,10 +158,8 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
                         height: "100%",
                         objectFit: "cover",
                         opacity: hovered ? 1 : 0,
-                        transition: "opacity 0.6s ease",
-                        transform: hovered ? "scale(1.04)" : "scale(1)",
-                        transitionProperty: "opacity, transform",
-                        transitionDuration: "0.6s",
+                        transition: "opacity 0.6s ease, transform 0.6s ease",
+                        transform: hovered ? "scale(1.03)" : "scale(1)",
                     }}
                 />
             </div>
@@ -199,15 +215,28 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
                 <div style={{ marginTop: "auto" }}>
                     <p
                         style={{
-                            fontSize: "1.25rem",
-                            fontWeight: 800,
-                            color: C.black,
+                            fontSize: "1.45rem",
+                            fontWeight: 900,
+                            color: "#000",
                             letterSpacing: "-0.02em",
                             fontFamily: FM,
                             marginBottom: "0.25rem",
                         }}
                     >
                         {priceDisplay}
+                    </p>
+                    <p
+                        style={{
+                            fontSize: "0.65rem",
+                            fontWeight: 700,
+                            letterSpacing: "0.14em",
+                            color: "#000",
+                            textTransform: "uppercase",
+                            marginBottom: "0.25rem",
+                            fontFamily: FM,
+                        }}
+                    >
+                        Strong Steel • Long Lasting
                     </p>
                     <p
                         style={{
@@ -223,29 +252,63 @@ export function ProductCard({ product, index }: { product: Product; index: numbe
                         10 Year Warranty Included
                     </p>
 
-                    <Link
-                        href={`/shop/${product.id}`}
-                        style={{ textDecoration: "none", display: "block" }}
-                    >
+                    <div style={{ display: "flex", gap: "0.5rem", flexDirection: "column" }}>
                         <button
+                            onClick={handleAddToCart}
                             style={{
                                 width: "100%",
                                 padding: "0.8rem",
-                                fontSize: "0.72rem",
-                                fontWeight: 700,
-                                letterSpacing: "0.14em",
+                                fontSize: "0.75rem",
+                                fontWeight: 800,
+                                letterSpacing: "0.1em",
                                 textTransform: "uppercase",
                                 cursor: "pointer",
                                 fontFamily: FM,
-                                background: hovered ? C.dark : "transparent",
-                                color: hovered ? "#fff" : C.dark,
-                                border: `1.5px solid ${C.dark}`,
+                                background: C.black,
+                                color: "#fff",
+                                border: `1.5px solid ${C.black}`,
                                 transition: "all 0.3s ease",
                             }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.background = "#333";
+                                e.currentTarget.style.borderColor = "#333";
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.background = C.black;
+                                e.currentTarget.style.borderColor = C.black;
+                            }}
                         >
-                            View Details
+                            Add To Cart
                         </button>
-                    </Link>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleCardClick();
+                            }}
+                            style={{
+                                width: "100%",
+                                padding: "0.8rem",
+                                fontSize: "0.75rem",
+                                fontWeight: 800,
+                                letterSpacing: "0.1em",
+                                textTransform: "uppercase",
+                                cursor: "pointer",
+                                fontFamily: FM,
+                                background: "transparent",
+                                color: C.black,
+                                border: `1.5px solid #E8E8E8`,
+                                transition: "all 0.3s ease",
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.borderColor = C.black;
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.borderColor = "#E8E8E8";
+                            }}
+                        >
+                            View Product
+                        </button>
+                    </div>
                 </div>
             </div>
         </motion.div>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Montserrat, Outfit } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { CartProvider } from "@/app/context/CartContext";
 import "./globals.css";
 
 import Script from "next/script";
@@ -215,7 +216,9 @@ export default function RootLayout({
           />
         </head>
         <body className={`${inter.variable} ${montserrat.variable} ${outfit.variable} antialiased`}>
-            {children}
+            <CartProvider>
+              {children}
+            </CartProvider>
         </body>
       </html>
     </ClerkProvider>

@@ -1,18 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useCart } from "@/app/context/CartContext";
 
 const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
+const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
 
 const NAV_LINKS = [
-    { label: "Home", href: "/" },
-    { label: "Products", href: "/shop" },
-    { label: "Bulk Orders", href: "/bulk-orders" },
-    { label: "Contact", href: "/contact" },
-];
-
-const DRAWER_LINKS = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/shop" },
     { label: "Bulk Orders", href: "/bulk-orders" },
@@ -22,6 +18,12 @@ const DRAWER_LINKS = [
 export default function SiteHeader() {
     const [scrolled, setScrolled] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [searchOpen, setSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [suggestions, setSuggestions] = useState<{ id: string; title: string; category: string }[]>([]);
+    const searchRef = useRef<HTMLDivElement>(null);
+    const router = useRouter();
+    const { totalItems } = useCart();
 
     useEffect(() => {
         const onScroll = () => setScrolled(window.scrollY > 10);
@@ -34,6 +36,47 @@ export default function SiteHeader() {
         document.body.style.overflow = drawerOpen ? "hidden" : "";
         return () => { document.body.style.overflow = ""; };
     }, [drawerOpen]);
+
+    // Close search on outside click
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+                setSearchOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handler);
+        return () => document.removeEventListener("mousedown", handler);
+    }, []);
+
+    // Debounced search suggestions
+    useEffect(() => {
+        if (searchQuery.length < 2) { setSuggestions([]); return; }
+        const t = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/products?search=${encodeURIComponent(searchQuery)}`);
+                const data = await res.json();
+                setSuggestions((data.products || []).slice(0, 5).map((p: { id: string; title: string; category: string }) => ({
+                    id: p.id, title: p.title, category: p.category,
+                })));
+            } catch { setSuggestions([]); }
+        }, 300);
+        return () => clearTimeout(t);
+    }, [searchQuery]);
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            router.push(`/shop?q=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchOpen(false);
+            setSearchQuery("");
+        }
+    };
+
+    const handleSuggestionClick = (id: string) => {
+        router.push(`/shop/${id}`);
+        setSearchOpen(false);
+        setSearchQuery("");
+    };
 
     return (
         <>
@@ -63,7 +106,7 @@ export default function SiteHeader() {
                         <span style={{ display: "block", width: 14, height: 1.5, background: "#1C1C1C", borderRadius: 1, alignSelf: "flex-start" }} />
                     </button>
 
-                    {/* ── LEFT: LOGO (desktop) / CENTER (mobile) ──── */}
+                    {/* ── LEFT: LOGO ──── */}
                     <Link href="/" style={{ textDecoration: "none", lineHeight: 1 }}>
                         <div style={{ fontSize: "1.15rem", fontWeight: 900, letterSpacing: "0.08em", color: "#111", textTransform: "uppercase", fontFamily: FM }}>
                             SANRA LIVING
@@ -91,8 +134,40 @@ export default function SiteHeader() {
                         ))}
                     </nav>
 
-                    {/* ── RIGHT: WhatsApp CTA ─────────────────────── */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                    {/* ── RIGHT: SEARCH + CART + WHATSAPP ────────── */}
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                        
+                        {/* Search Toggle */}
+                        <button
+                            onClick={() => setSearchOpen(!searchOpen)}
+                            aria-label="Search"
+                            style={{ background: "none", border: "none", cursor: "pointer", padding: "0.4rem", color: "#333" }}
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                        </button>
+
+                        {/* Cart Icon */}
+                        <Link href="/cart" style={{ position: "relative", color: "#333", textDecoration: "none", padding: "0.4rem" }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+                            </svg>
+                            {totalItems > 0 && (
+                                <span style={{
+                                    position: "absolute", top: -2, right: -4,
+                                    background: "#111", color: "#fff",
+                                    fontSize: "0.6rem", fontWeight: 800,
+                                    width: 18, height: 18, borderRadius: "50%",
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    fontFamily: FM,
+                                }}>
+                                    {totalItems}
+                                </span>
+                            )}
+                        </Link>
+
+                        {/* WhatsApp CTA (desktop) */}
                         <a
                             href="https://wa.me/8300904920?text=Hi!%20I'm%20interested%20in%20SANRA%20LIVING%20steel%20furniture."
                             target="_blank"
@@ -106,7 +181,6 @@ export default function SiteHeader() {
                                 letterSpacing: "0.08em", textTransform: "uppercase",
                                 textDecoration: "none", fontFamily: FM,
                                 borderRadius: 4,
-                                transition: "background 0.2s",
                             }}
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff">
@@ -116,6 +190,64 @@ export default function SiteHeader() {
                         </a>
                     </div>
                 </div>
+
+                {/* ── SEARCH BAR (Dropdown) ──────────────────────────── */}
+                {searchOpen && (
+                    <div ref={searchRef} style={{
+                        position: "absolute", top: "100%", left: 0, right: 0,
+                        background: "#fff", borderBottom: "1px solid #E6E6E6",
+                        boxShadow: "0 4px 16px rgba(0,0,0,0.08)", padding: "1rem 1.5rem",
+                        zIndex: 100,
+                    }}>
+                        <form onSubmit={handleSearch} style={{ maxWidth: 600, margin: "0 auto", position: "relative" }}>
+                            <input
+                                autoFocus
+                                type="text"
+                                placeholder="Search products, categories…"
+                                value={searchQuery}
+                                onChange={e => setSearchQuery(e.target.value)}
+                                style={{
+                                    width: "100%", padding: "0.875rem 1rem 0.875rem 2.75rem",
+                                    border: "1px solid #ccc", borderRadius: "6px",
+                                    fontSize: "1rem", fontFamily: FO, outline: "none",
+                                    boxSizing: "border-box",
+                                }}
+                            />
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }}>
+                                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+
+                            {/* Suggestions */}
+                            {suggestions.length > 0 && (
+                                <div style={{
+                                    position: "absolute", top: "100%", left: 0, right: 0,
+                                    background: "#fff", border: "1px solid #E6E6E6",
+                                    borderRadius: "0 0 6px 6px", boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                                    marginTop: 2,
+                                }}>
+                                    {suggestions.map((s) => (
+                                        <button
+                                            key={s.id}
+                                            type="button"
+                                            onClick={() => handleSuggestionClick(s.id)}
+                                            style={{
+                                                display: "flex", justifyContent: "space-between", alignItems: "center",
+                                                width: "100%", padding: "0.75rem 1rem",
+                                                background: "none", border: "none", borderBottom: "1px solid #f5f5f5",
+                                                cursor: "pointer", textAlign: "left",
+                                            }}
+                                            onMouseEnter={e => e.currentTarget.style.background = "#fafafa"}
+                                            onMouseLeave={e => e.currentTarget.style.background = "none"}
+                                        >
+                                            <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "#111", fontFamily: FO }}>{s.title}</span>
+                                            <span style={{ fontSize: "0.75rem", color: "#999", fontFamily: FM }}>{s.category}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </form>
+                    </div>
+                )}
             </header>
 
             {/* ── MOBILE DRAWER OVERLAY ─────────────────────────────── */}
@@ -150,7 +282,7 @@ export default function SiteHeader() {
 
                 {/* Drawer links */}
                 <nav style={{ padding: "0.75rem 0", flex: 1 }}>
-                    {DRAWER_LINKS.map((link) => (
+                    {NAV_LINKS.map((link) => (
                         <Link key={link.href} href={link.href} onClick={() => setDrawerOpen(false)}
                             style={{
                                 display: "block", padding: "0.9rem 1.5rem",
@@ -161,6 +293,16 @@ export default function SiteHeader() {
                             {link.label}
                         </Link>
                     ))}
+                    <Link href="/cart" onClick={() => setDrawerOpen(false)}
+                        style={{
+                            display: "flex", alignItems: "center", gap: "0.5rem",
+                            padding: "0.9rem 1.5rem",
+                            fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.1em",
+                            textTransform: "uppercase", color: "#111", textDecoration: "none",
+                            fontFamily: FM, borderBottom: "1px solid #F5F5F5",
+                        }}>
+                        🛒 Cart {totalItems > 0 && `(${totalItems})`}
+                    </Link>
                 </nav>
 
                 {/* Drawer WhatsApp CTA */}
