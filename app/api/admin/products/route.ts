@@ -34,6 +34,9 @@ export async function POST(req: NextRequest) {
             title, subtitle, price, category, finish,
             stock_status, stock_qty, image_url, hover_image_url,
             is_new, images, description, video_url, video_thumbnail,
+            sku, compare_at_price, highlights, material, steel_thickness, warranty,
+            weight_kg, dimensions, dispatch_time, tags, badges,
+            seo_title, seo_description, seo_keywords, faqs, whatsapp_message, slug
         } = body;
 
         if (!title || !price || !category) {
@@ -44,7 +47,6 @@ export async function POST(req: NextRequest) {
             .from("products")
             .insert({
                 title,
-                subtitle: subtitle ?? "",
                 price: Number(price),
                 category,
                 finish: finish ?? "Matte Black",
@@ -58,6 +60,23 @@ export async function POST(req: NextRequest) {
                 description: description ?? "",
                 is_new: is_new ?? false,
                 is_active: true,
+                sku: sku ?? "",
+                compare_at_price: compare_at_price ? Number(compare_at_price) : null,
+                highlights: highlights ?? [],
+                material: material ?? "",
+                steel_thickness: steel_thickness ?? "",
+                warranty: warranty ?? "",
+                weight_kg: weight_kg ? Number(weight_kg) : null,
+                dimensions: dimensions ?? "",
+                dispatch_time: dispatch_time ?? "2-5 Business Days",
+                tags: tags ?? [],
+                badges: badges ?? [],
+                seo_title: seo_title ?? "",
+                seo_description: seo_description ?? "",
+                seo_keywords: seo_keywords ?? "",
+                faqs: faqs ?? [],
+                whatsapp_message: whatsapp_message ?? "",
+                slug: slug ?? "",
             })
             .select()
             .single();

@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
                         }
                         : {
                             transformation: [
-                                { quality: "auto:good", fetch_format: "auto" },
+                                { width: 800, height: 1000, crop: "fill", gravity: "auto", quality: "auto:good", fetch_format: "auto" },
                             ],
                         }),
                 },

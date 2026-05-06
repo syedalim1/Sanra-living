@@ -69,7 +69,7 @@ export default function FeaturedProducts({ title, filterBy, category, limit = 8 
     if (!products.length) return null;
 
     return (
-        <section style={{ padding: "3.5rem 1.5rem", background: "#fff", borderBottom: "1px solid #eee" }}>
+        <section style={{ padding: "2.5rem 1.5rem", background: "#fff", borderBottom: "1px solid #eee" }}>
             <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "1.5rem" }}>
                     <h2
@@ -87,15 +87,31 @@ export default function FeaturedProducts({ title, filterBy, category, limit = 8 
                     <Link
                         href="/shop"
                         style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            padding: "0.5rem 1.25rem",
                             fontSize: "0.875rem",
-                            fontWeight: 600,
-                            color: "#007185", // Amazon-like link color
-                            fontFamily: FO,
+                            fontWeight: 700,
+                            color: "#111",
+                            background: "#f0f0f0",
+                            borderRadius: "0.25rem",
+                            fontFamily: FM,
+                            textTransform: "uppercase",
+                            letterSpacing: "0.05em",
                             textDecoration: "none",
+                            transition: "all 0.2s ease",
                         }}
-                        className="hover:underline"
+                        onMouseEnter={(e) => {
+                            e.currentTarget.style.background = "#111";
+                            e.currentTarget.style.color = "#fff";
+                        }}
+                        onMouseLeave={(e) => {
+                            e.currentTarget.style.background = "#f0f0f0";
+                            e.currentTarget.style.color = "#111";
+                        }}
                     >
-                        See more
+                        View All
                     </Link>
                 </div>
 
@@ -110,7 +126,7 @@ export default function FeaturedProducts({ title, filterBy, category, limit = 8 
                     }}
                 >
                     {products.map((p, i) => (
-                        <div key={p.id} style={{ width: "280px", flexShrink: 0, scrollSnapAlign: "start" }}>
+                        <div key={p.id} style={{ width: "min(85vw, 280px)", flexShrink: 0, scrollSnapAlign: "start" }}>
                             <ProductCard 
                                 product={p} 
                                 index={i} 

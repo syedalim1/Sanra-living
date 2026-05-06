@@ -10,7 +10,7 @@ export default function HeroSection() {
             className="sl-hero"
             style={{
                 position: "relative",
-                backgroundImage: "url('https://images.unsplash.com/photo-1586023492125-27b2c045efd7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80')",
+                backgroundImage: "url('/images/HERO_IMAGE.png')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 minHeight: "80vh",
@@ -36,9 +36,25 @@ export default function HeroSection() {
                             gap: "0.25rem"
                         }}
                     >
-                        <span>Premium Steel Living.</span>
-                        <span style={{ fontWeight: 400, fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}>Built to Last.</span>
+                        <span>Luxury Steel Furniture</span>
+                        <span style={{ fontWeight: 400, fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}>Built for Modern Indian Spaces.</span>
                     </h1>
+
+                    <ul style={{ 
+                        display: "flex", 
+                        flexDirection: "column", 
+                        gap: "0.5rem", 
+                        color: "#f5f5f5", 
+                        fontSize: "clamp(1rem, 2vw, 1.15rem)", 
+                        fontFamily: FO,
+                        marginTop: "0.5rem",
+                        listStyle: "none",
+                        padding: 0
+                    }}>
+                        <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><span style={{ color: "#25D366" }}>✓</span> Premium Powder-Coated Steel</li>
+                        <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><span style={{ color: "#25D366" }}>✓</span> Long-Lasting Durability</li>
+                        <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><span style={{ color: "#25D366" }}>✓</span> Unmatched Build Quality</li>
+                    </ul>
 
                     <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexWrap: "wrap" }}>
                         <Link

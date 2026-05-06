@@ -112,8 +112,8 @@ export default function ImageUploader({ images, onImagesChange, adminKey, maxIma
             {/* Preview */}
             {images.length > 0 ? (
                 <div style={{
-                    aspectRatio: "16/9", background: "#111", borderRadius: 8, overflow: "hidden",
-                    marginBottom: "1rem", border: `1px solid ${C.border}`, position: "relative",
+                    aspectRatio: "4/5", borderRadius: 8, overflow: "hidden",
+                    marginBottom: "1rem", border: `1px solid ${C.border}`, position: "relative", maxWidth: 400, margin: "0 auto 1rem"
                 }}>
                     <img src={images[activeThumb]} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
                     {/* Nav arrows */}
@@ -133,14 +133,14 @@ export default function ImageUploader({ images, onImagesChange, adminKey, maxIma
                     onDragLeave={() => setDragOver(false)}
                     onDrop={handleDrop}
                     style={{
-                        aspectRatio: "16/9", background: dragOver ? `${C.accent}08` : "#0F0F0F",
+                        aspectRatio: "4/5", background: dragOver ? `${C.accent}08` : "#FAFAFA",
                         borderRadius: 8, display: "flex", flexDirection: "column", alignItems: "center",
                         justifyContent: "center", marginBottom: "1rem", cursor: "pointer",
                         border: `2px dashed ${dragOver ? C.accent : C.border}`,
-                        transition: "all 0.2s",
+                        transition: "all 0.2s", maxWidth: 400, margin: "0 auto 1rem"
                     }}
                 >
-                    <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem", opacity: 0.4 }}>📸</div>
+                    <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem", opacity: 0.8 }}>📸</div>
                     <p style={{ fontSize: "0.88rem", color: C.text, fontFamily: FM, fontWeight: 700, marginBottom: "0.375rem" }}>
                         {uploading ? uploadProgress : "Drop images here or click to upload"}
                     </p>
@@ -166,7 +166,7 @@ export default function ImageUploader({ images, onImagesChange, adminKey, maxIma
                                 {i < images.length - 1 && <button type="button" onClick={() => moveImage(i, i + 1)} style={{ background: "none", border: `1px solid ${C.border}`, color: C.muted, cursor: "pointer", fontSize: "0.55rem", padding: "1px 4px", borderRadius: 3 }}>→</button>}
                                 <button type="button" onClick={() => removeImage(i)} style={{ background: "none", border: `1px solid ${C.red}33`, color: C.red, cursor: "pointer", fontSize: "0.55rem", padding: "1px 4px", borderRadius: 3 }}>✕</button>
                             </div>
-                            {i === 0 && <div style={{ position: "absolute", top: -5, left: -5, background: C.accent, color: "#111", fontSize: "0.45rem", fontWeight: 900, fontFamily: FM, padding: "1px 4px", borderRadius: 8 }}>PRIMARY</div>}
+                            {i === 0 && <div style={{ position: "absolute", top: -5, left: -5, background: C.accent, color: "#fff", fontSize: "0.45rem", fontWeight: 900, fontFamily: FM, padding: "2px 6px", borderRadius: 8 }}>MAIN PRODUCT IMAGE</div>}
                         </div>
                     ))}
 
@@ -175,7 +175,7 @@ export default function ImageUploader({ images, onImagesChange, adminKey, maxIma
                         <div
                             onClick={() => fileInputRef.current?.click()}
                             style={{
-                                width: 64, height: 64, background: "#0F0F0F", borderRadius: 6,
+                                width: 64, height: 64, background: "#FAFAFA", borderRadius: 6,
                                 border: `2px dashed ${C.border}`, display: "flex", alignItems: "center",
                                 justifyContent: "center", cursor: "pointer", fontSize: "1.2rem", color: C.muted,
                             }}
@@ -213,7 +213,7 @@ export default function ImageUploader({ images, onImagesChange, adminKey, maxIma
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading || images.length >= maxImages}
                     style={{
-                        padding: "0.625rem 1.25rem", background: C.accent, color: "#111", fontWeight: 900,
+                        padding: "0.625rem 1.25rem", background: C.accent, color: "#fff", fontWeight: 900,
                         fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase",
                         border: "none", cursor: uploading ? "not-allowed" : "pointer", borderRadius: 6,
                         fontFamily: FM, opacity: uploading ? 0.6 : 1,
@@ -226,9 +226,9 @@ export default function ImageUploader({ images, onImagesChange, adminKey, maxIma
                         value={manualUrl}
                         onChange={e => setManualUrl(e.target.value)}
                         placeholder="Or paste image URL…"
-                        onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addManualUrl())}
+                        onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addManualUrl(); } }}
                         style={{
-                            background: "#0F0F0F", border: `1px solid ${C.border}`, color: C.text,
+                            background: "#FAFAFA", border: `1px solid ${C.border}`, color: C.text,
                             fontSize: "0.78rem", fontFamily: FO, borderRadius: 6,
                             padding: "0.625rem 0.875rem", flex: 1, boxSizing: "border-box",
                         }}

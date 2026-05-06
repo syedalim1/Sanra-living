@@ -7,24 +7,24 @@ import { FM, FO } from "../../shop/ShopComponents";
 const applications = [
     {
         title: "Home Use",
-        image: "https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&q=80",
+        image: "/images/HOME.png",
         href: "/shop",
     },
     {
         title: "Office Use",
-        image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=600&q=80",
+        image: "/images/OFFICES.png",
         href: "/shop/workspace",
     },
     {
         title: "Commercial Use",
-        image: "https://images.unsplash.com/photo-1598928506311-c55e5bc7ad37?w=600&q=80",
+        image: "/images/COMMERCIAL.png",
         href: "/shop/commercial",
     },
 ];
 
 export default function ApplicationShowcase() {
     return (
-        <section style={{ padding: "4rem 1.5rem", background: "#fff" }}>
+        <section style={{ padding: "2.5rem 1.5rem", background: "#fff" }}>
             <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                 <h2
                     style={{

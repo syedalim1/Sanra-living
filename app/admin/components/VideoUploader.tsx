@@ -135,7 +135,7 @@ export default function VideoUploader({ videoUrl, videoThumbnail, onVideoChange,
                     onDragLeave={() => setDragOver(false)}
                     onDrop={handleDrop}
                     style={{
-                        aspectRatio: "16/9", background: dragOver ? `${C.accent}08` : "#0F0F0F",
+                        aspectRatio: "16/9", background: dragOver ? `${C.accent}08` : "#FAFAFA",
                         borderRadius: 8, display: "flex", flexDirection: "column",
                         alignItems: "center", justifyContent: "center",
                         marginBottom: "1rem", cursor: uploading ? "wait" : "pointer",
@@ -156,12 +156,12 @@ export default function VideoUploader({ videoUrl, videoThumbnail, onVideoChange,
                         </>
                     ) : (
                         <>
-                            <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem", opacity: 0.4 }}>🎬</div>
+                            <div style={{ fontSize: "2.5rem", marginBottom: "0.75rem", opacity: 0.8 }}>🎬</div>
                             <p style={{ fontSize: "0.88rem", color: C.text, fontFamily: FM, fontWeight: 700, marginBottom: "0.375rem" }}>
                                 Drop video here or click to upload
                             </p>
                             <p style={{ fontSize: "0.68rem", color: C.muted, fontFamily: FO }}>
-                                MP4, WebM, MOV · Max 100MB · Auto-optimized by Cloudinary
+                                MP4, WebM, MOV · Max 100MB · Auto-optimized
                             </p>
                         </>
                     )}

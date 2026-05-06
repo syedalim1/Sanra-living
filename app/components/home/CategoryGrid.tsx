@@ -8,38 +8,38 @@ const categories = [
     {
         name: "Chairs",
         href: "/shop/seating",
-        image: "https://images.unsplash.com/photo-1506439016147-380d19bdcb55?auto=format&fit=crop&w=800&q=80",
+        image: "/images/CHAIRS.png",
     },
     {
         name: "Tables",
         href: "/shop/tables",
-        image: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=800&q=80",
+        image: "/images/TABLES.png",
     },
     {
         name: "Sets",
         href: "/shop/commercial",
-        image: "https://images.unsplash.com/photo-1554295405-abb8fd54f153?auto=format&fit=crop&w=800&q=80",
+        image: "/images/SETS.png",
     },
     {
         name: "Office",
         href: "/shop/workspace",
-        image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?auto=format&fit=crop&w=800&q=80",
+        image: "/images/OFFICES.png",
     },
     {
         name: "Home",
         href: "/shop/living",
-        image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=800&q=80",
+        image: "/images/HOME.png",
     },
     {
         name: "Commercial",
         href: "/shop/commercial",
-        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80",
+        image: "/images/COMMERCIAL.png",
     },
 ];
 
 export default function CategoryGrid() {
     return (
-        <section style={{ padding: "4rem 1.5rem", background: "#fff", borderBottom: "1px solid #eee" }}>
+        <section style={{ padding: "2.5rem 1.5rem", background: "#fff", borderBottom: "1px solid #eee" }}>
             <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                 <h2 style={{
                     fontSize: "2rem",

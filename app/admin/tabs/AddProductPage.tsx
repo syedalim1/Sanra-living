@@ -22,15 +22,17 @@ const STOCK_STATUSES = ["In Stock", "Only 12 Left", "Only 3 Left", "New", "Limit
 
 export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
     const [saving, setSaving] = useState(false);
+    const [success, setSuccess] = useState(false);
+    const [publishedId, setPublishedId] = useState("");
     const [error, setError] = useState("");
     const [tagInput, setTagInput] = useState("");
+    const [showKeywords, setShowKeywords] = useState(false);
 
     const [aplusBlocks, setAplusBlocks] = useState<AplusBlock[]>([]);
     const [aplusError, setAplusError] = useState("");
 
     const [form, setForm] = useState({
         title: "",
-        subtitle: "",
         price: "",
         compare_at_price: "",
         category: CATEGORIES[0],
@@ -45,7 +47,36 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
         dimensions: "",
         tags: [] as string[],
         is_new: false,
+        sku: "",
+        highlights: [] as string[],
+        material: "",
+        steel_thickness: "",
+        warranty: "",
+        dispatch_time: "2-5 Business Days",
+        badges: [] as string[],
+        seo_title: "",
+        seo_description: "",
+        seo_keywords: "",
+        faqs: [] as { question: string, answer: string }[],
+        whatsapp_message: "",
     });
+
+    React.useEffect(() => {
+        const draft = localStorage.getItem("sanra_product_draft");
+        if (draft) {
+            try { setForm(JSON.parse(draft)); } catch (e) {}
+        }
+    }, []);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            if (form.title || form.price) localStorage.setItem("sanra_product_draft", JSON.stringify(form));
+        }, 5000);
+        return () => clearTimeout(timer);
+    }, [form]);
+
+    const [highlightInput, setHighlightInput] = useState("");
+    const [badgeInput, setBadgeInput] = useState("");
 
     const inp: React.CSSProperties = {
         background: "#fff", border: `1px solid ${C.border}`, color: C.text,
@@ -63,6 +94,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
     };
 
     const addTag = () => {
+        if (form.tags.length >= 10) return;
         const t = tagInput.trim();
         if (!t || form.tags.includes(t)) return;
         setForm(f => ({ ...f, tags: [...f.tags, t] }));
@@ -72,7 +104,47 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
         setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }));
     };
 
+    const addHighlight = () => {
+        setForm(f => ({ ...f, highlights: [...f.highlights, ""] }));
+    };
+    const updateHighlight = (index: number, value: string) => {
+        setForm(f => {
+            const h = [...f.highlights];
+            h[index] = value;
+            return { ...f, highlights: h };
+        });
+    };
+    const removeHighlight = (index: number) => {
+        setForm(f => ({ ...f, highlights: f.highlights.filter((_, i) => i !== index) }));
+    };
+
+    const addBadge = () => {
+        const b = badgeInput.trim();
+        if (!b || form.badges.includes(b)) return;
+        setForm(f => ({ ...f, badges: [...f.badges, b] }));
+        setBadgeInput("");
+    };
+    const removeBadge = (b: string) => {
+        setForm(f => ({ ...f, badges: f.badges.filter(x => x !== b) }));
+    };
+
+    const addFaq = () => {
+        if (form.faqs.length >= 3) return;
+        setForm(f => ({ ...f, faqs: [...f.faqs, { question: "", answer: "" }] }));
+    };
+    const updateFaq = (index: number, field: "question" | "answer", value: string) => {
+        setForm(f => {
+            const newFaqs = [...f.faqs];
+            newFaqs[index][field] = value;
+            return { ...f, faqs: newFaqs };
+        });
+    };
+    const removeFaq = (index: number) => {
+        setForm(f => ({ ...f, faqs: f.faqs.filter((_, i) => i !== index) }));
+    };
+
     const addAplusBlock = () => {
+        if (aplusBlocks.length >= 7) return;
         setAplusBlocks(prev => [...prev, { title: "", description: "", image_url: "" }]);
     };
 
@@ -90,8 +162,8 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
             setError("Title, Price, and Category are required.");
             return;
         }
-        if (aplusBlocks.length > 0 && aplusBlocks.length < 5) {
-            setAplusError("Minimum 5 A+ blocks required. Add more or remove all.");
+        if (aplusBlocks.length > 0 && aplusBlocks.length < 3) {
+            setAplusError("Minimum 3 A+ blocks required. Add more or remove all.");
             return;
         }
         
@@ -99,9 +171,9 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
         setError("");
         setAplusError("");
         try {
+            const generatedSlug = form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
             const body = {
                 title: form.title,
-                subtitle: form.subtitle,
                 price: Number(form.price),
                 compare_at_price: form.compare_at_price ? Number(form.compare_at_price) : null,
                 category: form.category,
@@ -118,6 +190,19 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 dimensions: form.dimensions,
                 tags: form.tags,
                 is_new: form.is_new,
+                sku: form.sku,
+                highlights: form.highlights,
+                material: form.material,
+                steel_thickness: form.steel_thickness,
+                warranty: form.warranty,
+                dispatch_time: form.dispatch_time,
+                badges: form.badges,
+                seo_title: form.seo_title,
+                seo_description: form.seo_description,
+                seo_keywords: form.seo_keywords,
+                faqs: form.faqs,
+                whatsapp_message: form.whatsapp_message,
+                slug: generatedSlug,
             };
             const res = await fetch("/api/admin/products", {
                 method: "POST",
@@ -132,7 +217,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
             const productData = await res.json();
             const newProductId = productData.product?.id;
 
-            if (newProductId && aplusBlocks.length >= 5) {
+            if (newProductId && aplusBlocks.length >= 3) {
                 const aplusRes = await fetch("/api/admin/aplus", {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
@@ -143,7 +228,9 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 }
             }
 
-            onSaved();
+            localStorage.removeItem("sanra_product_draft");
+            setPublishedId(newProductId);
+            setSuccess(true);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to create product");
         } finally {
@@ -151,8 +238,27 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
         }
     };
 
+    if (success) {
+        return (
+            <div style={{ maxWidth: 600, margin: "4rem auto", textAlign: "center", background: C.card, border: `1px solid ${C.border}`, padding: "3rem 2rem", borderRadius: 12 }}>
+                <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✅</div>
+                <h2 style={{ fontSize: "1.5rem", fontWeight: 900, color: C.text, fontFamily: FM, marginBottom: "0.5rem" }}>Product Published Successfully</h2>
+                <p style={{ color: C.muted, fontFamily: FO, fontSize: "0.9rem", marginBottom: "2rem" }}>Your product is now live on the store.</p>
+                <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
+                    <button onClick={onSaved} style={{ padding: "0.75rem 1.5rem", background: "transparent", border: `1px solid ${C.border}`, color: C.text, fontWeight: 700, borderRadius: 6, cursor: "pointer", fontFamily: FM }}>← Back to Products</button>
+                    <button onClick={() => window.open(`/shop`, "_blank")} style={{ padding: "0.75rem 1.5rem", background: C.accent, border: "none", color: "#111", fontWeight: 900, borderRadius: 6, cursor: "pointer", fontFamily: FM }}>View Product ↗</button>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div style={{ maxWidth: 900, margin: "0 auto" }}>
+            <style>{`
+                @media (max-width: 768px) {
+                    .admin-grid { grid-template-columns: 1fr !important; }
+                }
+            `}</style>
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
                 <div>
@@ -164,24 +270,24 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
             </div>
 
             {error && (
-                <div style={{ background: `${C.red}15`, border: `1px solid ${C.red}44`, padding: "0.75rem 1rem", borderRadius: 8, marginBottom: "1.5rem", fontSize: "0.82rem", color: C.red, fontFamily: FO }}>
+                <div style={{ background: `${C.red}15`, border: `1px solid ${C.red}44`, padding: "0.75rem 1rem", borderRadius: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: C.red, fontFamily: FO }}>
                     {error}
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
 
                 {/* BASIC INFO */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
                     <p style={sectionTitle}>Basic Information</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div style={{ gridColumn: "1/-1" }}>
                             <label style={lbl}>Title *</label>
                             <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. SL Edge Shelf" style={inp} required />
                         </div>
-                        <div style={{ gridColumn: "1/-1" }}>
-                            <label style={lbl}>Subtitle</label>
-                            <input value={form.subtitle} onChange={e => setForm(f => ({ ...f, subtitle: e.target.value }))} placeholder="e.g. Entryway Steel Organizer" style={inp} />
+                        <div>
+                            <label style={lbl}>SKU / Product Code</label>
+                            <input value={form.sku} onChange={e => setForm(f => ({ ...f, sku: e.target.value }))} placeholder="e.g. SL-CHR-001" style={inp} />
                         </div>
                         <div>
                             <label style={lbl}>Category *</label>
@@ -199,9 +305,9 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 </section>
 
                 {/* PRICING */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
                     <p style={sectionTitle}>Pricing</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                         <div>
                             <label style={lbl}>Selling Price (₹) *</label>
                             <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="2499" style={inp} required />
@@ -219,7 +325,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 </section>
 
                 {/* IMAGES — CLOUDINARY UPLOAD */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
                     <p style={sectionTitle}>Product Images</p>
                     <ImageUploader
                         images={form.images}
@@ -229,7 +335,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 </section>
 
                 {/* PRODUCT VIDEO */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
                     <p style={sectionTitle}>Product Video (optional)</p>
                     <p style={{ fontSize: "0.72rem", color: C.muted, fontFamily: FO, marginBottom: "1rem" }}>Upload a product showcase video. It will autoplay (muted) on the product page for a premium experience.</p>
                     <VideoUploader
@@ -241,9 +347,9 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 </section>
 
                 {/* INVENTORY */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
                     <p style={sectionTitle}>Inventory</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
+                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
                         <div>
                             <label style={lbl}>Stock Qty</label>
                             <input type="number" value={form.stock_qty} onChange={e => setForm(f => ({ ...f, stock_qty: e.target.value }))} style={inp} />
@@ -262,36 +368,75 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 </section>
 
                 {/* DESCRIPTION */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
                     <p style={sectionTitle}>Description</p>
                     <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={6} placeholder="Detailed product description…" style={{ ...inp, resize: "vertical", lineHeight: 1.7 }} />
                 </section>
 
+                {/* HIGHLIGHTS */}
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                        <p style={sectionTitle}>Product Highlights</p>
+                        <button type="button" onClick={addHighlight} style={{ padding: "0.5rem 1.25rem", background: "transparent", border: `1px solid ${C.accent}`, color: C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>
+                            + Add Bullet
+                        </button>
+                    </div>
+                    {form.highlights.length === 0 ? (
+                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, textAlign: "center", padding: "1rem 0" }}>No highlights added.</p>
+                    ) : (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                            {form.highlights.map((h, i) => (
+                                <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                    <span style={{ color: C.accent, fontSize: "1.2rem" }}>•</span>
+                                    <input value={h} onChange={e => updateHighlight(i, e.target.value)} placeholder="e.g. Heavy Duty Steel Frame" style={{ ...inp, flex: 1 }} />
+                                    <button type="button" onClick={() => removeHighlight(i)} style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: "0.82rem", fontWeight: 700, padding: "0.5rem" }}>✕</button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
                 {/* SHIPPING & SPECS */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
-                    <p style={sectionTitle}>Shipping & Specifications</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
+                    <p style={sectionTitle}>Specifications & Shipping</p>
+                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                        <div>
+                            <label style={lbl}>Material</label>
+                            <input value={form.material} onChange={e => setForm(f => ({ ...f, material: e.target.value }))} placeholder="e.g. Jindal Stainless Steel" style={inp} />
+                        </div>
+                        <div>
+                            <label style={lbl}>Steel Thickness</label>
+                            <input value={form.steel_thickness} onChange={e => setForm(f => ({ ...f, steel_thickness: e.target.value }))} placeholder="e.g. 1.2mm" style={inp} />
+                        </div>
                         <div>
                             <label style={lbl}>Weight (kg)</label>
                             <input type="number" step="0.1" value={form.weight_kg} onChange={e => setForm(f => ({ ...f, weight_kg: e.target.value }))} placeholder="e.g. 4.5" style={inp} />
                         </div>
                         <div>
                             <label style={lbl}>Dimensions (L × W × H cm)</label>
-                            <input value={form.dimensions} onChange={e => setForm(f => ({ ...f, dimensions: e.target.value }))} placeholder="e.g. 60 × 30 × 45" style={inp} />
+                            <input value={form.dimensions} onChange={e => setForm(f => ({ ...f, dimensions: e.target.value }))} placeholder="e.g. 18 x 18 x 36 Inches" style={inp} />
+                        </div>
+                        <div>
+                            <label style={lbl}>Warranty (Optional)</label>
+                            <input value={form.warranty} onChange={e => setForm(f => ({ ...f, warranty: e.target.value }))} placeholder="e.g. 3 Years Replacement" style={inp} />
+                        </div>
+                        <div>
+                            <label style={lbl}>Dispatch Time</label>
+                            <input value={form.dispatch_time} onChange={e => setForm(f => ({ ...f, dispatch_time: e.target.value }))} placeholder="e.g. 2-5 Business Days" style={inp} />
                         </div>
                     </div>
                 </section>
 
                 {/* A+ CONTENT */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
                         <div>
                             <p style={sectionTitle}>A+ Content</p>
                             <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginTop: "-0.5rem" }}>
-                                Add rich content blocks displayed below the product. Minimum 5 blocks required.
+                                Add rich content blocks displayed below the product. Min 3 blocks.
                             </p>
                         </div>
-                        <button type="button" onClick={addAplusBlock} style={{ padding: "0.5rem 1.25rem", background: C.accent, color: "#fff", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, border: "none", whiteSpace: "nowrap" }}>
+                        <button type="button" disabled={aplusBlocks.length >= 7} onClick={addAplusBlock} style={{ padding: "0.5rem 1.25rem", background: aplusBlocks.length >= 7 ? "#ccc" : C.accent, color: aplusBlocks.length >= 7 ? "#666" : "#fff", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: aplusBlocks.length >= 7 ? "not-allowed" : "pointer", borderRadius: 6, fontFamily: FM, border: "none", whiteSpace: "nowrap" }}>
                             + Add Block
                         </button>
                     </div>
@@ -338,8 +483,8 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 </section>
 
                 {/* TAGS */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.5rem" }}>
-                    <p style={sectionTitle}>Tags</p>
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
+                    <p style={sectionTitle}>Tags (Max 10)</p>
                     {form.tags.length > 0 && (
                         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.875rem" }}>
                             {form.tags.map(tag => (
@@ -356,18 +501,115 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                     </div>
                 </section>
 
+                {/* BADGES */}
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
+                    <p style={sectionTitle}>Product Badges</p>
+                    <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginBottom: "1rem" }}>e.g. Best Seller, Premium, Commercial Grade</p>
+                    {form.badges.length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.875rem" }}>
+                            {form.badges.map(b => (
+                                <span key={b} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.3rem 0.7rem", background: `${C.black}`, borderRadius: 4, fontSize: "0.72rem", color: "#fff", fontFamily: FM, fontWeight: 600 }}>
+                                    {b}
+                                    <button type="button" onClick={() => removeBadge(b)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: "0.72rem", padding: 0, lineHeight: 1 }}>✕</button>
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                        <select value={badgeInput} onChange={e => setBadgeInput(e.target.value)} style={{ ...inp, flex: 1, cursor: "pointer" }}>
+                            <option value="">Select a badge...</option>
+                            <option value="Best Seller">Best Seller</option>
+                            <option value="New Arrival">New Arrival</option>
+                            <option value="Premium">Premium</option>
+                            <option value="Commercial Grade">Commercial Grade</option>
+                            <option value="Luxury Collection">Luxury Collection</option>
+                        </select>
+                        <button type="button" onClick={addBadge} style={{ padding: "0 1.25rem", background: "transparent", border: `1px solid ${C.accent}`, color: C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>+ Add</button>
+                    </div>
+                </section>
+
+                {/* SEO */}
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
+                    <p style={sectionTitle}>Search Engine Optimization</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                        <div>
+                            <label style={lbl}>SEO Title</label>
+                            <input value={form.seo_title} onChange={e => setForm(f => ({ ...f, seo_title: e.target.value }))} placeholder="Title for Google Search" style={inp} />
+                        </div>
+                        <div>
+                            <label style={lbl}>SEO Meta Description</label>
+                            <textarea value={form.seo_description} onChange={e => setForm(f => ({ ...f, seo_description: e.target.value }))} rows={2} placeholder="Brief summary of the product for search results..." style={{ ...inp, resize: "vertical" }} />
+                        </div>
+                        
+                        <div style={{ marginTop: "0.5rem" }}>
+                            <button type="button" onClick={() => setShowKeywords(!showKeywords)} style={{ background: "none", border: "none", color: C.accent, fontWeight: 700, fontSize: "0.72rem", cursor: "pointer", fontFamily: FM, textTransform: "uppercase", letterSpacing: "0.1em", padding: 0 }}>
+                                {showKeywords ? "− Hide Advanced Keywords" : "+ Show Advanced Keywords"}
+                            </button>
+                            {showKeywords && (
+                                <div style={{ marginTop: "1rem" }}>
+                                    <label style={lbl}>SEO Keywords</label>
+                                    <input value={form.seo_keywords} onChange={e => setForm(f => ({ ...f, seo_keywords: e.target.value }))} placeholder="e.g. steel chair, banquet chair, hotel furniture" style={inp} />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </section>
+
+                {/* FAQS */}
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                        <p style={sectionTitle}>FAQ Section (Max 3)</p>
+                        <button type="button" disabled={form.faqs.length >= 3} onClick={addFaq} style={{ padding: "0.5rem 1.25rem", background: "transparent", border: `1px solid ${form.faqs.length >= 3 ? "#ccc" : C.accent}`, color: form.faqs.length >= 3 ? "#999" : C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: form.faqs.length >= 3 ? "not-allowed" : "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>
+                            + Add FAQ
+                        </button>
+                    </div>
+                    {form.faqs.length === 0 ? (
+                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, textAlign: "center", padding: "1rem 0" }}>No FAQs added.</p>
+                    ) : (
+                        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                            {form.faqs.map((faq, i) => (
+                                <div key={i} style={{ background: "#fdfdfd", border: `1px solid ${C.border}`, borderRadius: 8, padding: "1rem" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                                        <span style={lbl}>Q&A {i + 1}</span>
+                                        <button type="button" onClick={() => removeFaq(i)} style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: "0.7rem", fontWeight: 700, fontFamily: FM }}>✕ Remove</button>
+                                    </div>
+                                    <input value={faq.question} onChange={e => updateFaq(i, "question", e.target.value)} placeholder="Question" style={{ ...inp, marginBottom: "0.5rem" }} />
+                                    <textarea value={faq.answer} onChange={e => updateFaq(i, "answer", e.target.value)} placeholder="Answer" rows={2} style={{ ...inp, resize: "vertical" }} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+                {/* MARKETING */}
+                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
+                    <p style={sectionTitle}>Marketing & Enquiries</p>
+                    <div>
+                        <label style={lbl}>WhatsApp Custom Message</label>
+                        <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginBottom: "0.5rem" }}>Pre-filled message when a customer clicks WhatsApp CTA</p>
+                        <input value={form.whatsapp_message} onChange={e => setForm(f => ({ ...f, whatsapp_message: e.target.value }))} placeholder="e.g. Hi SANRA Living, I need this chair." style={inp} />
+                    </div>
+                </section>
+
                 {/* SUBMIT */}
                 <div style={{ display: "flex", gap: "0.75rem", position: "sticky", bottom: 0, background: C.bg, padding: "1.25rem 0", borderTop: `1px solid ${C.border}` }}>
                     <button type="submit" disabled={saving} style={{
-                        flex: 1, padding: "1rem", background: C.accent, color: "#111", fontWeight: 900,
+                        flex: 1, padding: "1rem", background: C.accent, color: "#fff", fontWeight: 900,
                         fontSize: "0.85rem", letterSpacing: "0.12em", textTransform: "uppercase",
                         border: "none", cursor: saving ? "not-allowed" : "pointer", borderRadius: 8,
                         fontFamily: FM, opacity: saving ? 0.7 : 1, transition: "all 0.2s",
                     }}>
                         {saving ? "Creating Product…" : "✓ Create Product"}
                     </button>
+                    <button type="button" onClick={() => window.open(`/shop/preview?draft=true`, "_blank")} style={{
+                        padding: "1rem 1.5rem", background: "transparent", color: C.accent,
+                        fontWeight: 900, fontSize: "0.85rem", border: `1px solid ${C.accent}`,
+                        cursor: "pointer", borderRadius: 8, fontFamily: FM, textTransform: "uppercase", letterSpacing: "0.05em",
+                    }}>
+                        Preview
+                    </button>
                     <button type="button" onClick={onCancel} style={{
-                        padding: "1rem 2rem", background: "transparent", color: C.muted,
+                        padding: "1rem 1.5rem", background: "transparent", color: C.muted,
                         fontWeight: 700, fontSize: "0.85rem", border: `1px solid ${C.border}`,
                         cursor: "pointer", borderRadius: 8, fontFamily: FM,
                     }}>

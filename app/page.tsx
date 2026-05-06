@@ -46,6 +46,35 @@ export default function Homepage() {
       {/* 6. Application/Space Showcase */}
       <ApplicationShowcase />
 
+      {/* 6.5. Factory/Workshop Section */}
+      <section style={{ display: "flex", flexWrap: "wrap", background: "#fff", borderTop: "1px solid #eee" }}>
+        <div style={{ flex: "1 1 50%", minWidth: "300px" }}>
+            <img 
+                src="/steel-factory.png" 
+                alt="Sanra Steel Furniture Factory Workshop" 
+                style={{ width: "100%", height: "100%", objectFit: "cover", minHeight: "400px" }} 
+            />
+        </div>
+        <div style={{ flex: "1 1 50%", padding: "clamp(3rem, 5vw, 6rem) clamp(2rem, 5vw, 4rem)", display: "flex", flexDirection: "column", justifyContent: "center", background: "#f8f8f8" }}>
+            <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#111", lineHeight: 1.1, marginBottom: "1.5rem" }}>
+                Forged in Excellence. <br /> Crafted in Coimbatore.
+            </h2>
+            <p style={{ fontSize: "1.1rem", color: "#555", fontFamily: "var(--font-outfit), Outfit, Inter, sans-serif", marginBottom: "2rem", lineHeight: 1.6, maxWidth: "500px" }}>
+                Our state-of-the-art manufacturing facility combines traditional craftsmanship with precision engineering. We use only premium Jindal Steel to create furniture that lasts generations.
+            </p>
+            <div style={{ display: "flex", gap: "1.5rem" }}>
+                <div>
+                    <h4 style={{ fontSize: "1.5rem", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#111", marginBottom: "0.25rem" }}>15+</h4>
+                    <p style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#666", fontWeight: 600 }}>Years Expertise</p>
+                </div>
+                <div>
+                    <h4 style={{ fontSize: "1.5rem", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#111", marginBottom: "0.25rem" }}>10k+</h4>
+                    <p style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#666", fontWeight: 600 }}>Happy Homes</p>
+                </div>
+            </div>
+        </div>
+      </section>
+
       {/* 7. TRUST BADGES STRIP (Why SANRA) */}
       <section style={{ background: "#1C1C1C", borderTop: "1px solid #333" }}>
         <div
@@ -61,10 +90,10 @@ export default function Homepage() {
           }}
         >
           {[
-            { icon: "🛡️", text: "Strong Steel Build" },
-            { icon: "✨", text: "Rust Resistant" },
-            { icon: "⏳", text: "Long Lasting" },
-            { icon: "🔧", text: "Low Maintenance" },
+            { icon: "🏭", text: "Jindal Steel" },
+            { icon: "🛡️", text: "3 Year Warranty" },
+            { icon: "🚚", text: "Pan India Delivery" },
+            { icon: "🇮🇳", text: "Made in Coimbatore" },
           ].map((badge) => (
             <div
               key={badge.text}
@@ -94,7 +123,7 @@ export default function Homepage() {
       </section>
 
       {/* 8. WhatsApp / Bulk CTA section */}
-      <section style={{ padding: "4rem 1.5rem", background: "#f0f0f0", textAlign: "center" }}>
+      <section style={{ padding: "2.5rem 1.5rem", background: "#f0f0f0", textAlign: "center" }}>
           <div style={{ maxWidth: 800, margin: "0 auto" }}>
               <h2 style={{ fontSize: "2rem", fontWeight: 900, color: "#111", fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", marginBottom: "1rem" }}>
                   Need Bulk Orders or Custom Quotes?

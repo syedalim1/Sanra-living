@@ -51,8 +51,8 @@ export interface Enquiry {
 
 export interface Product {
     id: string;
+    slug?: string;
     title: string;
-    subtitle: string;
     price: number;
     compare_at_price?: number | null;
     category: string;
@@ -71,6 +71,18 @@ export interface Product {
     display_order?: number;
     is_new: boolean;
     is_active: boolean;
+    sku?: string;
+    highlights?: string[];
+    material?: string;
+    steel_thickness?: string;
+    warranty?: string;
+    dispatch_time?: string;
+    badges?: string[];
+    seo_title?: string;
+    seo_description?: string;
+    seo_keywords?: string;
+    faqs?: { question: string; answer: string }[];
+    whatsapp_message?: string;
     created_at: string;
 }
 

@@ -27,7 +27,7 @@ const collections = [
 
 export default function CollectionShowcase() {
     return (
-        <section style={{ padding: "4rem 1.5rem", background: "#f9f9f9" }}>
+        <section style={{ padding: "2.5rem 1.5rem", background: "#f9f9f9" }}>
             <div style={{ maxWidth: 1200, margin: "0 auto" }}>
                 <h2
                     style={{
