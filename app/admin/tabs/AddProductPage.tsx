@@ -64,16 +64,25 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
     React.useEffect(() => {
         const draft = localStorage.getItem("sanra_product_draft");
         if (draft) {
-            try { setForm(JSON.parse(draft)); } catch (e) {}
+            try {
+                const parsed = JSON.parse(draft);
+                if (parsed.form) setForm(parsed.form);
+                if (parsed.aplusBlocks) setAplusBlocks(parsed.aplusBlocks);
+            } catch (e) {}
         }
     }, []);
 
     React.useEffect(() => {
         const timer = setTimeout(() => {
-            if (form.title || form.price) localStorage.setItem("sanra_product_draft", JSON.stringify(form));
+            if (form.title || form.price) {
+                localStorage.setItem("sanra_product_draft", JSON.stringify({
+                    form,
+                    aplusBlocks,
+                }));
+            }
         }, 5000);
         return () => clearTimeout(timer);
-    }, [form]);
+    }, [form, aplusBlocks]);
 
     const [highlightInput, setHighlightInput] = useState("");
     const [badgeInput, setBadgeInput] = useState("");
@@ -467,13 +476,13 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                                             <textarea value={block.description} onChange={e => updateAplusBlock(i, "description", e.target.value)} rows={2} placeholder="Short description for this feature…" style={{ ...inp, resize: "vertical" }} />
                                         </div>
                                         <div>
-                                            <label style={lbl}>Image URL</label>
-                                            <input value={block.image_url} onChange={e => updateAplusBlock(i, "image_url", e.target.value)} placeholder="https://..." style={inp} />
-                                            {block.image_url && (
-                                                <div style={{ marginTop: "0.5rem", width: 120, height: 80, borderRadius: 6, overflow: "hidden", background: "#eee" }}>
-                                                    <img src={block.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                                </div>
-                                            )}
+                                            <label style={lbl}>Block Image</label>
+                                            <ImageUploader
+                                                images={block.image_url ? [block.image_url] : []}
+                                                onImagesChange={imgs => updateAplusBlock(i, "image_url", imgs[0] ?? "")}
+                                                maxImages={1}
+                                                adminKey={adminKey}
+                                            />
                                         </div>
                                     </div>
                                 </div>

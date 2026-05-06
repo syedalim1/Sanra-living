@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
-const adminKey = process.env.NEXT_PUBLIC_ADMIN_KEY ?? "";
-
 function isAuthed(req: NextRequest) {
-    return req.headers.get("x-admin-key") === adminKey;
+    const key = req.headers.get("x-admin-key");
+    // Accept both env keys for compatibility
+    return (
+        key === process.env.ADMIN_PASSWORD ||
+        key === process.env.NEXT_PUBLIC_ADMIN_KEY
+    );
 }
 
 // GET — Fetch A+ content for a product
@@ -22,6 +25,7 @@ export async function GET(req: NextRequest) {
         .order("position", { ascending: true });
 
     if (error) {
+        console.error("[aplus GET] Error:", error.message, error);
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
@@ -31,14 +35,26 @@ export async function GET(req: NextRequest) {
 // POST — Save all A+ content blocks (replaces existing)
 export async function POST(req: NextRequest) {
     if (!isAuthed(req)) {
+        console.error("[aplus POST] Unauthorized — key mismatch");
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { product_id, blocks } = await req.json();
+    let body;
+    try {
+        body = await req.json();
+    } catch (e) {
+        console.error("[aplus POST] Invalid JSON body");
+        return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
+
+    const { product_id, blocks } = body;
 
     if (!product_id || !Array.isArray(blocks)) {
+        console.error("[aplus POST] Missing product_id or blocks", { product_id, blocks });
         return NextResponse.json({ error: "product_id and blocks[] required" }, { status: 400 });
     }
+
+    console.log(`[aplus POST] Saving ${blocks.length} blocks for product ${product_id}`);
 
     // Delete existing blocks for this product
     const { error: deleteError } = await supabaseAdmin
@@ -47,6 +63,7 @@ export async function POST(req: NextRequest) {
         .eq("product_id", product_id);
 
     if (deleteError) {
+        console.error("[aplus POST] Delete error:", deleteError.message, deleteError);
         return NextResponse.json({ error: deleteError.message }, { status: 500 });
     }
 
@@ -60,13 +77,19 @@ export async function POST(req: NextRequest) {
             position: i,
         }));
 
-        const { error: insertError } = await supabaseAdmin
+        console.log("[aplus POST] Inserting rows:", JSON.stringify(rows, null, 2));
+
+        const { data: insertedData, error: insertError } = await supabaseAdmin
             .from("product_aplus_content")
-            .insert(rows);
+            .insert(rows)
+            .select();
 
         if (insertError) {
+            console.error("[aplus POST] Insert error:", insertError.message, insertError);
             return NextResponse.json({ error: insertError.message }, { status: 500 });
         }
+
+        console.log(`[aplus POST] Successfully inserted ${insertedData?.length ?? 0} blocks`);
     }
 
     return NextResponse.json({ success: true });

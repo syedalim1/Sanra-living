@@ -307,6 +307,33 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                 throw new Error(data.error || "Failed to update product");
             }
 
+            // ── Auto-save A+ content alongside the product ──
+            if (aplusBlocks.length >= 3) {
+                try {
+                    const aplusRes = await fetch("/api/admin/aplus", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+                        body: JSON.stringify({ product_id: product.id, blocks: aplusBlocks }),
+                    });
+                    if (!aplusRes.ok) {
+                        console.warn("A+ content save failed, but product was saved.");
+                    } else {
+                        setAplusSaved(true);
+                    }
+                } catch {
+                    console.warn("A+ content save error (product saved OK).");
+                }
+            } else if (aplusBlocks.length === 0) {
+                // If all blocks removed, also clear from DB
+                try {
+                    await fetch("/api/admin/aplus", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
+                        body: JSON.stringify({ product_id: product.id, blocks: [] }),
+                    });
+                } catch { /* silent */ }
+            }
+
             localStorage.removeItem(`sanra_draft_${product.id}`);
             const updatedProduct = await res.json();
             
@@ -751,6 +778,7 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                                                 onImagesChange={imgs =>
                                                     updateAplusBlock(i, "image_url", imgs[0] ?? "")
                                                 }
+                                                maxImages={1}
                                                 adminKey={adminKey}
                                             />
                                         </div>

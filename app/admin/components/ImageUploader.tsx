@@ -41,7 +41,12 @@ export default function ImageUploader({ images, onImagesChange, adminKey, maxIma
     };
 
     const handleFiles = useCallback(async (files: FileList | File[]) => {
-        const fileArr = Array.from(files).slice(0, maxImages - images.length);
+        const allFiles = Array.from(files);
+        // When maxImages=1 (e.g. A+ block), allow replacing the existing image
+        const isReplacement = maxImages === 1 && images.length >= 1;
+        const fileArr = isReplacement
+            ? allFiles.slice(0, 1)
+            : allFiles.slice(0, maxImages - images.length);
         if (fileArr.length === 0) return;
 
         setUploading(true);
@@ -55,8 +60,14 @@ export default function ImageUploader({ images, onImagesChange, adminKey, maxIma
         }
 
         if (newUrls.length > 0) {
-            onImagesChange([...images, ...newUrls]);
-            setActiveThumb(images.length);
+            if (isReplacement) {
+                // Replace entire image list with the new upload
+                onImagesChange(newUrls);
+                setActiveThumb(0);
+            } else {
+                onImagesChange([...images, ...newUrls]);
+                setActiveThumb(images.length);
+            }
         }
         setUploading(false);
         setUploadProgress("");
