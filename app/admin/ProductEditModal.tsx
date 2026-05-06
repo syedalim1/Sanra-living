@@ -10,7 +10,7 @@ const C = {
 };
 
 interface Product {
-    id: string; title: string; subtitle: string; price: number; category: string;
+    id: string; title: string; price: number; category: string;
     finish: string; stock_status: string; stock_qty: number; image_url: string;
     hover_image_url: string; images?: string[]; description?: string;
     is_new: boolean; is_active: boolean; created_at: string;
@@ -23,7 +23,7 @@ export default function ProductEditModal({
     onClose: () => void; onSaved: (updated: Product) => void;
 }) {
     const [vals, setVals] = useState({
-        title: product.title, subtitle: product.subtitle, price: product.price,
+        title: product.title, price: product.price,
         category: product.category, finish: product.finish,
         stock_status: product.stock_status, stock_qty: product.stock_qty,
         is_new: product.is_new,
@@ -143,7 +143,6 @@ export default function ProductEditModal({
                         <p style={{ fontSize: "0.6rem", fontWeight: 700, color: C.accent, fontFamily: FM, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: "1rem" }}>Basic Info</p>
                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                             <div style={{ gridColumn: "1/-1" }}><label style={lbl}>Title</label><input value={vals.title} onChange={e => setVals(v => ({ ...v, title: e.target.value }))} style={inp} /></div>
-                            <div style={{ gridColumn: "1/-1" }}><label style={lbl}>Subtitle</label><input value={vals.subtitle} onChange={e => setVals(v => ({ ...v, subtitle: e.target.value }))} style={inp} /></div>
                             <div><label style={lbl}>Price (₹)</label><input type="number" value={vals.price} onChange={e => setVals(v => ({ ...v, price: Number(e.target.value) }))} style={inp} /></div>
                             <div><label style={lbl}>Stock Qty</label><input type="number" value={vals.stock_qty} onChange={e => setVals(v => ({ ...v, stock_qty: Number(e.target.value) }))} style={inp} /></div>
                             <div><label style={lbl}>Category</label><select value={vals.category} onChange={e => setVals(v => ({ ...v, category: e.target.value }))} style={{ ...inp, cursor: "pointer" }}>{["Entryway Storage", "Study Desks", "Wall Storage", "Bedroom", "Living Room", "Other"].map(c => <option key={c}>{c}</option>)}</select></div>

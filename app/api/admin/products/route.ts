@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const {
-            title, subtitle, price, category, finish,
+            title, price, category, finish,
             stock_status, stock_qty, image_url, hover_image_url,
             is_new, images, description, video_url, video_thumbnail,
             sku, compare_at_price, highlights, material, steel_thickness, warranty,

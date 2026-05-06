@@ -6,7 +6,7 @@ import React, { createContext, useContext, useReducer, useEffect } from "react";
 export interface CartItem {
     id: string;          // FIX: string (DB returns UUID/string ids)
     title: string;
-    subtitle: string;
+    subtitle?: string;
     finish: string;
     price: number;
     image: string;

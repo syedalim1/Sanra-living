@@ -205,7 +205,7 @@ export default function AdminPage() {
     };
 
     const duplicateProduct = async (product: Product) => {
-        const dup = { title: `${product.title} (Copy)`, subtitle: product.subtitle, price: product.price, category: product.category, finish: product.finish, stock_status: product.stock_status, stock_qty: product.stock_qty, image_url: product.image_url, hover_image_url: product.hover_image_url, is_new: false };
+        const dup = { title: `${product.title} (Copy)`, price: product.price, category: product.category, finish: product.finish, stock_status: product.stock_status, stock_qty: product.stock_qty, image_url: product.image_url, hover_image_url: product.hover_image_url, is_new: false };
         await fetch("/api/admin/products", { method: "POST", headers: { "Content-Type": "application/json", "x-admin-key": adminKey }, body: JSON.stringify(dup) });
         fetchData("products");
         logActivity("product_add", `Duplicated "${product.title}"`, { source_product_id: product.id });

@@ -28,11 +28,9 @@ function useIsMobile(bp = 768) {
 }
 
 /* ── DB PRODUCT TYPE ── */
-// FIX: Added compare_at_price, subtitle, description, tags, is_active
 interface DbProduct {
     id: string;
     title: string;
-    subtitle: string;
     price: number;
     compare_at_price?: number | null;
     category: string;
@@ -48,6 +46,7 @@ interface DbProduct {
     is_new: boolean;
     is_active: boolean;
     tags?: string[];
+    highlights?: string[];
 }
 
 /* ── TOAST ── */
@@ -209,7 +208,6 @@ export default function ProductDetailPage() {
         return {
             id: dbProduct.id,
             title: dbProduct.title,
-            subtitle: dbProduct.subtitle,
             finish: dbProduct.finish,
             price: dbProduct.price ?? 0,
             image: dbProduct.image_url,
@@ -360,7 +358,7 @@ export default function ProductDetailPage() {
                                 style={{
                                     width: "100%",
                                     height: "100%",
-                                    objectFit: "cover",
+                                    objectFit: "contain",
                                     transformOrigin: zoomStyle.transformOrigin,
                                     transform: isMobile ? "scale(1)" : zoomStyle.transform,
                                     transition: "transform 0.1s ease-out",
@@ -431,16 +429,6 @@ export default function ProductDetailPage() {
                             {dbProduct.title}
                         </h1>
 
-                        {/* FIX: Show subtitle if exists */}
-                        {dbProduct.subtitle && (
-                            <p style={{
-                                fontSize: "1rem", color: "#555",
-                                fontFamily: FO, marginBottom: "0.75rem",
-                                fontWeight: 500, lineHeight: 1.5,
-                            }}>
-                                {dbProduct.subtitle}
-                            </p>
-                        )}
 
                         {/* Price row */}
                         <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", flexWrap: "wrap", marginTop: "0.75rem", marginBottom: "0.5rem" }}>

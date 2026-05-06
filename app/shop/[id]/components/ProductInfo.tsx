@@ -21,7 +21,7 @@ const WhatsAppIcon = () => (
 
 interface Props {
     title: string;
-    subtitle: string;
+    subtitle?: string;
     category: string;
     price: number;
     description: string;
@@ -57,7 +57,7 @@ export default function ProductInfo({
                 <h1 style={{ fontSize: isMobile ? "1.75rem" : "clamp(1.6rem,3vw,2.25rem)", fontWeight: 900, lineHeight: 1.1, letterSpacing: "-0.02em", color: "#111", marginBottom: "0.375rem", fontFamily: FM }}>
                     {title}
                 </h1>
-                <p style={{ fontSize: "1rem", color: "#666", fontFamily: FO }}>{subtitle}</p>
+                {subtitle && <p style={{ fontSize: "1rem", color: "#666", fontFamily: FO }}>{subtitle}</p>}
             </div>
 
             {/* Price */}

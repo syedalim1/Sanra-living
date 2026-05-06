@@ -25,7 +25,7 @@ export const C = {
 export interface Product {
     id: string;
     title: string;
-    subtitle: string;
+    subtitle?: string;
     price: number;
     category: string;
     finish: string;
@@ -211,7 +211,7 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
                         lineHeight: 1.4,
                     }}
                 >
-                    {product.subtitle}
+                    {product.category} • {product.finish}
                 </p>
 
                 <div style={{ marginTop: "auto" }}>
