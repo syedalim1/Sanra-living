@@ -78,7 +78,7 @@ export default function SiteHeader() {
     return (
         <>
             <header className={`sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-300 ${scrolled ? 'bg-white/95 border-b border-black/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)]' : 'bg-white/90 border-b border-black/5'}`}>
-                <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 h-[60px] md:h-[64px] lg:h-[72px] flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 h-[56px] md:h-[60px] lg:h-[64px] flex items-center justify-between">
 
                     {/* ── LEFT: HAMBURGER (mobile) ─────────────────── */}
                     <button
@@ -102,7 +102,7 @@ export default function SiteHeader() {
                     </Link>
 
                     {/* ── CENTER: DESKTOP NAV ──────────────────────── */}
-                    <nav className="hidden md:flex items-center gap-8 lg:gap-10">
+                    <nav className="hidden md:flex items-center gap-8 lg:gap-12 md:ml-6 lg:ml-12">
                         {NAV_LINKS.map((link) => (
                             <Link key={link.href} href={link.href} className="font-montserrat text-[0.7rem] lg:text-xs font-medium tracking-[0.15em] text-gray-500 hover:text-black uppercase transition-colors duration-300 relative group py-2">
                                 {link.label}
