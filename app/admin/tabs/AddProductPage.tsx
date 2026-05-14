@@ -17,23 +17,6 @@ interface Props {
     onCancel: () => void;
 }
 
-const PRODUCT_TYPES = ["SS", "MS", "Luxury", "Foldable", "Commercial"];
-const BADGES = ["Bestseller", "New Arrival", "Premium Choice", "Limited Edition"];
-const IMAGE_PRESETS = ["Studio White", "Luxury Interior", "Warm Minimal", "Dark Premium"];
-const WATERMARK_OPTIONS = ["Soft", "Medium", "Strong"];
-// TRUST_OPTIONS kept for reference — now driven by TrustFeaturesSection component
-
-const inp: React.CSSProperties = {
-    background: "#FFFFFF", border: "1px solid #E5E7EB", color: "#111",
-    fontSize: "0.9rem", fontFamily: FO, borderRadius: "8px",
-    padding: "0.75rem 1rem", width: "100%", boxSizing: "border-box",
-    outline: "none", transition: "border-color 0.2s ease",
-};
-const lbl: React.CSSProperties = {
-    display: "block", fontSize: "0.7rem", fontWeight: 700, color: "#374151",
-    fontFamily: FM, marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.04em",
-};
-
 export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -143,34 +126,16 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
         } finally { setSaving(false); }
     };
 
-    /* ── Accordion ── */
-    const Section = ({ id, num, title, children }: { id: string; num: number; title: string; children: React.ReactNode }) => {
-        const isOpen = openSection === id;
-        return (
-            <div style={{ background: "#fff", borderRadius: "12px", marginBottom: "0.75rem", border: "1px solid #E5E7EB", overflow: "hidden", boxShadow: isOpen ? "0 4px 20px rgba(0,0,0,0.04)" : "none" }}>
-                <button type="button" onClick={() => setOpenSection(isOpen ? "" : id)} style={{ width: "100%", textAlign: "left", padding: "1.25rem 1.5rem", background: "#fff", border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                        <span style={{ width: 28, height: 28, borderRadius: "50%", background: isOpen ? "#111" : "#F3F4F6", color: isOpen ? "#fff" : "#6B7280", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 800, fontFamily: FM, transition: "all 0.2s" }}>{num}</span>
-                        <span style={{ fontSize: "0.95rem", fontWeight: 700, fontFamily: FM, color: "#111" }}>{title}</span>
-                    </div>
-                    <span style={{ fontSize: "1rem", color: "#9CA3AF", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
-                </button>
-                {isOpen && <div style={{ padding: "0 1.5rem 1.5rem", borderTop: "1px solid #F3F4F6" }}><div style={{ paddingTop: "1.5rem" }}>{children}</div></div>}
-            </div>
-        );
-    };
-
-
-
+    /* ── Success Screen ── */
     if (success) {
         return (
-            <div style={{ maxWidth: 500, margin: "5rem auto", textAlign: "center", background: "#fff", border: "1px solid #E5E7EB", padding: "3rem 2rem", borderRadius: 16 }}>
-                <div style={{ width: 56, height: 56, borderRadius: "50%", background: "#10B98118", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem", fontSize: "1.5rem" }}>✓</div>
-                <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#111", fontFamily: FM, margin: "0 0 0.5rem" }}>Product Published</h2>
-                <p style={{ color: "#9CA3AF", fontFamily: FO, fontSize: "0.9rem", marginBottom: "2rem" }}>Your product is now live on the store.</p>
+            <div className="admin-success">
+                <div className="admin-success-icon" style={{ background: "rgba(16,185,129,0.08)", color: "#10B981" }}>✓</div>
+                <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#111", fontFamily: FM, margin: "0 0 0.5rem", letterSpacing: "-0.02em" }}>Product Published</h2>
+                <p style={{ color: "#8C8C8C", fontFamily: FO, fontSize: "0.85rem", marginBottom: "2rem", lineHeight: 1.5 }}>Your product is now live on the store.</p>
                 <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center" }}>
-                    <button onClick={onSaved} style={{ padding: "0.75rem 1.5rem", background: "#111", border: "none", color: "#fff", fontWeight: 700, borderRadius: 8, cursor: "pointer", fontFamily: FM, fontSize: "0.85rem" }}>← Back to Products</button>
-                    <button onClick={() => window.open("/shop", "_blank")} style={{ padding: "0.75rem 1.5rem", background: "transparent", border: "1px solid #E5E7EB", color: "#111", fontWeight: 600, borderRadius: 8, cursor: "pointer", fontFamily: FM, fontSize: "0.85rem" }}>View Store ↗</button>
+                    <button onClick={onSaved} className="admin-btn-primary" style={{ padding: "0.75rem 1.5rem" }}>← Back to Products</button>
+                    <button onClick={() => window.open("/shop", "_blank")} className="admin-btn-secondary" style={{ padding: "0.75rem 1.5rem" }}>View Store ↗</button>
                 </div>
             </div>
         );
@@ -179,18 +144,27 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
     return (
         <div style={{ maxWidth: 820, margin: "0 auto" }}>
             {/* Header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2.5rem" }}>
                 <div>
-                    <button onClick={onCancel} style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer", fontFamily: FM, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", padding: 0, marginBottom: "0.5rem", display: "block" }}>← Back to Products</button>
-                    <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#111", fontFamily: FM, margin: 0 }}>Publish New Product</h2>
+                    <button onClick={onCancel} style={{ background: "none", border: "none", color: "#B8B3AC", cursor: "pointer", fontFamily: FM, fontSize: "0.65rem", letterSpacing: "0.12em", textTransform: "uppercase", padding: 0, marginBottom: "0.6rem", display: "flex", alignItems: "center", gap: "0.35rem", transition: "color 0.15s" }}
+                        onMouseOver={e => (e.currentTarget.style.color = "#111")}
+                        onMouseOut={e => (e.currentTarget.style.color = "#B8B3AC")}
+                    >← Back to Products</button>
+                    <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#111", fontFamily: FM, margin: 0, letterSpacing: "-0.02em" }}>Publish New Product</h2>
                 </div>
-                <button onClick={handleSubmit as any} disabled={saving} style={{ padding: "0.7rem 2rem", background: "#111", color: "#fff", fontWeight: 700, fontSize: "0.85rem", border: "none", cursor: saving ? "not-allowed" : "pointer", borderRadius: "8px", fontFamily: FM, opacity: saving ? 0.7 : 1 }}>{saving ? "Publishing…" : "Publish Product"}</button>
+                <button onClick={handleSubmit as any} disabled={saving} className="admin-btn-primary">
+                    {saving ? "Publishing…" : "Publish Product"}
+                </button>
             </div>
 
-            {error && <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", padding: "0.75rem 1rem", borderRadius: 8, marginBottom: "1rem", fontSize: "0.85rem", color: "#EF4444", fontFamily: FO }}>{error}</div>}
+            {error && (
+                <div className="admin-error" style={{ marginBottom: "1.25rem" }}>
+                    <span style={{ fontSize: "0.85rem" }}>⚠</span> {error}
+                </div>
+            )}
 
-            <form onSubmit={handleSubmit}>
-                {/* 1. BASIC INFO — Premium Component */}
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
+                {/* 1. BASIC INFO */}
                 <BasicProductInfo
                     title={form.title}
                     subtitle={form.subtitle}
@@ -206,7 +180,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                     defaultOpen={true}
                 />
 
-                {/* 2. MEDIA — Premium Component */}
+                {/* 2. MEDIA */}
                 <ProductMediaSection
                     images={form.images}
                     onImagesChange={(imgs) => {
@@ -229,7 +203,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                     defaultOpen={openSection === "desc"}
                 />
 
-                {/* 4. TRUST & PREMIUM FEATURES — Luxury card system */}
+                {/* 4. TRUST & PREMIUM FEATURES */}
                 <TrustFeaturesSection
                     trustFeatures={form.trust_features}
                     onToggle={handleTrust}
@@ -241,7 +215,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                     sectionNum={4}
                 />
 
-                {/* 5. RELATED PRODUCTS — Luxury searchable component */}
+                {/* 5. RELATED PRODUCTS */}
                 <RelatedProductsSection
                     relatedProducts={form.related_products.filter(Boolean)}
                     onChange={(products) => set("related_products", [...products, ...Array(4 - products.length).fill("")])}
@@ -249,7 +223,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                     sectionNum={5}
                 />
 
-                {/* 6. SEO — Premium component */}
+                {/* 6. SEO */}
                 <SeoSection
                     seoTitle={form.seo_title}
                     seoDescription={form.seo_description}
@@ -259,7 +233,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                     sectionNum={6}
                 />
 
-                {/* 7. FAQ — Premium accordion component */}
+                {/* 7. FAQ */}
                 <FaqSection
                     faqs={form.faqs}
                     onChange={(faqs) => set("faqs", faqs)}
@@ -274,15 +248,17 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                     hasUnsaved={hasUnsaved}
                 />
 
-                {/* Bottom Actions */}
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.5rem 0", borderTop: "1px solid #E5E7EB", marginTop: "0.5rem", position: "sticky", bottom: 0, background: "#F5F5F5" }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", fontFamily: FO, color: "#111", cursor: "pointer" }}>
-                        <input type="checkbox" checked={form.is_active} onChange={e => set("is_active", e.target.checked)} style={{ width: 18, height: 18, accentColor: "#111" }} />
+                {/* Sticky Bottom Bar */}
+                <div className="admin-sticky-bar" style={{ alignItems: "center" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.82rem", fontFamily: FO, color: "#111", cursor: "pointer", flex: 1 }}>
+                        <input type="checkbox" checked={form.is_active} onChange={e => set("is_active", e.target.checked)} style={{ width: 18, height: 18, accentColor: "#111", borderRadius: 4 }} />
                         Publish immediately
                     </label>
                     <div style={{ display: "flex", gap: "0.75rem" }}>
-                        <button type="button" onClick={onCancel} style={{ padding: "0.7rem 1.5rem", background: "transparent", color: "#EF4444", fontWeight: 600, fontSize: "0.8rem", border: "none", cursor: "pointer", fontFamily: FM }}>Discard</button>
-                        <button type="submit" disabled={saving} style={{ padding: "0.7rem 2rem", background: "#111", color: "#fff", fontWeight: 700, fontSize: "0.85rem", border: "none", cursor: saving ? "not-allowed" : "pointer", borderRadius: "8px", fontFamily: FM, opacity: saving ? 0.7 : 1 }}>{saving ? "Publishing…" : "Publish Product"}</button>
+                        <button type="button" onClick={onCancel} style={{ background: "none", border: "none", color: "#EF4444", fontWeight: 600, fontSize: "0.75rem", cursor: "pointer", fontFamily: FM, padding: "0.7rem 1rem", transition: "opacity 0.15s" }}>Discard</button>
+                        <button type="submit" disabled={saving} className="admin-btn-primary" style={{ padding: "0.75rem 2rem" }}>
+                            {saving ? "Publishing…" : "Publish Product"}
+                        </button>
                     </div>
                 </div>
             </form>

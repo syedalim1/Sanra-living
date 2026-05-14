@@ -57,7 +57,6 @@ export default function ProductEditModal({
         material: product.material || "",
         pipe_type: product.pipe_type || "",
         finish: product.finish || "",
-        color: product.color || "",
         dimensions: product.dimensions || "",
         weight_kg: product.weight_kg || 0,
         warranty: product.warranty || "No Warranty",
@@ -244,7 +243,6 @@ export default function ProductEditModal({
                                 <div><label style={lbl}>Material</label><input value={vals.material} onChange={e => set("material", e.target.value)} style={inp} /></div>
                                 <div><label style={lbl}>Finish</label><input value={vals.finish} onChange={e => set("finish", e.target.value)} style={inp} /></div>
                                 <div><label style={lbl}>Dimensions</label><input value={vals.dimensions} onChange={e => set("dimensions", e.target.value)} style={inp} placeholder="H: 45cm × W: 35cm" /></div>
-                                <div><label style={lbl}>Color</label><input value={vals.color} onChange={e => set("color", e.target.value)} style={inp} /></div>
                             </div>
                             <div><label style={lbl}>Warranty</label><select value={vals.warranty} onChange={e => set("warranty", e.target.value)} style={inp}><option>No Warranty</option><option>1 Year Warranty</option><option>3 Year Warranty</option><option>5 Year Warranty</option></select></div>
                             <div><label style={lbl}>Delivery Information</label><input value={vals.delivery_info} onChange={e => set("delivery_info", e.target.value)} style={inp} placeholder="Pan India Delivery Available" /></div>

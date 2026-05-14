@@ -251,20 +251,20 @@ export default function AdminPage() {
 
     /* ── RENDER ──────────────────────────────────────────────── */
     return (
-        <main style={{ background: C.bg, minHeight: "100vh", fontFamily: FO, color: C.text }}>
+        <main style={{ background: "#F7F6F3", minHeight: "100vh", fontFamily: FO, color: C.text, WebkitFontSmoothing: "antialiased" }}>
             {/* Header */}
-            <header style={{ background: C.panel, borderBottom: `1px solid ${C.border}`, padding: "0 1.5rem", position: "sticky", top: 0, zIndex: 50 }}>
-                <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 58 }}>
+            <header className="admin-topbar" style={{ padding: "0 1.5rem" }}>
+                <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 56 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
-                        <div style={{ width: 7, height: 7, borderRadius: "50%", background: C.accent }} />
-                        <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: C.accent, fontFamily: FM }}>SANRA LIVING™</span>
-                        <span style={{ color: C.border }}>|</span>
-                        <span style={{ fontSize: "0.78rem", color: C.muted, fontFamily: FM }}>Admin</span>
+                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#111" }} />
+                        <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "#111", fontFamily: FM }}>SANRA LIVING™</span>
+                        <span style={{ color: "#E8E4DC", fontSize: "0.8rem" }}>|</span>
+                        <span style={{ fontSize: "0.72rem", color: "#8C8C8C", fontFamily: FM, fontWeight: 500 }}>Admin</span>
                     </div>
-                    <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
-                        {lastRefreshed && <span style={{ fontSize: "0.62rem", color: "#444", fontFamily: FO }}>Updated {lastRefreshed.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>}
-                        <a href="/" target="_blank" rel="noopener" style={{ fontSize: "0.7rem", color: C.muted, fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", border: `1px solid ${C.border}`, padding: "0.4rem 0.875rem", borderRadius: 4 }}>↗ Site</a>
-                        <button onClick={() => fetchData(tab)} style={{ fontSize: "0.7rem", color: C.muted, background: "none", border: `1px solid ${C.border}`, cursor: "pointer", fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase", padding: "0.4rem 0.875rem", borderRadius: 4 }}>↻</button>
+                    <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
+                        {lastRefreshed && <span style={{ fontSize: "0.58rem", color: "#B8B3AC", fontFamily: FO }}>Updated {lastRefreshed.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>}
+                        <a href="/" target="_blank" rel="noopener" className="admin-btn-secondary" style={{ padding: "0.35rem 0.75rem", fontSize: "0.62rem", letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", borderWidth: 1 }}>↗ Store</a>
+                        <button onClick={() => fetchData(tab)} className="admin-btn-secondary" style={{ padding: "0.35rem 0.75rem", fontSize: "0.62rem", letterSpacing: "0.08em", textTransform: "uppercase", borderWidth: 1 }}>↻</button>
                         <UserButton />
                     </div>
                 </div>
@@ -272,22 +272,15 @@ export default function AdminPage() {
 
             <div style={{ maxWidth: 1400, margin: "0 auto", padding: "2rem 1.5rem" }}>
 
-                {/* Tabs with Badges */}
-                <div style={{ display: "flex", gap: 0, marginBottom: "1.5rem", borderBottom: `1px solid ${C.border}`, overflowX: "auto" }}>
+                {/* Tabs */}
+                <div className="admin-tab-bar" style={{ marginBottom: "2rem" }}>
                     {allTabs.map((t) => {
                         const count = badgeCounts[t];
                         return (
-                            <button key={t} onClick={() => setTab(t)} style={{
-                                padding: "0.8rem 1.25rem", background: "none", border: "none", cursor: "pointer",
-                                fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", fontFamily: FM,
-                                color: tab === t ? C.accent : C.muted,
-                                borderBottom: tab === t ? `2px solid ${C.accent}` : "2px solid transparent",
-                                transition: "all 0.15s", marginBottom: -1, whiteSpace: "nowrap",
-                                display: "flex", alignItems: "center", gap: "0.4rem",
-                            }}>
+                            <button key={t} onClick={() => setTab(t)} className={`admin-tab${tab === t ? " admin-tab-active" : ""}`}>
                                 {TAB_ICONS[t]} {t}
                                 {count != null && count > 0 && (
-                                    <span style={{ background: C.red, color: "#fff", fontSize: "0.5rem", fontWeight: 900, fontFamily: FM, padding: "1px 5px", borderRadius: 10, minWidth: 14, textAlign: "center" }}>{count}</span>
+                                    <span className="admin-tab-badge">{count}</span>
                                 )}
                             </button>
                         );
@@ -295,8 +288,9 @@ export default function AdminPage() {
                 </div>
 
                 {loading && (
-                    <div style={{ textAlign: "center", padding: "5rem", color: C.muted, fontFamily: FO }}>
-                        <div style={{ fontSize: "2rem", marginBottom: "1rem", opacity: 0.4 }}>⟳</div>Loading…
+                    <div className="admin-loading">
+                        <div className="admin-loading-spinner" />
+                        <p style={{ fontSize: "0.82rem", margin: 0 }}>Loading…</p>
                     </div>
                 )}
 

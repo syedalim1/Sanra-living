@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { FM, FO } from "../constants";
 
 /* ─────────────────────────────────────────────────────────────
@@ -22,6 +22,8 @@ export interface TrustFeaturesSectionProps {
     maxFeatures?: number;
     /** Section number shown in accordion header */
     sectionNum?: number;
+    /** Default open state */
+    defaultOpen?: boolean;
 }
 
 /* ── Trust feature definitions ── */
@@ -72,6 +74,7 @@ export default function TrustFeaturesSection({
     onBadgeToggle,
     maxFeatures = 8,
     sectionNum = 4,
+    defaultOpen = false,
 }: TrustFeaturesSectionProps) {
     const selectedCount = trustFeatures.length;
 
@@ -82,15 +85,30 @@ export default function TrustFeaturesSection({
         return false;
     };
 
+    const [isOpen, setIsOpen] = useState(defaultOpen);
+    const contentRef = useRef<HTMLDivElement>(null);
+    const headerRef = useRef<HTMLButtonElement>(null);
+    const [contentHeight, setContentHeight] = useState<number>(0);
+    const [isSticky, setIsSticky] = useState(false);
+
+    useEffect(() => {
+        if (contentRef.current) setContentHeight(contentRef.current.scrollHeight);
+    }, [trustFeatures, isFeatured, isBestSeller, isNewArrival]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => setIsSticky(!entry.isIntersecting && isOpen),
+            { threshold: 0, rootMargin: "-1px 0px 0px 0px" }
+        );
+        const sentinel = document.getElementById(`tfs-sentinel-${sectionNum}`);
+        if (sentinel) observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [isOpen, sectionNum]);
+
     return (
-        <div style={{
-            background: "#fff",
-            borderRadius: "16px",
-            border: "1px solid #E8E4DC",
-            overflow: "hidden",
-            boxShadow: "0 2px 16px rgba(0,0,0,0.04)",
-            marginBottom: "0.75rem",
-        }}>
+        <>
+            <div id={`tfs-sentinel-${sectionNum}`} style={{ height: 0 }} />
+            <div className={`bpi-section${isOpen ? " bpi-open" : ""}`}>
             {/* ── Inject hover/animation CSS ── */}
             <style>{`
                 .trust-card {
@@ -218,52 +236,24 @@ export default function TrustFeaturesSection({
             `}</style>
 
             {/* ── Section Header ── */}
-            <div style={{
-                padding: "1.4rem 1.75rem",
-                borderBottom: "1px solid #F0EDE8",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                background: "linear-gradient(135deg, #FAFAF8 0%, #F5F2EC 100%)",
-            }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                    <div style={{
-                        width: 32,
-                        height: 32,
-                        borderRadius: "50%",
-                        background: "#111",
-                        color: "#fff",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "0.75rem",
-                        fontWeight: 800,
-                        fontFamily: FM,
-                        flexShrink: 0,
-                    }}>{sectionNum}</div>
+            <button
+                ref={headerRef}
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className={`bpi-header${isSticky ? " bpi-header-sticky" : ""}`}
+            >
+                <div className="bpi-header-left">
+                    <span className={`bpi-num${isOpen ? " bpi-num-active" : ""}`}>
+                        {sectionNum}
+                    </span>
                     <div>
-                        <p style={{
-                            fontSize: "0.95rem",
-                            fontWeight: 700,
-                            fontFamily: FM,
-                            color: "#111",
-                            margin: 0,
-                        }}>Trust &amp; Premium Features</p>
-                        <p style={{
-                            fontSize: "0.7rem",
-                            color: "#9C9485",
-                            fontFamily: FO,
-                            margin: "0.15rem 0 0",
-                        }}>Select features that appear on the product page</p>
+                        <span className="bpi-title">Trust & Premium Features</span>
+                        {!isOpen && selectedCount > 0 && (
+                            <span className="bpi-title-preview">— {selectedCount} selected</span>
+                        )}
                     </div>
                 </div>
-
-                {/* Counter pill */}
-                <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
                     <span style={{
                         padding: "0.3rem 0.85rem",
                         borderRadius: 99,
@@ -277,10 +267,22 @@ export default function TrustFeaturesSection({
                     }}>
                         {selectedCount} / {maxFeatures}
                     </span>
+                    <span className={`bpi-arrow${isOpen ? " bpi-arrow-open" : ""}`}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </span>
                 </div>
-            </div>
+            </button>
 
-            <div style={{ padding: "1.75rem" }}>
+            <div
+                className="bpi-body"
+                style={{
+                    maxHeight: isOpen ? `${contentHeight + 80}px` : "0px",
+                    opacity: isOpen ? 1 : 0,
+                }}
+            >
+                <div ref={contentRef} className="bpi-inner" style={{ padding: "1.75rem" }}>
 
                 {/* ── Premium Badges ── */}
                 <div style={{ marginBottom: "2rem" }}>
@@ -479,6 +481,8 @@ export default function TrustFeaturesSection({
                     )}
                 </div>
             </div>
-        </div>
+                </div>
+            </div>
+        </>
     );
 }

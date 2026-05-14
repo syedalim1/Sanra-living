@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { FM, FO } from "../constants";
 
 /* ─────────────────────────────────────────────────────────────
@@ -18,6 +18,8 @@ export interface FaqSectionProps {
     onChange: (faqs: Faq[]) => void;
     category?: string;
     sectionNum?: number;
+    /** Default open state */
+    defaultOpen?: boolean;
 }
 
 const SUGGESTED_FAQS: Record<string, Faq[]> = {
@@ -48,9 +50,30 @@ export default function FaqSection({
     onChange,
     category = "",
     sectionNum = 7,
+    defaultOpen = false,
 }: FaqSectionProps) {
     const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
     const [showSuggestions, setShowSuggestions] = useState(false);
+
+    const [isOpen, setIsOpen] = useState(defaultOpen);
+    const contentRef = useRef<HTMLDivElement>(null);
+    const headerRef = useRef<HTMLButtonElement>(null);
+    const [contentHeight, setContentHeight] = useState<number>(0);
+    const [isSticky, setIsSticky] = useState(false);
+
+    useEffect(() => {
+        if (contentRef.current) setContentHeight(contentRef.current.scrollHeight);
+    }, [faqs, expandedIdx, showSuggestions, category]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            ([entry]) => setIsSticky(!entry.isIntersecting && isOpen),
+            { threshold: 0, rootMargin: "-1px 0px 0px 0px" }
+        );
+        const sentinel = document.getElementById(`faq-sentinel-${sectionNum}`);
+        if (sentinel) observer.observe(sentinel);
+        return () => observer.disconnect();
+    }, [isOpen, sectionNum]);
 
     const suggestions = useMemo(() => {
         const base = SUGGESTED_FAQS._default;
@@ -85,14 +108,9 @@ export default function FaqSection({
     const filledCount = faqs.filter(f => f.question.trim() && f.answer.trim()).length;
 
     return (
-        <div style={{
-            background: "#fff",
-            borderRadius: "16px",
-            border: "1px solid #E8E4DC",
-            overflow: "hidden",
-            boxShadow: "0 2px 16px rgba(0,0,0,0.04)",
-            marginBottom: "0.75rem",
-        }}>
+        <>
+            <div id={`faq-sentinel-${sectionNum}`} style={{ height: 0 }} />
+            <div className={`bpi-section${isOpen ? " bpi-open" : ""}`}>
             <style>{`
                 .faq-card {
                     background: #FAFAF8;
@@ -175,51 +193,61 @@ export default function FaqSection({
             `}</style>
 
             {/* Header */}
-            <div style={{
-                padding: "1.4rem 1.75rem",
-                borderBottom: "1px solid #F0EDE8",
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                background: "linear-gradient(135deg, #FAFAF8 0%, #F5F2EC 100%)",
-            }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                    <div style={{
-                        width: 32, height: 32, borderRadius: "50%", background: "#111", color: "#fff",
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "0.75rem", fontWeight: 800, fontFamily: FM, flexShrink: 0,
-                    }}>{sectionNum}</div>
+            <button
+                ref={headerRef}
+                type="button"
+                onClick={() => setIsOpen(!isOpen)}
+                className={`bpi-header${isSticky ? " bpi-header-sticky" : ""}`}
+            >
+                <div className="bpi-header-left">
+                    <span className={`bpi-num${isOpen ? " bpi-num-active" : ""}`}>
+                        {sectionNum}
+                    </span>
                     <div>
-                        <p style={{ fontSize: "0.95rem", fontWeight: 700, fontFamily: FM, color: "#111", margin: 0 }}>Frequently Asked Questions</p>
-                        <p style={{ fontSize: "0.7rem", color: "#9C9485", fontFamily: FO, margin: "0.15rem 0 0" }}>
-                            Build trust with {filledCount > 0 ? `${filledCount} FAQ${filledCount > 1 ? "s" : ""}` : "up to 3 FAQs"}
-                        </p>
+                        <span className="bpi-title">Frequently Asked Questions</span>
+                        {!isOpen && filledCount > 0 && (
+                            <span className="bpi-title-preview">— {filledCount} FAQ{filledCount > 1 ? "s" : ""}</span>
+                        )}
                     </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                    <span style={{
-                        padding: "0.3rem 0.85rem", borderRadius: 99,
-                        background: faqs.length > 0 ? "#111" : "#F0EDE8",
-                        color: faqs.length > 0 ? "#fff" : "#9C9485",
-                        fontSize: "0.68rem", fontWeight: 700, fontFamily: FM,
-                        transition: "all 0.2s",
-                    }}>{faqs.length} / 3</span>
-                    {faqs.length < 3 && (
-                        <button
-                            type="button"
-                            onClick={addFaq}
-                            style={{
-                                padding: "0.4rem 1rem", background: "#111", border: "none",
-                                color: "#fff", fontSize: "0.65rem", fontWeight: 700,
-                                fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase",
-                                borderRadius: 8, cursor: "pointer", transition: "opacity 0.15s",
-                            }}
-                        >+ Add FAQ</button>
-                    )}
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                        <span style={{
+                            padding: "0.3rem 0.85rem", borderRadius: 99,
+                            background: faqs.length > 0 ? "#111" : "#F0EDE8",
+                            color: faqs.length > 0 ? "#fff" : "#9C9485",
+                            fontSize: "0.68rem", fontWeight: 700, fontFamily: FM,
+                            transition: "all 0.2s",
+                        }}>{faqs.length} / 3</span>
+                        {faqs.length < 3 && (
+                            <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); setIsOpen(true); addFaq(); }}
+                                style={{
+                                    padding: "0.4rem 1rem", background: "#111", border: "none",
+                                    color: "#fff", fontSize: "0.65rem", fontWeight: 700,
+                                    fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase",
+                                    borderRadius: 8, cursor: "pointer", transition: "opacity 0.15s",
+                                }}
+                            >+ Add FAQ</button>
+                        )}
+                    </div>
+                    <span className={`bpi-arrow${isOpen ? " bpi-arrow-open" : ""}`}>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </span>
                 </div>
-            </div>
+            </button>
 
-            <div style={{ padding: "1.75rem" }}>
+            <div
+                className="bpi-body"
+                style={{
+                    maxHeight: isOpen ? `${contentHeight + 80}px` : "0px",
+                    opacity: isOpen ? 1 : 0,
+                }}
+            >
+                <div ref={contentRef} className="bpi-inner" style={{ padding: "1.75rem" }}>
 
                 {/* FAQ Cards */}
                 {faqs.length === 0 ? (
@@ -382,6 +410,8 @@ export default function FaqSection({
                     </div>
                 )}
             </div>
-        </div>
+                </div>
+            </div>
+        </>
     );
 }
