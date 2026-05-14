@@ -23,6 +23,54 @@ export default function Homepage() {
       {/* 1. Hero Banner */}
       <HeroSection />
 
+      {/* 1.5. TRUST BADGES STRIP */}
+      <section style={{ background: "#fff", borderBottom: "1px solid #f0f0f0" }}>
+        <div
+          style={{
+            maxWidth: 1280,
+            margin: "0 auto",
+            padding: "1.5rem",
+            display: "flex",
+            flexWrap: "wrap",
+            justifyContent: "center",
+            gap: "2.5rem",
+            alignItems: "center",
+          }}
+        >
+          {[
+            { icon: "🏭", text: "Premium Jindal Steel" },
+            { icon: "🛡️", text: "10 Year Warranty" },
+            { icon: "🚚", text: "Pan India Delivery" },
+            { icon: "💳", text: "Secure Payments" },
+            { icon: "🇮🇳", text: "Made in Coimbatore" },
+          ].map((badge) => (
+            <div
+              key={badge.text}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+              }}
+            >
+              <span style={{ fontSize: "1.1rem" }}>{badge.icon}</span>
+              <span
+                style={{
+                  fontSize: "0.7rem",
+                  fontWeight: 600,
+                  color: "#555",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase",
+                  whiteSpace: "nowrap",
+                  fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif",
+                }}
+              >
+                {badge.text}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* 2. Visual Categories */}
       <CategoryGrid />
 
@@ -47,88 +95,42 @@ export default function Homepage() {
       <ApplicationShowcase />
 
       {/* 6.5. Factory/Workshop Section */}
-      <section style={{ display: "flex", flexWrap: "wrap", background: "#fff", borderTop: "1px solid #eee" }}>
-        <div style={{ flex: "1 1 50%", minWidth: "300px" }}>
+      <section style={{ display: "flex", flexWrap: "wrap", background: "#111", color: "#fff" }}>
+        <div style={{ flex: "1 1 50%", minWidth: "300px", position: "relative" }}>
             <img 
-                src="/steel-factory.png" 
-                alt="Sanra Steel Furniture Factory Workshop" 
-                style={{ width: "100%", height: "100%", objectFit: "cover", minHeight: "400px" }} 
+                src="https://images.unsplash.com/photo-1565615833203-8dce288b20ce?w=800&q=80" 
+                alt="Sanra Steel Factory" 
+                style={{ width: "100%", height: "100%", objectFit: "cover", minHeight: "500px", filter: "grayscale(100%) contrast(1.2)" }} 
             />
+            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }} />
         </div>
-        <div style={{ flex: "1 1 50%", padding: "clamp(3rem, 5vw, 6rem) clamp(2rem, 5vw, 4rem)", display: "flex", flexDirection: "column", justifyContent: "center", background: "#f8f8f8" }}>
-            <h2 style={{ fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#111", lineHeight: 1.1, marginBottom: "1.5rem" }}>
-                Forged in Excellence. <br /> Crafted in Coimbatore.
+        <div style={{ flex: "1 1 50%", padding: "clamp(4rem, 8vw, 8rem) clamp(2rem, 8vw, 6rem)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+            <h2 style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#fff", lineHeight: 1.1, marginBottom: "1.5rem", letterSpacing: "-0.02em" }}>
+                Forged in Excellence.<br />Crafted in Coimbatore.
             </h2>
-            <p style={{ fontSize: "1.1rem", color: "#555", fontFamily: "var(--font-outfit), Outfit, Inter, sans-serif", marginBottom: "2rem", lineHeight: 1.6, maxWidth: "500px" }}>
+            <p style={{ fontSize: "1.1rem", color: "#ccc", fontFamily: "var(--font-outfit), Outfit, Inter, sans-serif", marginBottom: "3rem", lineHeight: 1.6, maxWidth: "500px" }}>
                 Our state-of-the-art manufacturing facility combines traditional craftsmanship with precision engineering. We use only premium Jindal Steel to create furniture that lasts generations.
             </p>
-            <div style={{ display: "flex", gap: "1.5rem" }}>
+            <div style={{ display: "flex", gap: "3rem" }}>
                 <div>
-                    <h4 style={{ fontSize: "1.5rem", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#111", marginBottom: "0.25rem" }}>15+</h4>
-                    <p style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#666", fontWeight: 600 }}>Years Expertise</p>
+                    <h4 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#fff", marginBottom: "0.25rem" }}>15+</h4>
+                    <p style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", fontWeight: 600, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif" }}>Years Expertise</p>
                 </div>
                 <div>
-                    <h4 style={{ fontSize: "1.5rem", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#111", marginBottom: "0.25rem" }}>10k+</h4>
-                    <p style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "#666", fontWeight: 600 }}>Happy Homes</p>
+                    <h4 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#fff", marginBottom: "0.25rem" }}>10k+</h4>
+                    <p style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", fontWeight: 600, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif" }}>Happy Homes</p>
                 </div>
             </div>
-        </div>
-      </section>
-
-      {/* 7. TRUST BADGES STRIP (Why SANRA) */}
-      <section style={{ background: "#1C1C1C", borderTop: "1px solid #333" }}>
-        <div
-          style={{
-            maxWidth: 1200,
-            margin: "0 auto",
-            padding: "1.75rem 1.5rem",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "1.5rem",
-            alignItems: "center",
-          }}
-        >
-          {[
-            { icon: "🏭", text: "Jindal Steel" },
-            { icon: "🛡️", text: "3 Year Warranty" },
-            { icon: "🚚", text: "Pan India Delivery" },
-            { icon: "🇮🇳", text: "Made in Coimbatore" },
-          ].map((badge) => (
-            <div
-              key={badge.text}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                padding: "0 0.5rem",
-              }}
-            >
-              <span style={{ fontSize: "1.1rem" }}>{badge.icon}</span>
-              <span
-                style={{
-                  fontSize: "0.72rem",
-                  fontWeight: 700,
-                  color: "rgba(255,255,255,0.7)",
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {badge.text}
-              </span>
-            </div>
-          ))}
         </div>
       </section>
 
       {/* 8. WhatsApp / Bulk CTA section */}
-      <section style={{ padding: "2.5rem 1.5rem", background: "#f0f0f0", textAlign: "center" }}>
+      <section style={{ padding: "6rem 1.5rem", background: "#F5F5F5", textAlign: "center" }}>
           <div style={{ maxWidth: 800, margin: "0 auto" }}>
-              <h2 style={{ fontSize: "2rem", fontWeight: 900, color: "#111", fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", marginBottom: "1rem" }}>
+              <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#111", fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", marginBottom: "1.5rem", letterSpacing: "-0.02em" }}>
                   Need Bulk Orders or Custom Quotes?
               </h2>
-              <p style={{ fontSize: "1rem", color: "#555", marginBottom: "2rem", fontFamily: "var(--font-outfit), Outfit, Inter, sans-serif" }}>
+              <p style={{ fontSize: "1.1rem", color: "#666", marginBottom: "3rem", fontFamily: "var(--font-outfit), Outfit, Inter, sans-serif", maxWidth: "600px", margin: "0 auto 3rem" }}>
                   Get special pricing for commercial spaces, offices, and bulk home purchases directly via WhatsApp.
               </p>
               <a 
@@ -137,25 +139,25 @@ export default function Homepage() {
                       display: "inline-flex",
                       alignItems: "center",
                       gap: "0.5rem",
-                      padding: "1rem 2rem",
-                      background: "#25D366",
+                      padding: "1.25rem 3rem",
+                      background: "#111",
                       color: "#fff",
-                      fontWeight: 800,
-                      fontSize: "1.1rem",
+                      fontWeight: 600,
+                      fontSize: "0.95rem",
                       textTransform: "uppercase",
                       letterSpacing: "0.05em",
                       textDecoration: "none",
-                      borderRadius: "0.5rem",
+                      borderRadius: "40px",
                       fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif",
-                      transition: "transform 0.2s ease, background 0.2s ease",
+                      transition: "all 0.3s ease",
                   }}
                   onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "#1da851";
-                      e.currentTarget.style.transform = "translateY(-2px)";
+                      e.currentTarget.style.transform = "scale(1.02)";
+                      e.currentTarget.style.boxShadow = "0 12px 24px rgba(0,0,0,0.1)";
                   }}
                   onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "#25D366";
-                      e.currentTarget.style.transform = "translateY(0)";
+                      e.currentTarget.style.transform = "scale(1)";
+                      e.currentTarget.style.boxShadow = "none";
                   }}
               >
                   Contact on WhatsApp

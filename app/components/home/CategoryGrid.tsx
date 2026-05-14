@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { FM } from "../../shop/ShopComponents";
+import { FM, FO } from "../../shop/ShopComponents";
 
 const categories = [
     {
@@ -39,44 +39,74 @@ const categories = [
 
 export default function CategoryGrid() {
     return (
-        <section style={{ padding: "2.5rem 1.5rem", background: "#fff", borderBottom: "1px solid #eee" }}>
-            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-                <h2 style={{
-                    fontSize: "2rem",
-                    fontWeight: 900,
-                    color: "#111",
-                    fontFamily: FM,
-                    textAlign: "center",
-                    marginBottom: "2.5rem",
-                    letterSpacing: "-0.02em"
-                }}>
-                    Shop by Category
-                </h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+        <section style={{ padding: "8rem 1.5rem", background: "#fff" }}>
+            <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "3rem" }}>
+                    <div>
+                        <h2 style={{
+                            fontSize: "2rem",
+                            fontWeight: 800,
+                            color: "#111",
+                            fontFamily: FM,
+                            letterSpacing: "-0.02em",
+                            marginBottom: "0.5rem"
+                        }}>
+                            Shop by Category
+                        </h2>
+                        <p style={{ fontFamily: FO, color: "#666", fontSize: "1.05rem" }}>
+                            Explore our engineered steel collections.
+                        </p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-10">
                     {categories.map((cat) => (
                         <Link
                             key={cat.name}
                             href={cat.href}
-                            className="group relative block w-full aspect-square overflow-hidden rounded-lg bg-gray-100"
+                            className="group block w-full text-center"
+                            style={{ textDecoration: "none" }}
                         >
-                            <img
-                                src={cat.image}
-                                alt={cat.name}
-                                loading="lazy"
-                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                            />
-                            {/* Overlay */}
-                            <div className="absolute inset-0 bg-black/30 transition-colors duration-300 group-hover:bg-black/50" />
-                            
-                            {/* Text */}
-                            <div className="absolute inset-0 flex items-center justify-center p-4">
-                                <h3
-                                    style={{ fontFamily: FM, textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
-                                    className="text-white text-center text-lg md:text-xl font-extrabold uppercase tracking-wide transition-transform duration-300 group-hover:scale-105"
-                                >
-                                    {cat.name}
-                                </h3>
+                            <div 
+                                style={{
+                                    width: "100%",
+                                    aspectRatio: "1/1",
+                                    background: "#F5F5F5",
+                                    borderRadius: "12px",
+                                    overflow: "hidden",
+                                    marginBottom: "1.25rem",
+                                    position: "relative",
+                                }}
+                            >
+                                <img
+                                    src={cat.image}
+                                    alt={cat.name}
+                                    loading="lazy"
+                                    style={{
+                                        position: "absolute",
+                                        inset: 0,
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                        transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
+                                    }}
+                                    className="group-hover:scale-105"
+                                />
                             </div>
+                            
+                            <h3
+                                style={{ 
+                                    fontFamily: FM, 
+                                    fontSize: "0.95rem",
+                                    fontWeight: 700,
+                                    color: "#111",
+                                    letterSpacing: "0.05em",
+                                    textTransform: "uppercase",
+                                    transition: "color 0.2s ease"
+                                }}
+                            >
+                                {cat.name}
+                            </h3>
                         </Link>
                     ))}
                 </div>

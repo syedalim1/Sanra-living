@@ -10,114 +10,138 @@ export default function HeroSection() {
             className="sl-hero"
             style={{
                 position: "relative",
-                backgroundImage: "url('/images/HERO_IMAGE.png')",
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                minHeight: "80vh",
+                background: "#F8F6F2", // Premium light beige
+                minHeight: "85vh",
+                display: "flex",
+                alignItems: "center",
+                overflow: "hidden",
             }}
         >
-            <div className="sl-hero-overlay" style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.3)" }} />
-            <div className="sl-container sl-hero-content" style={{ position: "relative", zIndex: 1, width: "100%", paddingBottom: "4rem" }}>
-                <div
-                    className="flex flex-col items-start text-left"
-                    style={{ maxWidth: 650, gap: "1.5rem" }}
-                >
+            <div 
+                className="sl-container" 
+                style={{ 
+                    maxWidth: 1280, 
+                    margin: "0 auto", 
+                    padding: "4rem 1.5rem", 
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    textAlign: "center",
+                    position: "relative",
+                    zIndex: 2,
+                }}
+            >
+                <div style={{ maxWidth: 800, marginBottom: "3rem" }}>
                     <h1
                         style={{
-                            fontSize: "clamp(2.5rem, 6vw, 4rem)",
-                            fontWeight: 900,
-                            lineHeight: 1,
-                            letterSpacing: "-0.02em",
-                            color: "#ffffff",
+                            fontSize: "clamp(3rem, 8vw, 5.5rem)",
+                            fontWeight: 800,
+                            lineHeight: 1.05,
+                            letterSpacing: "-0.03em",
+                            color: "#111",
                             fontFamily: FM,
-                            textShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: "0.25rem"
+                            marginBottom: "1.5rem",
                         }}
                     >
-                        <span>Luxury Steel Furniture</span>
-                        <span style={{ fontWeight: 400, fontSize: "clamp(1.5rem, 4vw, 2.5rem)" }}>Built for Modern Indian Spaces.</span>
+                        Masterpiece in Steel.
                     </h1>
 
-                    <ul style={{ 
-                        display: "flex", 
-                        flexDirection: "column", 
-                        gap: "0.5rem", 
-                        color: "#f5f5f5", 
-                        fontSize: "clamp(1rem, 2vw, 1.15rem)", 
+                    <p style={{ 
+                        color: "#555", 
+                        fontSize: "clamp(1.1rem, 2vw, 1.35rem)", 
                         fontFamily: FO,
-                        marginTop: "0.5rem",
-                        listStyle: "none",
-                        padding: 0
+                        maxWidth: 600,
+                        margin: "0 auto 2.5rem",
+                        lineHeight: 1.5,
+                        fontWeight: 400,
                     }}>
-                        <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><span style={{ color: "#25D366" }}>✓</span> Premium Powder-Coated Steel</li>
-                        <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><span style={{ color: "#25D366" }}>✓</span> Long-Lasting Durability</li>
-                        <li style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><span style={{ color: "#25D366" }}>✓</span> Unmatched Build Quality</li>
-                    </ul>
+                        Engineered for modern Indian spaces. <br className="hidden md:block" />
+                        Built to last generations.
+                    </p>
 
-                    <div style={{ display: "flex", gap: "1rem", marginTop: "1rem", flexWrap: "wrap" }}>
+                    <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
                         <Link
                             href="/shop"
                             style={{
                                 display: "inline-flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                padding: "1.25rem 3rem",
-                                background: "#fff",
-                                color: "#111",
-                                fontWeight: 800,
-                                fontSize: "1rem",
-                                letterSpacing: "0.1em",
+                                padding: "1rem 2.5rem",
+                                background: "#111",
+                                color: "#fff",
+                                fontWeight: 600,
+                                fontSize: "0.9rem",
+                                letterSpacing: "0.05em",
                                 textTransform: "uppercase",
                                 textDecoration: "none",
                                 fontFamily: FM,
-                                transition: "all 0.2s ease",
-                                boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                                transition: "all 0.3s ease",
+                                borderRadius: "40px",
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "#f0f0f0";
-                                e.currentTarget.style.transform = "translateY(-2px)";
+                                e.currentTarget.style.background = "#333";
+                                e.currentTarget.style.transform = "scale(1.02)";
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.background = "#fff";
-                                e.currentTarget.style.transform = "translateY(0)";
+                                e.currentTarget.style.background = "#111";
+                                e.currentTarget.style.transform = "scale(1)";
                             }}
                         >
-                            Shop Products
+                            Shop Collection
                         </Link>
                         <Link
-                            href="/shop"
+                            href="/shop/living"
                             style={{
                                 display: "inline-flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                padding: "1.25rem 3rem",
-                                background: "rgba(0,0,0,0.4)",
-                                color: "#fff",
-                                fontWeight: 800,
-                                fontSize: "1rem",
-                                letterSpacing: "0.1em",
+                                padding: "1rem 2.5rem",
+                                background: "transparent",
+                                color: "#111",
+                                fontWeight: 600,
+                                fontSize: "0.9rem",
+                                letterSpacing: "0.05em",
                                 textTransform: "uppercase",
                                 textDecoration: "none",
                                 fontFamily: FM,
-                                transition: "all 0.2s ease",
-                                border: "2px solid rgba(255,255,255,0.8)",
-                                backdropFilter: "blur(4px)",
+                                transition: "all 0.3s ease",
+                                border: "1px solid #111",
+                                borderRadius: "40px",
                             }}
                             onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "rgba(255,255,255,0.15)";
-                                e.currentTarget.style.borderColor = "#fff";
-                                e.currentTarget.style.transform = "translateY(-2px)";
+                                e.currentTarget.style.background = "rgba(0,0,0,0.05)";
                             }}
                             onMouseLeave={(e) => {
-                                e.currentTarget.style.background = "rgba(0,0,0,0.4)";
-                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.8)";
-                                e.currentTarget.style.transform = "translateY(0)";
+                                e.currentTarget.style.background = "transparent";
                             }}
                         >
                             View Best Sellers
                         </Link>
+                    </div>
+                </div>
+
+                {/* Hero Image Focus */}
+                <div style={{ width: "100%", maxWidth: 1000, position: "relative" }}>
+                    <div style={{
+                        position: "relative",
+                        width: "100%",
+                        aspectRatio: "16/9",
+                        borderRadius: "16px",
+                        overflow: "hidden",
+                        boxShadow: "0 24px 64px rgba(0,0,0,0.08)",
+                    }}>
+                        {/* Placeholder for a high-quality cinematic beige interior shot */}
+                        <img 
+                            src="https://images.unsplash.com/photo-1592078615290-033ee584e267?w=1600&q=80" 
+                            alt="Luxury Steel Furniture"
+                            style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                filter: "contrast(1.05) saturate(1.1)",
+                            }}
+                        />
                     </div>
                 </div>
             </div>

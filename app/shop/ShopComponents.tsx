@@ -105,10 +105,12 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
                 flexDirection: "column",
                 cursor: "pointer",
                 boxShadow: hovered
-                    ? "0 12px 48px rgba(0,0,0,0.15)"
-                    : "0 2px 12px rgba(0,0,0,0.06)",
-                transition: "box-shadow 0.3s ease, transform 0.3s ease",
-                transform: hovered ? "translateY(-6px)" : "translateY(0)",
+                    ? "0 20px 40px rgba(0,0,0,0.04)"
+                    : "0 0 0 rgba(0,0,0,0)",
+                transition: "box-shadow 0.4s ease, transform 0.4s ease",
+                transform: hovered ? "translateY(-4px)" : "translateY(0)",
+                borderRadius: "12px",
+                overflow: "hidden",
             }}
         >
             {/* Image Area */}
@@ -169,31 +171,19 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
             {/* Card Body */}
             <div
                 style={{
-                    padding: "1.25rem 1.25rem 1.5rem",
+                    padding: "1.25rem 1rem",
                     display: "flex",
                     flexDirection: "column",
                     flex: 1,
+                    textAlign: "center",
                 }}
             >
-                <p
-                    style={{
-                        fontSize: "0.65rem",
-                        fontWeight: 700,
-                        letterSpacing: "0.18em",
-                        color: C.muted,
-                        textTransform: "uppercase",
-                        marginBottom: "0.375rem",
-                        fontFamily: FM,
-                    }}
-                >
-                    {product.category}
-                </p>
                 <h3
                     style={{
                         fontSize: "0.95rem",
-                        fontWeight: 700,
+                        fontWeight: 600,
                         color: C.black,
-                        letterSpacing: "0.02em",
+                        letterSpacing: "0.01em",
                         fontFamily: FM,
                         marginBottom: "0.25rem",
                         lineHeight: 1.3,
@@ -203,112 +193,52 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
                 </h3>
                 <p
                     style={{
-                        fontSize: "0.8rem",
-                        color: C.mid,
+                        fontSize: "0.85rem",
+                        color: "#777",
                         fontWeight: 400,
                         marginBottom: "1rem",
                         fontFamily: FO,
                         lineHeight: 1.4,
                     }}
                 >
-                    {product.category} • {product.finish}
+                    {product.category}
                 </p>
 
                 <div style={{ marginTop: "auto" }}>
                     <p
                         style={{
-                            fontSize: "1.45rem",
-                            fontWeight: 900,
-                            color: "#000",
-                            letterSpacing: "-0.02em",
-                            fontFamily: FM,
-                            marginBottom: "0.25rem",
+                            fontSize: "1.1rem",
+                            fontWeight: 700,
+                            color: "#111",
+                            fontFamily: FO,
+                            marginBottom: "1rem",
                         }}
                     >
                         {priceDisplay}
                     </p>
-                    <p
-                        style={{
-                            fontSize: "0.65rem",
-                            fontWeight: 700,
-                            letterSpacing: "0.14em",
-                            color: "#000",
-                            textTransform: "uppercase",
-                            marginBottom: "0.25rem",
-                            fontFamily: FM,
-                        }}
-                    >
-                        Strong Steel • Long Lasting
-                    </p>
-                    <p
-                        style={{
-                            fontSize: "0.63rem",
-                            fontWeight: 600,
-                            letterSpacing: "0.14em",
-                            color: C.muted,
-                            textTransform: "uppercase",
-                            marginBottom: "1rem",
-                            fontFamily: FM,
-                        }}
-                    >
-                        10 Year Warranty Included
-                    </p>
 
-                    <div style={{ display: "flex", gap: "0.5rem", flexDirection: "column" }}>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
                         <button
                             onClick={handleAddToCart}
                             style={{
                                 width: "100%",
-                                padding: "0.8rem",
+                                maxWidth: "200px",
+                                padding: "0.75rem",
                                 fontSize: "0.75rem",
-                                fontWeight: 800,
-                                letterSpacing: "0.1em",
+                                fontWeight: 700,
+                                letterSpacing: "0.05em",
                                 textTransform: "uppercase",
                                 cursor: "pointer",
                                 fontFamily: FM,
-                                background: C.black,
-                                color: "#fff",
-                                border: `1.5px solid ${C.black}`,
+                                background: hovered ? C.black : "transparent",
+                                color: hovered ? "#fff" : C.black,
+                                border: `1px solid ${C.black}`,
+                                borderRadius: "4px",
                                 transition: "all 0.3s ease",
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "#333";
-                                e.currentTarget.style.borderColor = "#333";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background = C.black;
-                                e.currentTarget.style.borderColor = C.black;
+                                opacity: hovered ? 1 : 0.8,
                             }}
                         >
                             Add To Cart
-                        </button>
-                        <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                handleCardClick();
-                            }}
-                            style={{
-                                width: "100%",
-                                padding: "0.8rem",
-                                fontSize: "0.75rem",
-                                fontWeight: 800,
-                                letterSpacing: "0.1em",
-                                textTransform: "uppercase",
-                                cursor: "pointer",
-                                fontFamily: FM,
-                                background: "transparent",
-                                color: C.black,
-                                border: `1.5px solid #E8E8E8`,
-                                transition: "all 0.3s ease",
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.borderColor = C.black;
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.borderColor = "#E8E8E8";
-                            }}
-                        >
-                            View Product
                         </button>
                     </div>
                 </div>
