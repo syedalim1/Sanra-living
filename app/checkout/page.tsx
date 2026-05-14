@@ -8,9 +8,6 @@ import SiteHeader from "@/app/components/SiteHeader";
 import SiteFooter from "@/app/components/SiteFooter";
 import { optimizeImage } from "@/utils/cloudinary";
 
-const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
-const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
-
 /* ── Razorpay type declaration ── */
 declare global {
     interface Window {
@@ -58,12 +55,25 @@ export default function CheckoutPage() {
 
     if (items.length === 0) {
         return (
-            <div style={{ background: "#F5F5F5", minHeight: "100vh", fontFamily: FO, display: "flex", flexDirection: "column" }}>
+            <div className="bg-[#FCFCFC] min-h-screen font-outfit flex flex-col">
                 <SiteHeader />
-                <main style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "2rem" }}>
-                    <h1 style={{ fontSize: "2rem", fontWeight: 900, fontFamily: FM, color: "#111", marginBottom: "1rem" }}>Your Cart is Empty</h1>
-                    <Link href="/shop" style={{ padding: "1rem 2rem", background: "#111", color: "#fff", textDecoration: "none", fontWeight: 700, fontFamily: FM, borderRadius: "4px" }}>
-                        CONTINUE SHOPPING
+                <main className="flex-1 flex flex-col items-center justify-center px-6 py-20 text-center max-w-lg mx-auto">
+                    <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mb-8 shadow-sm">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" strokeWidth="1.5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                    </div>
+                    <h1 className="text-3xl lg:text-4xl font-black text-black tracking-tight font-montserrat mb-4">
+                        Your Cart is Empty.
+                    </h1>
+                    <p className="text-base text-gray-500 font-light mb-10 leading-relaxed">
+                        Discover premium steel furniture crafted for modern living.
+                    </p>
+                    <Link 
+                        href="/shop" 
+                        className="inline-flex justify-center items-center px-10 py-4 bg-black text-white font-bold text-xs tracking-[0.2em] uppercase font-montserrat rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                    >
+                        Explore Collection
                     </Link>
                 </main>
                 <SiteFooter />
@@ -82,7 +92,6 @@ export default function CheckoutPage() {
         setProcessing(true);
 
         try {
-            // 1. Create Razorpay order via API
             const codAdvance = paymentMethod === "cod" ? Math.round(subtotal * 0.2) : 0;
             const amountPayableNow = paymentMethod === "cod" ? codAdvance : subtotal;
 
@@ -116,7 +125,6 @@ export default function CheckoutPage() {
 
             const data = await res.json();
 
-            // 2. Open Razorpay checkout
             if (!window.Razorpay) {
                 throw new Error("Payment gateway is loading. Please try again in a moment.");
             }
@@ -134,7 +142,6 @@ export default function CheckoutPage() {
                 },
                 theme: { color: "#111111" },
                 handler: async function (response: Record<string, unknown>) {
-                    // 3. Verify payment
                     try {
                         const verifyRes = await fetch("/api/razorpay/verify-payment", {
                             method: "POST",
@@ -148,11 +155,8 @@ export default function CheckoutPage() {
                             }),
                         });
 
-                        if (!verifyRes.ok) {
-                            throw new Error("Payment verification failed");
-                        }
+                        if (!verifyRes.ok) throw new Error("Payment verification failed");
 
-                        // 4. Success → clear cart and redirect
                         dispatch({ type: "CLEAR" });
                         router.push(`/order-confirmation?order=${data.orderNumber}`);
                     } catch {
@@ -182,200 +186,232 @@ export default function CheckoutPage() {
     };
 
     return (
-        <div style={{ background: "#F5F5F5", minHeight: "100vh", fontFamily: FO, display: "flex", flexDirection: "column" }}>
+        <div className="bg-[#FCFCFC] min-h-screen font-outfit flex flex-col">
             <SiteHeader />
             
-            <main style={{ flex: 1, padding: "3rem 1.5rem" }}>
-                <div style={{ maxWidth: 1200, margin: "0 auto", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "3rem", alignItems: "start" }}>
+            <main className="flex-1 pt-8 pb-16 lg:pt-12 lg:pb-24 px-4 md:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-14 items-start">
                     
-                    {/* LEFT: CHECKOUT FORM */}
-                    <div style={{ background: "#fff", padding: "2.5rem", borderRadius: "8px", boxShadow: "0 2px 10px rgba(0,0,0,0.02)" }}>
-                        <h1 style={{ fontSize: "2.5rem", fontWeight: 900, fontFamily: FM, color: "#111", marginBottom: "1rem", letterSpacing: "-0.02em" }}>
-                            Secure Checkout
-                        </h1>
+                    {/* ── LEFT: CHECKOUT FORM ──────────────────────────── */}
+                    <div className="w-full lg:flex-1">
                         
-                        {/* Trust Indicators */}
-                        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "2.5rem" }}>
-                            {["🔒 Secure Payment", "⚡ Fast Processing", "🚚 Reliable Delivery"].map((text) => (
-                                <span key={text} style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1da851", background: "rgba(37,211,102,0.1)", padding: "0.4rem 1rem", borderRadius: "100px", fontFamily: FM }}>
-                                    {text}
-                                </span>
-                            ))}
+                        <div className="mb-8 lg:mb-10">
+                            <h1 className="text-3xl lg:text-4xl font-black text-black tracking-tight font-montserrat mb-3">
+                                Secure Checkout
+                            </h1>
+                            
+                            {/* Premium Trust Badges */}
+                            <div className="flex flex-wrap items-center gap-4 lg:gap-6 mt-4">
+                                {[
+                                    { icon: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z", text: "Secure Payment" },
+                                    { icon: "M13 10V3L4 14h7v7l9-11h-7z", text: "Fast Processing" },
+                                    { icon: "M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4", text: "Safe Packaging" }
+                                ].map((trust, i) => (
+                                    <div key={i} className="flex items-center gap-2">
+                                        <div className="text-gray-400">
+                                            <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d={trust.icon} />
+                                            </svg>
+                                        </div>
+                                        <span className="text-[0.7rem] font-medium uppercase tracking-[0.1em] font-montserrat text-gray-500">{trust.text}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
-                        {/* Error Banner */}
                         {error && (
-                            <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", borderRadius: "8px", padding: "1rem 1.25rem", marginBottom: "1.5rem", display: "flex", alignItems: "flex-start", gap: "0.75rem" }}>
-                                <span style={{ fontSize: "1.2rem", flexShrink: 0 }}>⚠️</span>
+                            <div className="bg-[#FEF2F2] border border-[#FECACA] rounded-xl p-4 lg:p-5 mb-8 flex items-start gap-4 shadow-sm">
+                                <span className="text-xl shrink-0 mt-0.5">⚠️</span>
                                 <div>
-                                    <p style={{ margin: 0, fontSize: "0.95rem", color: "#991B1B", fontWeight: 600, fontFamily: FM }}>{error}</p>
-                                    <button onClick={() => setError("")} style={{ background: "none", border: "none", color: "#DC2626", fontSize: "0.85rem", cursor: "pointer", padding: 0, marginTop: "0.5rem", textDecoration: "underline" }}>Dismiss</button>
+                                    <p className="text-sm font-semibold text-[#991B1B] font-montserrat leading-relaxed m-0">{error}</p>
+                                    <button onClick={() => setError("")} className="text-xs font-semibold text-[#DC2626] uppercase tracking-widest mt-2 hover:underline underline-offset-4">Dismiss</button>
                                 </div>
                             </div>
                         )}
 
-                        <form onSubmit={handlePlaceOrder} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                        <form onSubmit={handlePlaceOrder} className="bg-white rounded-3xl p-6 md:p-8 lg:p-10 border border-black/5 shadow-[0_12px_40px_rgba(0,0,0,0.03)] flex flex-col gap-8">
                             
-                            <h3 style={{ fontSize: "1.2rem", fontWeight: 800, fontFamily: FM, color: "#111", margin: "0.5rem 0 0" }}>Shipping Details</h3>
-                            
+                            {/* Shipping Details */}
                             <div>
-                                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#555", marginBottom: "0.4rem" }}>Full Name</label>
-                                <input type="text" name="name" value={form.name} onChange={handleChange} required style={{ width: "100%", padding: "0.875rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "1rem", fontFamily: FO, outline: "none", boxSizing: "border-box" }} />
-                            </div>
-                            
-                            <div>
-                                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#555", marginBottom: "0.4rem" }}>Phone Number</label>
-                                <input type="tel" name="phone" value={form.phone} onChange={handleChange} required style={{ width: "100%", padding: "0.875rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "1rem", fontFamily: FO, outline: "none", boxSizing: "border-box" }} />
-                            </div>
-                            
-                            <div>
-                                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#555", marginBottom: "0.4rem" }}>Address</label>
-                                <textarea name="address" value={form.address} onChange={handleChange} required rows={2} style={{ width: "100%", padding: "0.875rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "1rem", fontFamily: FO, resize: "vertical", outline: "none", boxSizing: "border-box" }} />
-                            </div>
-
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                                <div>
-                                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#555", marginBottom: "0.4rem" }}>City</label>
-                                    <input type="text" name="city" value={form.city} onChange={handleChange} required style={{ width: "100%", padding: "0.875rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "1rem", fontFamily: FO, outline: "none", boxSizing: "border-box" }} />
-                                </div>
-                                <div>
-                                    <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#555", marginBottom: "0.4rem" }}>Pincode</label>
-                                    <input type="text" name="pincode" value={form.pincode} onChange={handleChange} required style={{ width: "100%", padding: "0.875rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "1rem", fontFamily: FO, outline: "none", boxSizing: "border-box" }} />
-                                </div>
-                            </div>
-
-                            <div>
-                                <label style={{ display: "block", fontSize: "0.85rem", fontWeight: 600, color: "#555", marginBottom: "0.4rem" }}>State</label>
-                                <input type="text" name="state" value={form.state} onChange={handleChange} required style={{ width: "100%", padding: "0.875rem", border: "1px solid #ccc", borderRadius: "4px", fontSize: "1rem", fontFamily: FO, outline: "none", boxSizing: "border-box" }} />
-                            </div>
-
-                            <div style={{ height: 1, background: "#E6E6E6", margin: "1.5rem 0" }} />
-
-                            <h3 style={{ fontSize: "1.2rem", fontWeight: 800, fontFamily: FM, color: "#111", margin: 0 }}>Payment Method</h3>
-                            
-                            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", marginBottom: "1rem" }}>
-                                <label
-                                    onClick={() => setPaymentMethod("prepaid")}
-                                    style={{
-                                        display: "flex", alignItems: "center", gap: "0.75rem", padding: "1rem",
-                                        border: paymentMethod === "prepaid" ? "2px solid #111" : "1px solid #ccc",
-                                        borderRadius: "4px", cursor: "pointer",
-                                        background: paymentMethod === "prepaid" ? "#fafafa" : "#fff",
-                                    }}
-                                >
-                                    <input type="radio" name="payment" checked={paymentMethod === "prepaid"} readOnly style={{ width: "1.2rem", height: "1.2rem" }} />
-                                    <div>
-                                        <span style={{ fontSize: "1rem", fontWeight: 700, color: "#111", fontFamily: FM }}>UPI / Card / Net Banking</span>
-                                        <p style={{ margin: "0.25rem 0 0", fontSize: "0.8rem", color: "#666" }}>Pay full amount now via Razorpay</p>
+                                <h3 className="text-sm font-black text-black tracking-[0.2em] uppercase font-montserrat mb-6">Shipping Details</h3>
+                                
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-[0.75rem] font-semibold text-gray-500 uppercase tracking-widest font-montserrat ml-1">Full Name</label>
+                                        <input type="text" name="name" value={form.name} onChange={handleChange} required 
+                                            className="w-full px-4 py-3.5 bg-[#FAFAFA] border border-black/10 rounded-xl font-outfit text-sm text-black outline-none focus:border-black/30 focus:bg-white focus:shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all placeholder:text-gray-400"
+                                            placeholder="Enter your full name"
+                                        />
                                     </div>
-                                </label>
-                                <label
-                                    onClick={() => setPaymentMethod("cod")}
-                                    style={{
-                                        display: "flex", alignItems: "center", gap: "0.75rem", padding: "1rem",
-                                        border: paymentMethod === "cod" ? "2px solid #111" : "1px solid #ccc",
-                                        borderRadius: "4px", cursor: "pointer",
-                                        background: paymentMethod === "cod" ? "#fafafa" : "#fff",
-                                    }}
-                                >
-                                    <input type="radio" name="payment" checked={paymentMethod === "cod"} readOnly style={{ width: "1.2rem", height: "1.2rem" }} />
-                                    <div>
-                                        <span style={{ fontSize: "1rem", fontWeight: 600, color: "#333", fontFamily: FM }}>Cash on Delivery (COD)</span>
-                                        <p style={{ margin: "0.25rem 0 0", fontSize: "0.8rem", color: "#666" }}>Pay 20% advance now, rest on delivery</p>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-[0.75rem] font-semibold text-gray-500 uppercase tracking-widest font-montserrat ml-1">Phone Number</label>
+                                        <input type="tel" name="phone" value={form.phone} onChange={handleChange} required 
+                                            className="w-full px-4 py-3.5 bg-[#FAFAFA] border border-black/10 rounded-xl font-outfit text-sm text-black outline-none focus:border-black/30 focus:bg-white focus:shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all placeholder:text-gray-400"
+                                            placeholder="10-digit mobile number"
+                                        />
                                     </div>
-                                </label>
+                                </div>
+                                
+                                <div className="flex flex-col gap-2 mb-5">
+                                    <label className="text-[0.75rem] font-semibold text-gray-500 uppercase tracking-widest font-montserrat ml-1">Delivery Address</label>
+                                    <textarea name="address" value={form.address} onChange={handleChange} required rows={3} 
+                                        className="w-full px-4 py-3.5 bg-[#FAFAFA] border border-black/10 rounded-xl font-outfit text-sm text-black outline-none focus:border-black/30 focus:bg-white focus:shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all resize-none placeholder:text-gray-400"
+                                        placeholder="Flat/House No, Floor, Building, Street, Area"
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-[0.75rem] font-semibold text-gray-500 uppercase tracking-widest font-montserrat ml-1">City</label>
+                                        <input type="text" name="city" value={form.city} onChange={handleChange} required 
+                                            className="w-full px-4 py-3.5 bg-[#FAFAFA] border border-black/10 rounded-xl font-outfit text-sm text-black outline-none focus:border-black/30 focus:bg-white focus:shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all placeholder:text-gray-400"
+                                            placeholder="Enter your city"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="text-[0.75rem] font-semibold text-gray-500 uppercase tracking-widest font-montserrat ml-1">Pincode</label>
+                                        <input type="text" name="pincode" value={form.pincode} onChange={handleChange} required 
+                                            className="w-full px-4 py-3.5 bg-[#FAFAFA] border border-black/10 rounded-xl font-outfit text-sm text-black outline-none focus:border-black/30 focus:bg-white focus:shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all placeholder:text-gray-400"
+                                            placeholder="6-digit pincode"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex flex-col gap-2">
+                                    <label className="text-[0.75rem] font-semibold text-gray-500 uppercase tracking-widest font-montserrat ml-1">State</label>
+                                    <input type="text" name="state" value={form.state} onChange={handleChange} required 
+                                        className="w-full px-4 py-3.5 bg-[#FAFAFA] border border-black/10 rounded-xl font-outfit text-sm text-black outline-none focus:border-black/30 focus:bg-white focus:shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all placeholder:text-gray-400"
+                                        placeholder="Enter your state"
+                                    />
+                                </div>
                             </div>
 
-                            {/* COD notice */}
-                            {paymentMethod === "cod" && (
-                                <div style={{ background: "#FFF7ED", border: "1px solid #FED7AA", borderRadius: "6px", padding: "1rem", fontSize: "0.9rem", color: "#9A3412" }}>
-                                    <strong>COD Advance:</strong> ₹{Math.round(subtotal * 0.2).toLocaleString("en-IN")} (20% of ₹{subtotal.toLocaleString("en-IN")}) will be charged now. Remaining ₹{Math.round(subtotal * 0.8).toLocaleString("en-IN")} on delivery.
+                            <hr className="border-t border-black/5" />
+
+                            {/* Payment Details */}
+                            <div>
+                                <h3 className="text-sm font-black text-black tracking-[0.2em] uppercase font-montserrat mb-6">Payment Method</h3>
+                                
+                                <div className="flex flex-col gap-4 mb-6">
+                                    {/* Prepaid Option */}
+                                    <label 
+                                        onClick={() => setPaymentMethod("prepaid")}
+                                        className={`flex items-start gap-4 p-5 rounded-2xl cursor-pointer transition-all duration-300 border ${paymentMethod === "prepaid" ? "border-black bg-[#FAFAFA] shadow-[0_4px_20px_rgba(0,0,0,0.03)]" : "border-[#E5E5E5] bg-white hover:border-black/30"}`}
+                                    >
+                                        <div className={`mt-0.5 shrink-0 w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center transition-colors ${paymentMethod === "prepaid" ? "border-black" : "border-gray-300"}`}>
+                                            {paymentMethod === "prepaid" && <div className="w-2.5 h-2.5 bg-black rounded-full" />}
+                                        </div>
+                                        <div className="flex-1">
+                                            <span className="block text-[0.95rem] font-bold text-black font-montserrat tracking-tight mb-1">Prepaid / Full Amount</span>
+                                            <p className="text-xs text-gray-500 font-outfit leading-relaxed">Pay securely now via UPI, Credit Card, Debit Card, or Net Banking.</p>
+                                        </div>
+                                    </label>
+                                    
+                                    {/* COD Option */}
+                                    <label 
+                                        onClick={() => setPaymentMethod("cod")}
+                                        className={`flex items-start gap-4 p-5 rounded-2xl cursor-pointer transition-all duration-300 border ${paymentMethod === "cod" ? "border-black bg-[#FAFAFA] shadow-[0_4px_20px_rgba(0,0,0,0.03)]" : "border-[#E5E5E5] bg-white hover:border-black/30"}`}
+                                    >
+                                        <div className={`mt-0.5 shrink-0 w-5 h-5 rounded-full border-[1.5px] flex items-center justify-center transition-colors ${paymentMethod === "cod" ? "border-black" : "border-gray-300"}`}>
+                                            {paymentMethod === "cod" && <div className="w-2.5 h-2.5 bg-black rounded-full" />}
+                                        </div>
+                                        <div className="flex-1">
+                                            <span className="block text-[0.95rem] font-bold text-black font-montserrat tracking-tight mb-1">Cash on Delivery (20% Advance)</span>
+                                            <p className="text-xs text-gray-500 font-outfit leading-relaxed">Pay 20% advance now to confirm order. Pay the remaining balance upon delivery.</p>
+                                        </div>
+                                    </label>
                                 </div>
-                            )}
 
-                            <button 
-                                type="submit"
-                                disabled={processing}
-                                style={{
-                                    width: "100%",
-                                    padding: "1.25rem",
-                                    background: processing ? "#666" : "#111",
-                                    color: "#fff",
-                                    fontSize: "1.2rem",
-                                    fontWeight: 900,
-                                    fontFamily: FM,
-                                    textTransform: "uppercase",
-                                    letterSpacing: "0.05em",
-                                    border: "none",
-                                    borderRadius: "4px",
-                                    cursor: processing ? "wait" : "pointer",
-                                    transition: "background 0.2s",
-                                    marginTop: "1rem",
-                                    opacity: processing ? 0.7 : 1,
-                                }}
-                                onMouseEnter={(e) => !processing && (e.currentTarget.style.background = "#333")}
-                                onMouseLeave={(e) => !processing && (e.currentTarget.style.background = "#111")}
-                            >
-                                {processing ? "PROCESSING..." : paymentMethod === "cod" ? `PAY ₹${Math.round(subtotal * 0.2).toLocaleString("en-IN")} ADVANCE` : "PLACE ORDER"}
-                            </button>
+                                {/* COD notice */}
+                                {paymentMethod === "cod" && (
+                                    <div className="bg-[#FAFAFA] border border-[#F0F0F0] rounded-xl p-4 lg:p-5 flex items-start gap-3">
+                                        <svg className="w-5 h-5 text-gray-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+                                        </svg>
+                                        <p className="text-[0.8rem] font-outfit text-gray-600 leading-relaxed m-0">
+                                            <strong className="text-black font-semibold font-montserrat tracking-tight block mb-1">Advance Payment Required</strong>
+                                            ₹{Math.round(subtotal * 0.2).toLocaleString("en-IN")} will be charged now. The remaining ₹{Math.round(subtotal * 0.8).toLocaleString("en-IN")} is due on delivery.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
 
-                            <p style={{ textAlign: "center", fontSize: "0.9rem", color: "#666", fontFamily: FO, margin: 0, fontWeight: 500 }}>
-                                🔒 100% Secure Payment. No hidden charges.
-                            </p>
                         </form>
                     </div>
 
-                    {/* RIGHT: ORDER SUMMARY */}
-                    <div style={{ background: "#fdfdfd", padding: "2.5rem", borderRadius: "8px", border: "1px solid #E6E6E6", position: "sticky", top: "2rem" }}>
-                        <h2 style={{ fontSize: "1.5rem", fontWeight: 800, fontFamily: FM, color: "#111", marginBottom: "1.5rem", borderBottom: "1px solid #E6E6E6", paddingBottom: "1rem" }}>
-                            Order Summary
-                        </h2>
+                    {/* ── RIGHT: ORDER SUMMARY ──────────────────────────── */}
+                    <div className="w-full lg:w-[420px] shrink-0 lg:sticky lg:top-28">
+                        <div className="bg-white border border-black/5 rounded-3xl p-6 md:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.03)]">
+                            <h2 className="text-sm font-black text-black tracking-[0.2em] uppercase font-montserrat mb-8">
+                                Order Summary
+                            </h2>
 
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", marginBottom: "2rem" }}>
-                            {items.map((item) => (
-                                <div key={`${item.id}-${item.finish}`} style={{ display: "flex", alignItems: "center", gap: "1rem", position: "relative" }}>
-                                    <div style={{ width: 64, height: 64, flexShrink: 0, background: "#f0f0f0", borderRadius: "4px", overflow: "hidden", position: "relative" }}>
-                                        <img src={optimizeImage(item.image, 150)} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                        <span style={{ position: "absolute", top: 0, right: 0, background: "rgba(0,0,0,0.8)", color: "#fff", fontSize: "0.65rem", width: 18, height: 18, display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold" }}>
-                                            {item.qty}
-                                        </span>
+                            {/* Products List */}
+                            <div className="flex flex-col gap-6 mb-8 max-h-[350px] overflow-y-auto pr-2 scrollbar-hide">
+                                {items.map((item) => (
+                                    <div key={`${item.id}-${item.finish}`} className="flex items-start gap-4">
+                                        <div className="w-[72px] h-[90px] shrink-0 bg-[#F9F9F9] rounded-xl overflow-hidden relative border border-black/5">
+                                            <img src={optimizeImage(item.image, 150) || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=150&q=80"} alt={item.title} className="absolute inset-0 w-full h-full object-cover object-center" />
+                                            <div className="absolute top-0 right-0 bg-black/80 backdrop-blur-md text-white text-[0.6rem] font-bold w-5 h-5 flex items-center justify-center font-montserrat rounded-bl-lg">
+                                                {item.qty}
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 flex flex-col pt-1">
+                                            <h4 className="text-[0.85rem] font-bold text-black font-montserrat tracking-tight mb-1 line-clamp-2 leading-snug">{item.title}</h4>
+                                            <p className="text-[0.65rem] text-gray-500 font-outfit uppercase tracking-[0.1em] mb-2">Finish: {item.finish}</p>
+                                            <div className="text-[0.9rem] font-bold text-black font-montserrat tracking-tight mt-auto">
+                                                ₹{(item.price * item.qty).toLocaleString("en-IN")}
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div style={{ flex: 1 }}>
-                                        <h4 style={{ fontSize: "0.95rem", fontWeight: 800, fontFamily: FM, color: "#111", margin: "0 0 0.2rem", lineHeight: 1.2 }}>{item.title}</h4>
-                                        <p style={{ fontSize: "0.8rem", color: "#666", margin: 0, fontFamily: FO }}>Finish: {item.finish}</p>
-                                    </div>
-                                    <div style={{ fontWeight: 800, color: "#111", fontFamily: FM, fontSize: "1rem" }}>
-                                        ₹{(item.price * item.qty).toLocaleString("en-IN")}
-                                    </div>
+                                ))}
+                            </div>
+
+                            <hr className="border-t border-black/5 mb-6" />
+
+                            {/* Totals */}
+                            <div className="flex flex-col gap-5 mb-8">
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500 font-light font-outfit">Subtotal</span>
+                                    <span className="font-semibold text-black font-montserrat tracking-tight">₹{subtotal.toLocaleString("en-IN")}</span>
                                 </div>
-                            ))}
-                        </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-500 font-light font-outfit">Shipping</span>
+                                    <span className="text-[0.75rem] text-gray-400 font-medium uppercase tracking-widest font-montserrat">Free</span>
+                                </div>
+                                
+                                {paymentMethod === "cod" && (
+                                    <>
+                                        <div className="flex justify-between items-center text-sm pt-2">
+                                            <span className="text-gray-900 font-semibold font-outfit">Advance Payable (20%)</span>
+                                            <span className="font-bold text-black font-montserrat tracking-tight">₹{Math.round(subtotal * 0.2).toLocaleString("en-IN")}</span>
+                                        </div>
+                                        <div className="flex justify-between items-center text-[0.8rem]">
+                                            <span className="text-gray-500 font-light font-outfit">Due on Delivery</span>
+                                            <span className="text-gray-600 font-medium font-montserrat tracking-tight">₹{Math.round(subtotal * 0.8).toLocaleString("en-IN")}</span>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                            
+                            <div className="pt-8 border-t border-black/10 mb-8 flex justify-between items-end">
+                                <span className="text-sm font-bold text-black uppercase tracking-widest font-montserrat">Total</span>
+                                <span className="text-3xl lg:text-4xl font-black text-black font-montserrat tracking-tight leading-none">
+                                    ₹{subtotal.toLocaleString("en-IN")}
+                                </span>
+                            </div>
 
-                        <div style={{ borderTop: "1px solid #E6E6E6", paddingTop: "1.5rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", color: "#666", fontSize: "1rem", fontFamily: FO }}>
-                                <span>Subtotal</span>
-                                <span>₹{subtotal.toLocaleString("en-IN")}</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", color: "#666", fontSize: "1rem", fontFamily: FO }}>
-                                <span>Shipping</span>
-                                <span style={{ color: "#1da851", fontWeight: 700 }}>Free</span>
-                            </div>
-                            {paymentMethod === "cod" && (
-                                <>
-                                    <div style={{ display: "flex", justifyContent: "space-between", color: "#9A3412", fontSize: "0.95rem", fontFamily: FO, fontWeight: 600 }}>
-                                        <span>Advance (20%)</span>
-                                        <span>₹{Math.round(subtotal * 0.2).toLocaleString("en-IN")}</span>
-                                    </div>
-                                    <div style={{ display: "flex", justifyContent: "space-between", color: "#666", fontSize: "0.95rem", fontFamily: FO }}>
-                                        <span>Due on Delivery</span>
-                                        <span>₹{Math.round(subtotal * 0.8).toLocaleString("en-IN")}</span>
-                                    </div>
-                                </>
-                            )}
-                            <div style={{ display: "flex", justifyContent: "space-between", color: "#111", fontSize: "1.5rem", fontWeight: 900, fontFamily: FM, marginTop: "0.5rem", borderTop: "1px solid #E6E6E6", paddingTop: "1.5rem" }}>
-                                <span>Total</span>
-                                <span>₹{subtotal.toLocaleString("en-IN")}</span>
-                            </div>
+                            <button 
+                                onClick={handlePlaceOrder}
+                                disabled={processing}
+                                className="w-full inline-flex justify-center items-center py-4 sm:py-5 bg-black text-white font-bold text-xs tracking-[0.2em] uppercase font-montserrat rounded-xl hover:bg-[#1A1A1A] hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-black disabled:hover:translate-y-0 disabled:hover:shadow-none"
+                            >
+                                {processing ? "PROCESSING..." : paymentMethod === "cod" ? `PAY ₹${Math.round(subtotal * 0.2).toLocaleString("en-IN")} NOW` : "PLACE ORDER"}
+                            </button>
+                            
+                            <p className="text-center text-[0.65rem] text-gray-400 font-outfit uppercase tracking-widest mt-6 font-medium">
+                                🔒 Encrypted & Secure Checkout
+                            </p>
                         </div>
                     </div>
                 </div>
