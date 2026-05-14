@@ -80,7 +80,13 @@ export interface Product {
     trust_features?: string[];
     material?: string;
     pipe_type?: string;
-    color?: string;
+    assembly_required?: boolean;
+    usage_environment?: string;
+    weight_capacity?: string;
+    premium_finish?: string;
+    height?: string;
+    width?: string;
+    depth?: string;
     steel_thickness?: string;
     warranty?: string;
     delivery_info?: string;

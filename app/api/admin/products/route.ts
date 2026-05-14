@@ -34,10 +34,11 @@ export async function POST(req: NextRequest) {
             title, subtitle, price, category, product_type, finish,
             stock_status, stock_qty, image_url, hover_image_url, lifestyle_image, mobile_thumbnail,
             is_new, images, description, video_url, video_thumbnail,
-            sku, compare_at_price, highlights, trust_features, material, pipe_type, color, steel_thickness, warranty,
+            sku, compare_at_price, highlights, trust_features, material, pipe_type, steel_thickness, warranty,
             weight_kg, dimensions, delivery_info, tags, badge,
             seo_title, seo_description, seo_keywords, faqs, whatsapp_link, related_products, slug,
-            image_style_preset, watermark_strength, care_instructions
+            image_style_preset, watermark_strength, care_instructions,
+            assembly_required, usage_environment, weight_capacity, premium_finish, height, width, depth
         } = body;
 
         if (!title || !price || !category) {
@@ -71,7 +72,6 @@ export async function POST(req: NextRequest) {
                 trust_features: trust_features ?? [],
                 material: material ?? "",
                 pipe_type: pipe_type ?? "",
-                color: color ?? "",
                 steel_thickness: steel_thickness ?? "",
                 warranty: warranty ?? "",
                 weight_kg: weight_kg ? Number(weight_kg) : null,
@@ -89,6 +89,13 @@ export async function POST(req: NextRequest) {
                 image_style_preset: image_style_preset ?? "",
                 watermark_strength: watermark_strength ?? "Medium",
                 care_instructions: care_instructions ?? "",
+                assembly_required: assembly_required ?? false,
+                usage_environment: usage_environment ?? "",
+                weight_capacity: weight_capacity ?? "",
+                premium_finish: premium_finish ?? "",
+                height: height ?? "",
+                width: width ?? "",
+                depth: depth ?? "",
             })
             .select()
             .single();

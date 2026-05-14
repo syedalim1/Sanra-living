@@ -1,11 +1,18 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { C, FM, FO, CATEGORIES } from "../constants";
 import VideoUploader from "../components/VideoUploader";
 import BasicProductInfo from "../components/BasicProductInfo";
 import ProductMediaSection from "../components/ProductMediaSection";
+import ProductDescriptionSection from "../components/ProductDescriptionSection";
+import TrustFeaturesSection from "../components/TrustFeaturesSection";
+import RelatedProductsSection from "../components/RelatedProductsSection";
+import SeoSection from "../components/SeoSection";
+import FaqSection from "../components/FaqSection";
+import MobilePreviewSection from "../components/MobilePreviewSection";
 import type { Product } from "../types";
+import ImageUploader from "../components/ImageUploader";
 
 interface AplusBlock {
     title: string;
@@ -80,6 +87,9 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
         description: product.description ?? "",
         weight_kg: product.weight_kg ? String(product.weight_kg) : "",
         dimensions: product.dimensions ?? "",
+        height: product.height ?? "",
+        width: product.width ?? "",
+        depth: product.depth ?? "",
         tags: product.tags ?? [],
         is_new: product.is_new ?? false,
         is_active: product.is_active ?? true,
@@ -90,6 +100,12 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
         warranty: product.warranty ?? "",
         dispatch_time: product.dispatch_time ?? "2-5 Business Days",
         badges: product.badges ?? [],
+        assembly_required: product.assembly_required ?? false,
+        usage_environment: product.usage_environment ?? "",
+        weight_capacity: product.weight_capacity ?? "",
+        premium_finish: product.premium_finish ?? "",
+        delivery_info: product.delivery_info ?? "Pan India Delivery Available",
+        care_instructions: product.care_instructions ?? "",
         seo_title: product.seo_title ?? "",
         seo_description: product.seo_description ?? "",
         seo_keywords: product.seo_keywords ?? "",
@@ -99,12 +115,16 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
         is_featured: product.is_featured ?? false,
         is_best_seller: product.is_best_seller ?? false,
         subtitle: product.subtitle ?? "",
+        trust_features: (product as any).trust_features ?? [],
     });
 
 
     const [badgeInput, setBadgeInput] = useState("");
     const [success, setSuccess] = useState(false);
-    const [showKeywords, setShowKeywords] = useState(false);
+    const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [hasUnsaved, setHasUnsaved] = useState(false);
+    const formRef = useRef(form);
+    formRef.current = form;
 
     useEffect(() => {
         const draft = localStorage.getItem(`sanra_draft_${product.id}`);
@@ -115,8 +135,10 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
 
     useEffect(() => {
         const timer = setTimeout(() => {
-            localStorage.setItem(`sanra_draft_${product.id}`, JSON.stringify(form));
-        }, 5000);
+            localStorage.setItem(`sanra_draft_${product.id}`, JSON.stringify(formRef.current));
+            setLastSaved(new Date());
+            setHasUnsaved(false);
+        }, 3000);
         return () => clearTimeout(timer);
     }, [form, product.id]);
 
@@ -216,19 +238,7 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
         setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }));
     }, []);
 
-    const addHighlight = useCallback(() => {
-        setForm(f => ({ ...f, highlights: [...f.highlights, ""] }));
-    }, []);
-    const updateHighlight = useCallback((index: number, value: string) => {
-        setForm(f => {
-            const h = [...f.highlights];
-            h[index] = value;
-            return { ...f, highlights: h };
-        });
-    }, []);
-    const removeHighlight = useCallback((index: number) => {
-        setForm(f => ({ ...f, highlights: f.highlights.filter((_, i) => i !== index) }));
-    }, []);
+    /* ── Highlights helpers removed as handled by component ── */
 
     const addBadge = useCallback(() => {
         const b = badgeInput.trim();
@@ -238,6 +248,22 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
     }, [badgeInput]);
     const removeBadge = useCallback((b: string) => {
         setForm(f => ({ ...f, badges: f.badges.filter(x => x !== b) }));
+    }, []);
+
+    /* ── Trust feature toggle ── */
+    const handleTrustToggle = useCallback((feat: string) => {
+        setForm(f => {
+            const cur = f.trust_features ?? [];
+            if (cur.includes(feat)) return { ...f, trust_features: cur.filter((x: string) => x !== feat) };
+            if (cur.length >= 8) return f;
+            return { ...f, trust_features: [...cur, feat] };
+        });
+    }, []);
+
+    const handleBadgeToggle = useCallback((badge: "featured" | "best_seller" | "new_arrival") => {
+        if (badge === "featured") setForm(f => ({ ...f, is_featured: !f.is_featured }));
+        if (badge === "best_seller") setForm(f => ({ ...f, is_best_seller: !f.is_best_seller }));
+        if (badge === "new_arrival") setForm(f => ({ ...f, is_new: !f.is_new }));
     }, []);
 
     const addFaq = useCallback(() => {
@@ -284,6 +310,9 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                 description: form.description.trim(),
                 weight_kg: form.weight_kg ? Number(form.weight_kg) : null,
                 dimensions: form.dimensions.trim() || null,
+                height: form.height,
+                width: form.width,
+                depth: form.depth,
                 tags: form.tags,
                 is_new: form.is_new,
                 is_active: form.is_active,
@@ -294,6 +323,12 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                 warranty: form.warranty,
                 dispatch_time: form.dispatch_time,
                 badges: form.badges,
+                assembly_required: form.assembly_required,
+                usage_environment: form.usage_environment,
+                weight_capacity: form.weight_capacity,
+                premium_finish: form.premium_finish,
+                delivery_info: form.delivery_info,
+                care_instructions: form.care_instructions,
                 seo_title: form.seo_title,
                 seo_description: form.seo_description,
                 seo_keywords: form.seo_keywords,
@@ -303,6 +338,7 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                 is_featured: form.is_featured,
                 is_best_seller: form.is_best_seller,
                 subtitle: form.subtitle,
+                trust_features: (form as any).trust_features ?? [],
             };
 
             const res = await fetch(`/api/admin/products?id=${product.id}`, {
@@ -552,84 +588,13 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                     </div>
                 </section>
 
-                {/* ── DESCRIPTION ── */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Description</p>
-                    <textarea
-                        value={form.description}
-                        onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                        rows={6}
-                        placeholder="Detailed product description…"
-                        style={{ ...inp, resize: "vertical", lineHeight: 1.7 }}
-                    />
-                </section>
-
-                {/* ── HIGHLIGHTS ── */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                        <p style={sectionTitle}>Product Highlights</p>
-                        <button type="button" onClick={addHighlight} style={{ padding: "0.5rem 1.25rem", background: "transparent", border: `1px solid ${C.accent}`, color: C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>
-                            + Add Bullet
-                        </button>
-                    </div>
-                    {form.highlights.length === 0 ? (
-                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, textAlign: "center", padding: "1rem 0" }}>No highlights added.</p>
-                    ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                            {form.highlights.map((h, i) => (
-                                <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                    <span style={{ color: C.accent, fontSize: "1.2rem" }}>•</span>
-                                    <input value={h} onChange={e => updateHighlight(i, e.target.value)} placeholder="e.g. Heavy Duty Steel Frame" style={{ ...inp, flex: 1 }} />
-                                    <button type="button" onClick={() => removeHighlight(i)} style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: "0.82rem", fontWeight: 700, padding: "0.5rem" }}>✕</button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* ── SHIPPING & SPECS ── */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Specifications & Shipping</p>
-                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div>
-                            <label style={lbl}>Material</label>
-                            <input value={form.material} onChange={e => setForm(f => ({ ...f, material: e.target.value }))} placeholder="e.g. Jindal Stainless Steel" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Steel Thickness</label>
-                            <input value={form.steel_thickness} onChange={e => setForm(f => ({ ...f, steel_thickness: e.target.value }))} placeholder="e.g. 1.2mm" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Weight (kg)</label>
-                            <input
-                                type="number"
-                                min={0}
-                                step="0.1"
-                                value={form.weight_kg}
-                                onChange={e => setForm(f => ({ ...f, weight_kg: e.target.value }))}
-                                placeholder="e.g. 4.5"
-                                style={inp}
-                            />
-                        </div>
-                        <div>
-                            <label style={lbl}>Dimensions (L × W × H cm)</label>
-                            <input
-                                value={form.dimensions}
-                                onChange={e => setForm(f => ({ ...f, dimensions: e.target.value }))}
-                                placeholder="e.g. 18 x 18 x 36 Inches"
-                                style={inp}
-                            />
-                        </div>
-                        <div>
-                            <label style={lbl}>Warranty (Optional)</label>
-                            <input value={form.warranty} onChange={e => setForm(f => ({ ...f, warranty: e.target.value }))} placeholder="e.g. 3 Years Replacement" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Dispatch Time</label>
-                            <input value={form.dispatch_time} onChange={e => setForm(f => ({ ...f, dispatch_time: e.target.value }))} placeholder="e.g. 2-5 Business Days" style={inp} />
-                        </div>
-                    </div>
-                </section>
+                {/* ── DESCRIPTION & SPECS ── */}
+                <ProductDescriptionSection
+                    form={form as any}
+                    onChange={(field, value) => setForm(f => ({ ...f, [field]: value }))}
+                    sectionNum={3}
+                    defaultOpen={true}
+                />
 
                 {/* ── TAGS ── */}
                 <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
@@ -830,58 +795,44 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                     </div>
                 </section>
 
-                {/* ── SEO ── */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Search Engine Optimization</p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                        <div>
-                            <label style={lbl}>SEO Title</label>
-                            <input value={form.seo_title} onChange={e => setForm(f => ({ ...f, seo_title: e.target.value }))} placeholder="Title for Google Search" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>SEO Meta Description</label>
-                            <textarea value={form.seo_description} onChange={e => setForm(f => ({ ...f, seo_description: e.target.value }))} rows={2} placeholder="Brief summary of the product for search results..." style={{ ...inp, resize: "vertical" }} />
-                        </div>
-                        
-                        <div style={{ marginTop: "0.5rem" }}>
-                            <button type="button" onClick={() => setShowKeywords(!showKeywords)} style={{ background: "none", border: "none", color: C.accent, fontWeight: 700, fontSize: "0.72rem", cursor: "pointer", fontFamily: FM, textTransform: "uppercase", letterSpacing: "0.1em", padding: 0 }}>
-                                {showKeywords ? "− Hide Advanced Keywords" : "+ Show Advanced Keywords"}
-                            </button>
-                            {showKeywords && (
-                                <div style={{ marginTop: "1rem" }}>
-                                    <label style={lbl}>SEO Keywords</label>
-                                    <input value={form.seo_keywords} onChange={e => setForm(f => ({ ...f, seo_keywords: e.target.value }))} placeholder="e.g. steel chair, banquet chair, hotel furniture" style={inp} />
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </section>
+                {/* ── TRUST & PREMIUM FEATURES — Luxury card system ── */}
+                <TrustFeaturesSection
+                    trustFeatures={(form as any).trust_features ?? []}
+                    onToggle={handleTrustToggle}
+                    isFeatured={form.is_featured}
+                    isBestSeller={form.is_best_seller}
+                    isNewArrival={(form as any).is_new ?? false}
+                    onBadgeToggle={handleBadgeToggle}
+                    maxFeatures={8}
+                    sectionNum={7}
+                />
 
-                {/* ── FAQS ── */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                        <p style={sectionTitle}>FAQ Section (Max 3)</p>
-                        <button type="button" disabled={form.faqs.length >= 3} onClick={addFaq} style={{ padding: "0.5rem 1.25rem", background: "transparent", border: `1px solid ${form.faqs.length >= 3 ? "#ccc" : C.accent}`, color: form.faqs.length >= 3 ? "#999" : C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: form.faqs.length >= 3 ? "not-allowed" : "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>
-                            + Add FAQ
-                        </button>
-                    </div>
-                    {form.faqs.length === 0 ? (
-                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, textAlign: "center", padding: "1rem 0" }}>No FAQs added.</p>
-                    ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            {form.faqs.map((faq, i) => (
-                                <div key={i} style={{ background: "#fdfdfd", border: `1px solid ${C.border}`, borderRadius: 8, padding: "1rem" }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                                        <span style={lbl}>Q&A {i + 1}</span>
-                                        <button type="button" onClick={() => removeFaq(i)} style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: "0.7rem", fontWeight: 700, fontFamily: FM }}>✕ Remove</button>
-                                    </div>
-                                    <input value={faq.question} onChange={e => updateFaq(i, "question", e.target.value)} placeholder="Question" style={{ ...inp, marginBottom: "0.5rem" }} />
-                                    <textarea value={faq.answer} onChange={e => updateFaq(i, "answer", e.target.value)} placeholder="Answer" rows={2} style={{ ...inp, resize: "vertical" }} />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
+                {/* ── RELATED PRODUCTS — Luxury searchable component ── */}
+                <RelatedProductsSection
+                    relatedProducts={((product as any).related_products_ids ?? []) as string[]}
+                    onChange={(products) => setForm(f => ({ ...f, related_products_ids: products }))}
+                    adminKey={adminKey}
+                    currentProductId={product.id}
+                    sectionNum={8}
+                />
+
+                {/* ── SEO — Premium component ── */}
+                <SeoSection
+                    seoTitle={form.seo_title}
+                    seoDescription={form.seo_description}
+                    productTitle={form.title}
+                    productPrice={form.price}
+                    onChange={(field, value) => setForm(f => ({ ...f, [field]: value }))}
+                    sectionNum={9}
+                />
+
+                {/* ── FAQS — Premium accordion component ── */}
+                <FaqSection
+                    faqs={form.faqs}
+                    onChange={(faqs) => setForm(f => ({ ...f, faqs }))}
+                    category={form.category}
+                    sectionNum={10}
+                />
 
                 {/* ── MARKETING ── */}
                 <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
@@ -892,6 +843,13 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                         <input value={form.whatsapp_message} onChange={e => setForm(f => ({ ...f, whatsapp_message: e.target.value }))} placeholder="e.g. Hi SANRA Living, I need this chair." style={inp} />
                     </div>
                 </section>
+
+                {/* ── QUALITY SCORE & MOBILE PREVIEW ── */}
+                <MobilePreviewSection
+                    form={form}
+                    lastSaved={lastSaved}
+                    hasUnsaved={hasUnsaved}
+                />
 
                 {/* ── DANGER ZONE ── */}
                 <section style={{ background: `${C.red}08`, border: `1px solid ${C.red}22`, borderRadius: 10, padding: "1.25rem" }}>

@@ -1,9 +1,15 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { C, FM, FO, CATEGORIES } from "../constants";
 import BasicProductInfo from "../components/BasicProductInfo";
 import ProductMediaSection from "../components/ProductMediaSection";
+import ProductDescriptionSection from "../components/ProductDescriptionSection";
+import TrustFeaturesSection from "../components/TrustFeaturesSection";
+import RelatedProductsSection from "../components/RelatedProductsSection";
+import SeoSection from "../components/SeoSection";
+import FaqSection from "../components/FaqSection";
+import MobilePreviewSection from "../components/MobilePreviewSection";
 
 interface Props {
     adminKey: string;
@@ -15,10 +21,7 @@ const PRODUCT_TYPES = ["SS", "MS", "Luxury", "Foldable", "Commercial"];
 const BADGES = ["Bestseller", "New Arrival", "Premium Choice", "Limited Edition"];
 const IMAGE_PRESETS = ["Studio White", "Luxury Interior", "Warm Minimal", "Dark Premium"];
 const WATERMARK_OPTIONS = ["Soft", "Medium", "Strong"];
-const TRUST_OPTIONS = [
-    "Jindal Steel", "Rust Resistant", "3 Year Warranty",
-    "Premium Finish", "Pan India Delivery", "Heavy Duty", "Easy Maintenance"
-];
+// TRUST_OPTIONS kept for reference — now driven by TrustFeaturesSection component
 
 const inp: React.CSSProperties = {
     background: "#FFFFFF", border: "1px solid #E5E7EB", color: "#111",
@@ -36,6 +39,8 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
     const [openSection, setOpenSection] = useState<string>("basic");
+    const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [hasUnsaved, setHasUnsaved] = useState(false);
 
     const [form, setForm] = useState({
         title: "", subtitle: "", category: CATEGORIES[0],
@@ -43,37 +48,53 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
         stock_qty: "99", image_url: "", images: [] as string[],
         image_style_preset: "Studio White", watermark_strength: "Medium",
         description: "", highlights: [] as string[],
-        material: "", pipe_type: "", finish: "Matte Black", color: "",
+        material: "", pipe_type: "", finish: "Matte Black",
+        premium_finish: "", assembly_required: false, usage_environment: "", weight_capacity: "",
+        height: "", width: "", depth: "",
         dimensions: "", weight_kg: "", warranty: "No Warranty",
         delivery_info: "Pan India Delivery Available", care_instructions: "",
         trust_features: [] as string[], related_products: ["", "", "", ""],
         seo_title: "", seo_description: "",
-        faqs: [{ question: "", answer: "" }, { question: "", answer: "" }, { question: "", answer: "" }],
+        faqs: [] as { question: string; answer: string }[],
         is_active: true,
         collection: "",
         is_featured: false,
         is_best_seller: false,
+        is_new: false,
     });
 
-    const set = (field: string, value: unknown) => setForm(f => ({ ...f, [field]: value }));
+    const formRef = useRef(form);
+    formRef.current = form;
+
+    const set = (field: string, value: unknown) => { setForm(f => ({ ...f, [field]: value })); setHasUnsaved(true); };
 
     const handleTrust = (feat: string) => {
         const cur = form.trust_features;
         if (cur.includes(feat)) set("trust_features", cur.filter(f => f !== feat));
-        else if (cur.length < 6) set("trust_features", [...cur, feat]);
+        else if (cur.length < 8) set("trust_features", [...cur, feat]);
     };
 
-    const setRelatedSlot = (idx: number, val: string) => {
-        const slots = [...form.related_products];
-        slots[idx] = val.trim();
-        set("related_products", slots);
+    const handleBadgeToggle = (badge: "featured" | "best_seller" | "new_arrival") => {
+        if (badge === "featured") set("is_featured", !form.is_featured);
+        if (badge === "best_seller") set("is_best_seller", !form.is_best_seller);
+        if (badge === "new_arrival") set("is_new", !form.is_new);
     };
 
-    const setFaq = (idx: number, field: "question" | "answer", val: string) => {
-        const updated = [...form.faqs];
-        updated[idx] = { ...updated[idx], [field]: val };
-        set("faqs", updated);
-    };
+    /* ── Auto-save draft every 3 seconds ── */
+    useEffect(() => {
+        const draft = localStorage.getItem("sanra_product_draft");
+        if (draft) { try { setForm(JSON.parse(draft)); } catch {} }
+    }, []);
+
+    useEffect(() => {
+        if (!hasUnsaved) return;
+        const timer = setTimeout(() => {
+            localStorage.setItem("sanra_product_draft", JSON.stringify(formRef.current));
+            setLastSaved(new Date());
+            setHasUnsaved(false);
+        }, 3000);
+        return () => clearTimeout(timer);
+    }, [form, hasUnsaved]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -97,7 +118,10 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                 images: form.images, image_style_preset: form.image_style_preset,
                 watermark_strength: form.watermark_strength, description: form.description,
                 highlights: form.highlights.filter(Boolean), material: form.material,
-                pipe_type: form.pipe_type, color: form.color, dimensions: form.dimensions,
+                pipe_type: form.pipe_type, dimensions: form.dimensions,
+                height: form.height, width: form.width, depth: form.depth,
+                premium_finish: form.premium_finish, assembly_required: form.assembly_required,
+                usage_environment: form.usage_environment, weight_capacity: form.weight_capacity,
                 weight_kg: form.weight_kg ? Number(form.weight_kg) : null,
                 warranty: form.warranty, delivery_info: form.delivery_info,
                 care_instructions: form.care_instructions, trust_features: form.trust_features,
@@ -136,33 +160,7 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
         );
     };
 
-    /* ── Mobile Preview ── */
-    const MobilePreview = () => (
-        <div style={{ background: "#F9FAFB", borderRadius: "12px", border: "1px solid #E5E7EB", padding: "1.5rem", marginBottom: "0.75rem" }}>
-            <p style={{ fontSize: "0.7rem", fontWeight: 700, fontFamily: FM, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "1rem" }}>📱 Mobile Live Preview</p>
-            <div style={{ width: "100%", maxWidth: 320, margin: "0 auto", background: "#fff", borderRadius: "24px", border: "3px solid #111", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
-                <div style={{ background: "#111", padding: "0.4rem 1rem", display: "flex", justifyContent: "space-between" }}><span style={{ color: "#fff", fontSize: "0.6rem", fontWeight: 600 }}>9:41</span><span style={{ color: "#fff", fontSize: "0.6rem" }}>●●●</span></div>
-                <div style={{ width: "100%", aspectRatio: "4/5", background: "#F3F4F6", overflow: "hidden" }}>
-                    {form.image_url ? <img src={form.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "#D1D5DB", fontSize: "0.8rem", fontFamily: FO }}>No image</div>}
-                </div>
-                <div style={{ padding: "1rem" }}>
-                    <p style={{ fontSize: "0.9rem", fontWeight: 600, fontFamily: FM, color: "#111", margin: "0 0 0.15rem", lineHeight: 1.2 }}>{form.title || "Product Title"}</p>
-                    {form.subtitle && <p style={{ fontSize: "0.65rem", color: "#6B7280", fontFamily: FO, margin: "0 0 0.5rem" }}>{form.subtitle}</p>}
-                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem", marginBottom: "0.75rem" }}>
-                        <span style={{ fontSize: "1rem", fontWeight: 800, fontFamily: FM, color: "#111" }}>₹{form.price ? Number(form.price).toLocaleString("en-IN") : "0"}</span>
-                        {form.compare_at_price && <span style={{ fontSize: "0.7rem", color: "#9CA3AF", textDecoration: "line-through" }}>₹{Number(form.compare_at_price).toLocaleString("en-IN")}</span>}
-                    </div>
-                    <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
-                        {form.trust_features.slice(0, 4).map((f, i) => (
-                            <span key={i} style={{ fontSize: "0.45rem", background: "#F3F4F6", padding: "0.15rem 0.35rem", borderRadius: "4px", fontFamily: FM, fontWeight: 600, color: "#374151" }}>{f}</span>
-                        ))}
-                    </div>
-                    <div style={{ background: "#111", color: "#fff", textAlign: "center", padding: "0.5rem", borderRadius: "6px", fontSize: "0.55rem", fontWeight: 700, fontFamily: FM, marginBottom: "0.35rem" }}>ADD TO CART</div>
-                    <div style={{ background: "#25D366", color: "#fff", textAlign: "center", padding: "0.5rem", borderRadius: "6px", fontSize: "0.55rem", fontWeight: 700, fontFamily: FM }}>BUY ON WHATSAPP</div>
-                </div>
-            </div>
-        </div>
-    );
+
 
     if (success) {
         return (
@@ -223,78 +221,58 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
                     sectionNum={2}
                 />
 
-                {/* 3. DESCRIPTION */}
-                <Section id="desc" num={3} title="Product Description">
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                        <div><label style={lbl}>Short Description (2-3 lines)</label><textarea value={form.description} onChange={e => set("description", e.target.value)} rows={3} style={{ ...inp, resize: "vertical" }} /></div>
-                        <div><label style={lbl}>Key Highlights (one per line)</label><textarea value={form.highlights.join("\n")} onChange={e => set("highlights", e.target.value.split("\n").map(s => s.trim()))} rows={4} style={{ ...inp, resize: "vertical" }} placeholder={"Rust Resistant\nJindal Steel\nHeavy Duty"} /></div>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
-                            <div><label style={lbl}>Material</label><input value={form.material} onChange={e => set("material", e.target.value)} style={inp} /></div>
-                            <div><label style={lbl}>Finish</label><input value={form.finish} onChange={e => set("finish", e.target.value)} style={inp} /></div>
-                            <div><label style={lbl}>Dimensions</label><input value={form.dimensions} onChange={e => set("dimensions", e.target.value)} style={inp} placeholder="H: 45cm × W: 35cm" /></div>
-                            <div><label style={lbl}>Color</label><input value={form.color} onChange={e => set("color", e.target.value)} style={inp} /></div>
-                        </div>
-                        <div><label style={lbl}>Warranty</label><select value={form.warranty} onChange={e => set("warranty", e.target.value)} style={inp}><option>No Warranty</option><option>1 Year Warranty</option><option>3 Year Warranty</option><option>5 Year Warranty</option></select></div>
-                        <div><label style={lbl}>Delivery Information</label><input value={form.delivery_info} onChange={e => set("delivery_info", e.target.value)} style={inp} /></div>
-                        <div><label style={lbl}>Care Instructions</label><textarea value={form.care_instructions} onChange={e => set("care_instructions", e.target.value)} rows={2} style={{ ...inp, resize: "vertical" }} placeholder="Wipe clean with a damp cloth." /></div>
-                    </div>
-                </Section>
+                {/* 3. DESCRIPTION & SPECS */}
+                <ProductDescriptionSection
+                    form={form}
+                    onChange={set}
+                    sectionNum={3}
+                    defaultOpen={openSection === "desc"}
+                />
 
-                {/* 4. TRUST FEATURES */}
-                <Section id="trust" num={4} title="Trust & Premium Features">
-                    <p style={{ fontSize: "0.75rem", color: "#9CA3AF", fontFamily: FO, marginBottom: "1rem" }}>Select up to 6 features that appear on the product page.</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
-                        {TRUST_OPTIONS.map(feat => {
-                            const active = form.trust_features.includes(feat);
-                            const atMax = form.trust_features.length >= 6 && !active;
-                            return (
-                                <button type="button" key={feat} onClick={() => handleTrust(feat)} disabled={atMax} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.85rem 1rem", background: active ? "#111" : "#fff", color: active ? "#fff" : atMax ? "#D1D5DB" : "#374151", border: `1px solid ${active ? "#111" : "#E5E7EB"}`, borderRadius: "8px", cursor: atMax ? "not-allowed" : "pointer", fontFamily: FO, fontSize: "0.85rem", fontWeight: active ? 700 : 500, textAlign: "left", transition: "all 0.15s ease" }}>
-                                    <span style={{ width: 20, height: 20, borderRadius: "4px", border: `2px solid ${active ? "#fff" : "#D1D5DB"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                                        {active && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"></polyline></svg>}
-                                    </span>
-                                    {feat}
-                                </button>
-                            );
-                        })}
-                    </div>
-                    <p style={{ fontSize: "0.7rem", color: "#9CA3AF", fontFamily: FO, marginTop: "0.75rem" }}>{form.trust_features.length}/6 selected</p>
-                </Section>
+                {/* 4. TRUST & PREMIUM FEATURES — Luxury card system */}
+                <TrustFeaturesSection
+                    trustFeatures={form.trust_features}
+                    onToggle={handleTrust}
+                    isFeatured={form.is_featured}
+                    isBestSeller={form.is_best_seller}
+                    isNewArrival={form.is_new}
+                    onBadgeToggle={handleBadgeToggle}
+                    maxFeatures={8}
+                    sectionNum={4}
+                />
 
-                {/* 5. RELATED */}
-                <Section id="related" num={5} title="Related Products">
-                    <p style={{ fontSize: "0.75rem", color: "#9CA3AF", fontFamily: FO, marginBottom: "1rem" }}>Add up to 4 related product slugs.</p>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        {[0, 1, 2, 3].map(i => (
-                            <div key={i}><label style={lbl}>Slot {i + 1}</label><input value={form.related_products[i]} onChange={e => setRelatedSlot(i, e.target.value)} style={inp} placeholder="product-slug" /></div>
-                        ))}
-                    </div>
-                </Section>
+                {/* 5. RELATED PRODUCTS — Luxury searchable component */}
+                <RelatedProductsSection
+                    relatedProducts={form.related_products.filter(Boolean)}
+                    onChange={(products) => set("related_products", [...products, ...Array(4 - products.length).fill("")])}
+                    adminKey={adminKey}
+                    sectionNum={5}
+                />
 
-                {/* 6. SEO */}
-                <Section id="seo" num={6} title="SEO">
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-                        <div><label style={lbl}>SEO Title</label><input value={form.seo_title} onChange={e => set("seo_title", e.target.value)} style={inp} placeholder="Buy Premium Stainless Steel Stool Online" /></div>
-                        <div><label style={lbl}>SEO Description</label><textarea value={form.seo_description} onChange={e => set("seo_description", e.target.value)} rows={2} style={{ ...inp, resize: "vertical" }} placeholder="Shop premium quality furniture..." /></div>
-                    </div>
-                </Section>
+                {/* 6. SEO — Premium component */}
+                <SeoSection
+                    seoTitle={form.seo_title}
+                    seoDescription={form.seo_description}
+                    productTitle={form.title}
+                    productPrice={form.price}
+                    onChange={(field, value) => set(field, value)}
+                    sectionNum={6}
+                />
 
-                {/* 7. FAQ */}
-                <Section id="faq" num={7} title="FAQ">
-                    <p style={{ fontSize: "0.75rem", color: "#9CA3AF", fontFamily: FO, marginBottom: "1rem" }}>Max 3 FAQs to build customer trust.</p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                        {[0, 1, 2].map(i => (
-                            <div key={i} style={{ background: "#F9FAFB", borderRadius: "8px", padding: "1rem", border: "1px solid #F3F4F6" }}>
-                                <label style={lbl}>Question {i + 1}</label>
-                                <input value={form.faqs[i].question} onChange={e => setFaq(i, "question", e.target.value)} style={{ ...inp, marginBottom: "0.75rem" }} placeholder="Is this product rust proof?" />
-                                <label style={lbl}>Answer {i + 1}</label>
-                                <textarea value={form.faqs[i].answer} onChange={e => setFaq(i, "answer", e.target.value)} rows={2} style={{ ...inp, resize: "vertical" }} placeholder="Yes, 100% rust proof." />
-                            </div>
-                        ))}
-                    </div>
-                </Section>
+                {/* 7. FAQ — Premium accordion component */}
+                <FaqSection
+                    faqs={form.faqs}
+                    onChange={(faqs) => set("faqs", faqs)}
+                    category={form.category}
+                    sectionNum={7}
+                />
 
-                {/* 8. MOBILE PREVIEW */}
-                <MobilePreview />
+                {/* 8. QUALITY SCORE & MOBILE PREVIEW */}
+                <MobilePreviewSection
+                    form={form}
+                    lastSaved={lastSaved}
+                    hasUnsaved={hasUnsaved}
+                />
 
                 {/* Bottom Actions */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.5rem 0", borderTop: "1px solid #E5E7EB", marginTop: "0.5rem", position: "sticky", bottom: 0, background: "#F5F5F5" }}>
