@@ -29,20 +29,17 @@ export interface CategoryConfig {
 /* ── Global filters available on every category ──────────── */
 const priceRanges = ["All", "Under ₹2,000", "₹2,000 – ₹5,000", "₹5,000 – ₹10,000", "₹10,000+"];
 const finishes = ["All", "Matte Black", "Graphite Grey"];
-const assemblyTypes = ["All", "Self Assembly", "Pre-assembled"];
 
 /* ── FilterPanel OUTSIDE CategoryPage to prevent input remount on state change ── */
 function FilterPanel({
     selectedPrice, setSelectedPrice,
     selectedFinish, setSelectedFinish,
-    selectedAssembly, setSelectedAssembly,
     extraFilterValues, setExtraFilterValues,
     extraFilters,
     onReset,
 }: {
     selectedPrice: string; setSelectedPrice: (v: string) => void;
     selectedFinish: string; setSelectedFinish: (v: string) => void;
-    selectedAssembly: string; setSelectedAssembly: (v: string) => void;
     extraFilterValues: Record<string, string>;
     setExtraFilterValues: React.Dispatch<React.SetStateAction<Record<string, string>>>;
     extraFilters?: CategoryFilterDef[];
@@ -52,7 +49,6 @@ function FilterPanel({
         <>
             <FilterSection title="Price Range" options={priceRanges} selected={selectedPrice} onSelect={setSelectedPrice} />
             <FilterSection title="Finish" options={finishes} selected={selectedFinish} onSelect={setSelectedFinish} />
-            <FilterSection title="Assembly" options={assemblyTypes} selected={selectedAssembly} onSelect={setSelectedAssembly} />
             {extraFilters?.map((ef) => (
                 <FilterSection
                     key={ef.key}
@@ -66,10 +62,13 @@ function FilterPanel({
                 onClick={onReset}
                 style={{
                     width: "100%", padding: "0.625rem", fontSize: "0.68rem", fontWeight: 700,
-                    letterSpacing: "0.18em", textTransform: "uppercase", cursor: "pointer",
-                    marginTop: "0.5rem", border: "1.5px solid #ddd", background: "transparent",
-                    color: "#666", fontFamily: FM, transition: "border-color 0.2s, color 0.2s",
+                    letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer",
+                    marginTop: "1.5rem", border: "1px solid #EBEBEB", background: "transparent",
+                    color: "#000", fontFamily: FM, transition: "all 0.3s",
+                    borderRadius: "0.5rem"
                 }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "#F9F9F9"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
             >
                 Clear Filters
             </button>
@@ -88,7 +87,6 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
     /* Filter states */
     const [selectedPrice, setSelectedPrice] = useState("All");
     const [selectedFinish, setSelectedFinish] = useState("All");
-    const [selectedAssembly, setSelectedAssembly] = useState("All");
     const [selectedSort, setSelectedSort] = useState("Featured");
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
     const [visibleCount, setVisibleCount] = useState(12);
@@ -163,7 +161,6 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
     const resetFilters = () => {
         setSelectedPrice("All");
         setSelectedFinish("All");
-        setSelectedAssembly("All");
         const resetExtras: Record<string, string> = {};
         config.extraFilters?.forEach((f) => { resetExtras[f.key] = "All"; });
         setExtraFilterValues(resetExtras);
@@ -175,57 +172,40 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
         <main style={{ background: C.bg, minHeight: "100vh", fontFamily: FO }}>
             <SiteHeader />
 
-            {/* ── HEADER ──────────────────────────────────────────── */}
-            <section style={{ background: C.white, borderBottom: `1px solid ${C.border}`, padding: "2.5rem 1.5rem" }}>
-                <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-                    {/* Breadcrumb */}
-                    <p style={{ fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted, marginBottom: "1.5rem", fontFamily: FM }}>
-                        <Link href="/" style={{ color: C.muted, textDecoration: "none" }}>Home</Link>
-                        <span style={{ margin: "0 0.5rem" }}>/</span>
-                        <Link href="/shop" style={{ color: C.muted, textDecoration: "none" }}>Shop</Link>
-                        <span style={{ margin: "0 0.5rem" }}>/</span>
-                        <span style={{ color: C.black, fontWeight: 700 }}>{config.name}</span>
-                    </p>
-
-                    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "flex-end", justifyContent: "space-between", gap: "1rem" }}>
-                        <div>
-                            <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 900, color: C.black, letterSpacing: "-0.03em", lineHeight: 1.1, fontFamily: FM, marginBottom: "0.5rem" }}>
-                                {config.name}
-                            </h1>
-                            <p style={{ fontSize: "0.9375rem", color: C.mid, fontFamily: FO }}>{config.description}</p>
-                        </div>
-
-                        {/* Sort – desktop */}
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-                            <span style={{ fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em", textTransform: "uppercase", color: C.muted, fontFamily: FM }}>Sort By</span>
-                            <select
-                                value={selectedSort}
-                                onChange={(e) => setSelectedSort(e.target.value)}
-                                style={{ border: `1.5px solid ${C.border}`, background: C.white, color: C.black, fontSize: "0.82rem", padding: "0.6rem 1rem", fontFamily: FO, appearance: "none", cursor: "pointer" }}
-                            >
-                                {sortOptions.map((o) => <option key={o}>{o}</option>)}
-                            </select>
-                        </div>
+            <section className="bg-white border-b border-black/5 py-10 lg:py-16 px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div>
+                        {/* Breadcrumb */}
+                        <p className="text-[0.65rem] tracking-[0.2em] uppercase text-gray-400 font-montserrat mb-4">
+                            <Link href="/" className="hover:text-black transition-colors">Home</Link>
+                            <span className="mx-2">/</span>
+                            <Link href="/shop" className="hover:text-black transition-colors">Shop</Link>
+                            <span className="mx-2">/</span>
+                            <span className="text-black font-semibold">{config.name}</span>
+                        </p>
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-black tracking-tight font-montserrat mb-3 leading-tight">
+                            {config.name}
+                        </h1>
+                        <p className="text-sm md:text-base text-gray-500 font-outfit max-w-xl font-light">
+                            {config.description}
+                        </p>
                     </div>
                 </div>
             </section>
 
-            {/* ── MAIN: SIDEBAR + GRID ─────────────────────────────── */}
-            <div style={{ maxWidth: 1200, margin: "0 auto", padding: "2.5rem 1.5rem" }}>
-                <div style={{ display: "flex", gap: "2rem", alignItems: "flex-start" }}>
+            <div className="max-w-7xl mx-auto py-10 lg:py-16 px-6 lg:px-8">
+                <div className="flex gap-10 lg:gap-14 items-start">
 
                     {/* ── SIDEBAR – desktop only ────────────────────────── */}
-                    <aside className="hidden lg:block" style={{ width: 220, flexShrink: 0 }}>
-                        <div style={{ position: "sticky", top: "5rem" }}>
-                            <div style={{ background: C.white, padding: "1.5rem", boxShadow: "0 2px 16px rgba(0,0,0,0.07)" }}>
-                                <h3 style={{ fontSize: "0.62rem", fontWeight: 900, letterSpacing: "0.28em", textTransform: "uppercase", color: C.black, fontFamily: FM, paddingBottom: "0.875rem", borderBottom: `2px solid ${C.black}`, marginBottom: "1.5rem" }}>
-                                    Filters
-                                </h3>
-                                <FilterPanel
-                                    selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
-                                    selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
-                                    selectedAssembly={selectedAssembly} setSelectedAssembly={setSelectedAssembly}
-                                    extraFilterValues={extraFilterValues} setExtraFilterValues={setExtraFilterValues}
+                    <aside className="hidden lg:block w-[240px] shrink-0 sticky top-28">
+                        <div>
+                            <h3 className="text-xs font-black tracking-[0.2em] uppercase text-black font-montserrat pb-4 border-b border-black mb-4">
+                                Filters
+                            </h3>
+                            <FilterPanel
+                                selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
+                                selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
+                                extraFilterValues={extraFilterValues} setExtraFilterValues={setExtraFilterValues}
                                     extraFilters={config.extraFilters}
                                     onReset={resetFilters}
                                 />
@@ -234,96 +214,64 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                             {/* Back to shop */}
                             <Link
                                 href="/shop"
-                                style={{
-                                    display: "flex", alignItems: "center", gap: "0.5rem",
-                                    marginTop: "1.25rem", fontSize: "0.78rem", fontWeight: 600,
-                                    color: C.mid, textDecoration: "none", fontFamily: FM,
-                                    letterSpacing: "0.08em",
-                                }}
+                                className="inline-flex items-center gap-2 mt-8 text-[0.7rem] font-semibold text-gray-500 font-montserrat tracking-widest hover:text-black transition-colors uppercase"
                             >
                                 ← All Categories
                             </Link>
-                        </div>
                     </aside>
 
                     {/* ── PRODUCT AREA ─────────────────────────────────── */}
-                    <div style={{ flex: 1, minWidth: 0 }}>
+                    <div className="flex-1 min-w-0">
 
-                        {/* Mobile top bar */}
-                        <div className="flex lg:hidden" style={{ justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem" }}>
-                            <button
-                                onClick={() => setFilterDrawerOpen(true)}
-                                style={{
-                                    display: "flex", alignItems: "center", gap: "0.5rem",
-                                    padding: "0.625rem 1rem", border: `1.5px solid ${C.border}`,
-                                    background: C.white, fontSize: "0.72rem", fontWeight: 700,
-                                    letterSpacing: "0.12em", textTransform: "uppercase",
-                                    cursor: "pointer", color: C.black, fontFamily: FM,
-                                }}
-                            >
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                    <line x1="3" y1="6" x2="21" y2="6" /><line x1="7" y1="12" x2="17" y2="12" /><line x1="10" y1="18" x2="14" y2="18" />
-                                </svg>
-                                Filters
-                            </button>
-                            <select
-                                value={selectedSort}
-                                onChange={(e) => setSelectedSort(e.target.value)}
-                                style={{ border: `1.5px solid ${C.border}`, background: C.white, color: C.black, fontSize: "0.78rem", padding: "0.5rem 0.875rem", fontFamily: FO }}
-                            >
-                                {sortOptions.map((o) => <option key={o}>{o}</option>)}
-                            </select>
-                        </div>
-
-                        {/* Count */}
-                        <p style={{ fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: C.muted, marginBottom: "1.5rem", fontFamily: FM }}>
-                            {loading ? "Loading…" : `${sorted.length} ${sorted.length === 1 ? "product" : "products"} found`}
-                        </p>
-
-                        {/* Error */}
-                        {error && (
-                            <div style={{ textAlign: "center", padding: "4rem 0" }}>
-                                <p style={{ color: "#b04000", fontFamily: FO, marginBottom: "0.75rem" }}>{error}</p>
-                                <button onClick={() => window.location.reload()} style={{ background: "none", border: "none", color: C.black, fontSize: "0.875rem", fontFamily: FO, textDecoration: "underline", cursor: "pointer" }}>Retry</button>
+                        {/* Header Row: Count & Sort */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+                            <div className="flex items-center gap-4">
+                                <button
+                                    onClick={() => setFilterDrawerOpen(true)}
+                                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-black/10 bg-white text-[0.7rem] font-bold tracking-[0.15em] uppercase text-black font-montserrat rounded-full"
+                                >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <line x1="3" y1="6" x2="21" y2="6" /><line x1="7" y1="12" x2="17" y2="12" /><line x1="10" y1="18" x2="14" y2="18" />
+                                    </svg>
+                                    Filters
+                                </button>
+                                <p className="text-[0.7rem] tracking-[0.15em] uppercase text-gray-400 font-montserrat">
+                                    {loading ? "Loading…" : `${sorted.length} ${sorted.length === 1 ? "product" : "products"} found`}
+                                </p>
                             </div>
-                        )}
+                            
+                            <div className="flex items-center gap-3">
+                                <span className="text-[0.65rem] font-bold tracking-[0.2em] uppercase text-gray-400 font-montserrat hidden sm:inline-block">Sort By</span>
+                                <select
+                                    value={selectedSort}
+                                    onChange={(e) => setSelectedSort(e.target.value)}
+                                    className="border border-black/10 bg-transparent text-black text-[0.75rem] font-outfit px-3 py-2 outline-none cursor-pointer rounded-md focus:border-black transition-colors"
+                                >
+                                    {sortOptions.map((o) => <option key={o}>{o}</option>)}
+                                </select>
+                            </div>
+                        </div>
 
                         {/* Loading skeleton */}
                         {loading && (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" style={{ gap: "1.5rem" }}>
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 lg:gap-10">
                                 {Array.from({ length: 6 }).map((_, i) => (
-                                    <div key={i} style={{ background: C.white, aspectRatio: "3/4", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", animation: "pulse 1.5s ease-in-out infinite" }} />
+                                    <div key={i} className="bg-gray-100 aspect-[4/5] rounded-2xl animate-pulse" />
                                 ))}
                             </div>
                         )}
 
                         {/* Grid */}
                         {!loading && !error && (sorted.length === 0 ? (
-                            <div style={{ textAlign: "center", padding: "5rem 0" }}>
-                                <p style={{ color: C.muted, fontFamily: FO, marginBottom: "0.75rem" }}>No products in this category yet.</p>
-                                <p style={{ fontSize: "0.82rem", color: "#999", fontFamily: FO, marginBottom: "1.5rem" }}>Products will appear here as they are added to the store.</p>
-                                <Link href="/shop" style={{ color: C.black, fontSize: "0.875rem", fontFamily: FO, textDecoration: "underline", fontWeight: 600 }}>Browse All Categories</Link>
+                            <div className="text-center py-20">
+                                <p className="text-gray-500 font-outfit mb-2">No products in this category yet.</p>
+                                <Link href="/shop" className="text-black text-sm font-semibold font-outfit underline underline-offset-4">Browse All Categories</Link>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" style={{ gap: "1.5rem" }}>
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
                                 {visible.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
                             </div>
                         ))}
-
-                        {/* Quality strip */}
-                        {sorted.length > 0 && (
-                            <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
-                                style={{ margin: "3rem 0", padding: "2rem", background: C.white, border: `1px solid ${C.border}`, textAlign: "center" }}>
-                                <div style={{ width: 24, height: 1, background: C.black, margin: "0 auto 1rem" }} />
-                                <p style={{ fontSize: "0.78rem", fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: C.black, fontFamily: FM, marginBottom: "0.5rem" }}>
-                                    Limited Production Runs.
-                                </p>
-                                <p style={{ fontSize: "0.875rem", color: "#666", fontFamily: FO, maxWidth: 440, margin: "0 auto", lineHeight: 1.65 }}>
-                                    Each product is manufactured in controlled batches to maintain quality standards.
-                                </p>
-                                <div style={{ width: 24, height: 1, background: C.black, margin: "1rem auto 0" }} />
-                            </motion.div>
-                        )}
 
                         {/* Load more */}
                         {hasMore && (
@@ -376,7 +324,6 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 <FilterPanel
                                     selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
                                     selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
-                                    selectedAssembly={selectedAssembly} setSelectedAssembly={setSelectedAssembly}
                                     extraFilterValues={extraFilterValues} setExtraFilterValues={setExtraFilterValues}
                                     extraFilters={config.extraFilters}
                                     onReset={resetFilters}
