@@ -5,9 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/app/context/CartContext";
 
-const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
-const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
-
 const NAV_LINKS = [
     { label: "Home", href: "/" },
     { label: "Products", href: "/shop" },
@@ -80,89 +77,61 @@ export default function SiteHeader() {
 
     return (
         <>
-            <header style={{
-                position: "sticky",
-                top: 0,
-                left: 0,
-                right: 0,
-                zIndex: 200,
-                background: "rgba(255, 255, 255, 0.95)",
-                backdropFilter: "blur(10px)",
-                borderBottom: "1px solid #F0F0F0",
-                boxShadow: scrolled ? "0 4px 20px rgba(0,0,0,0.03)" : "none",
-                transition: "all 0.3s ease",
-                fontFamily: FM,
-            }}>
-                <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 1.5rem", display: "flex", alignItems: "center", justifyContent: "space-between", height: 60 }}>
+            <header className={`sticky top-0 z-50 w-full backdrop-blur-md transition-all duration-300 ${scrolled ? 'bg-white/95 border-b border-black/5 shadow-[0_4px_20px_rgba(0,0,0,0.03)]' : 'bg-white/90 border-b border-black/5'}`}>
+                <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 h-[60px] md:h-[64px] lg:h-[72px] flex items-center justify-between">
 
                     {/* ── LEFT: HAMBURGER (mobile) ─────────────────── */}
                     <button
                         onClick={() => setDrawerOpen(true)}
                         aria-label="Open menu"
-                        style={{ background: "none", border: "none", cursor: "pointer", padding: "0.5rem", display: "flex", flexDirection: "column", gap: 5, alignItems: "center", justifyContent: "center" }}
-                        className="sl-mobile-only"
+                        className="md:hidden flex flex-col gap-1.5 items-start justify-center p-2 w-[80px]"
                     >
-                        <span style={{ display: "block", width: 22, height: 1.5, background: "#1C1C1C", borderRadius: 1 }} />
-                        <span style={{ display: "block", width: 22, height: 1.5, background: "#1C1C1C", borderRadius: 1 }} />
-                        <span style={{ display: "block", width: 14, height: 1.5, background: "#1C1C1C", borderRadius: 1, alignSelf: "flex-start" }} />
+                        <span className="block w-5 h-[1.5px] bg-[#1C1C1C] rounded" />
+                        <span className="block w-5 h-[1.5px] bg-[#1C1C1C] rounded" />
+                        <span className="block w-3.5 h-[1.5px] bg-[#1C1C1C] rounded self-start" />
                     </button>
 
-                    {/* ── LEFT: LOGO ──── */}
-                    <Link href="/" style={{ textDecoration: "none", lineHeight: 1 }}>
-                        <div style={{ fontSize: "1.1rem", fontWeight: 800, letterSpacing: "0.1em", color: "#111", textTransform: "uppercase", fontFamily: FM }}>
+                    {/* ── CENTER / LEFT: LOGO ──── */}
+                    <Link href="/" className="flex flex-col justify-center items-center md:items-start group flex-shrink-0">
+                        <div className="font-montserrat text-[1.1rem] md:text-xl font-black tracking-widest text-[#111] uppercase leading-none">
                             SANRA LIVING
                         </div>
-                        <div style={{ fontSize: "0.55rem", fontWeight: 500, letterSpacing: "0.22em", color: "#999", textTransform: "uppercase", fontFamily: FM, marginTop: "0.2rem" }}>
+                        <div className="font-montserrat text-[0.55rem] font-semibold tracking-[0.3em] text-[#111] opacity-70 uppercase mt-1.5 leading-none">
                             Engineered Steel
                         </div>
                     </Link>
 
                     {/* ── CENTER: DESKTOP NAV ──────────────────────── */}
-                    <nav className="sl-desktop-only" style={{ display: "flex", alignItems: "center", gap: "2.5rem" }}>
+                    <nav className="hidden md:flex items-center gap-8 lg:gap-10">
                         {NAV_LINKS.map((link) => (
-                            <Link key={link.href} href={link.href} style={{
-                                fontSize: "0.75rem", fontWeight: 500, letterSpacing: "0.12em", textTransform: "uppercase",
-                                color: "#555", textDecoration: "none", fontFamily: FM,
-                                paddingBottom: "2px",
-                                borderBottom: "1px solid transparent",
-                                transition: "color 0.2s, border-color 0.2s",
-                            }}
-                                onMouseEnter={(e) => { e.currentTarget.style.color = "#111"; e.currentTarget.style.borderBottomColor = "#111"; }}
-                                onMouseLeave={(e) => { e.currentTarget.style.color = "#555"; e.currentTarget.style.borderBottomColor = "transparent"; }}
-                            >
+                            <Link key={link.href} href={link.href} className="font-montserrat text-[0.7rem] lg:text-xs font-medium tracking-[0.15em] text-gray-500 hover:text-black uppercase transition-colors duration-300 relative group py-2">
                                 {link.label}
+                                <span className="absolute left-0 bottom-0 w-full h-[1px] bg-black scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
                             </Link>
                         ))}
                     </nav>
 
                     {/* ── RIGHT: SEARCH + CART + WHATSAPP ────────── */}
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                    <div className="flex items-center justify-end gap-3 lg:gap-5 w-[80px] md:w-auto">
                         
                         {/* Search Toggle */}
                         <button
                             onClick={() => setSearchOpen(!searchOpen)}
                             aria-label="Search"
-                            style={{ background: "none", border: "none", cursor: "pointer", padding: "0.4rem", color: "#111" }}
+                            className="text-[#111] hover:text-black transition-colors duration-300 p-1"
                         >
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                             </svg>
                         </button>
 
                         {/* Cart Icon */}
-                        <Link href="/cart" style={{ position: "relative", color: "#111", textDecoration: "none", padding: "0.4rem" }}>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round">
+                        <Link href="/cart" className="relative text-[#111] hover:text-black transition-colors duration-300 p-1">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                 <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
                             </svg>
                             {totalItems > 0 && (
-                                <span style={{
-                                    position: "absolute", top: -2, right: -4,
-                                    background: "#111", color: "#fff",
-                                    fontSize: "0.55rem", fontWeight: 700,
-                                    width: 16, height: 16, borderRadius: "50%",
-                                    display: "flex", alignItems: "center", justifyContent: "center",
-                                    fontFamily: FM,
-                                }}>
+                                <span className="absolute -top-1.5 -right-1.5 bg-black text-white text-[0.6rem] font-bold w-[16px] h-[16px] rounded-full flex items-center justify-center font-montserrat">
                                     {totalItems}
                                 </span>
                             )}
@@ -173,20 +142,9 @@ export default function SiteHeader() {
                             href="https://wa.me/8300904920?text=Hi!%20I'm%20interested%20in%20SANRA%20LIVING%20steel%20furniture."
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="sl-desktop-only"
-                            style={{
-                                display: "inline-flex", alignItems: "center", gap: "0.5rem",
-                                padding: "0.5rem 1.25rem",
-                                border: "1px solid #111", color: "#111",
-                                fontSize: "0.72rem", fontWeight: 600,
-                                letterSpacing: "0.08em", textTransform: "uppercase",
-                                textDecoration: "none", fontFamily: FM,
-                                borderRadius: 4, transition: "background 0.2s, color 0.2s",
-                            }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = "#111"; e.currentTarget.style.color = "#fff"; }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#111"; }}
+                            className="hidden md:flex items-center gap-2 h-10 px-5 ml-2 rounded-xl border border-black/20 text-[#111] font-montserrat text-[0.7rem] lg:text-xs font-semibold tracking-widest uppercase transition-all duration-300 hover:bg-black hover:text-white hover:border-black shadow-sm"
                         >
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
                             </svg>
                             WhatsApp
@@ -196,54 +154,32 @@ export default function SiteHeader() {
 
                 {/* ── SEARCH BAR (Dropdown) ──────────────────────────── */}
                 {searchOpen && (
-                    <div ref={searchRef} style={{
-                        position: "absolute", top: "100%", left: 0, right: 0,
-                        background: "#fff", borderBottom: "1px solid #E6E6E6",
-                        boxShadow: "0 4px 16px rgba(0,0,0,0.08)", padding: "1rem 1.5rem",
-                        zIndex: 100,
-                    }}>
-                        <form onSubmit={handleSearch} style={{ maxWidth: 600, margin: "0 auto", position: "relative" }}>
+                    <div ref={searchRef} className="absolute top-full left-0 right-0 bg-white border-b border-black/5 shadow-[0_10px_30px_rgba(0,0,0,0.08)] py-6 px-4 z-40">
+                        <form onSubmit={handleSearch} className="max-w-3xl mx-auto relative">
                             <input
                                 autoFocus
                                 type="text"
-                                placeholder="Search products, categories…"
+                                placeholder="Search premium furniture…"
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
-                                style={{
-                                    width: "100%", padding: "0.875rem 1rem 0.875rem 2.75rem",
-                                    border: "1px solid #ccc", borderRadius: "6px",
-                                    fontSize: "1rem", fontFamily: FO, outline: "none",
-                                    boxSizing: "border-box",
-                                }}
+                                className="w-full pl-12 pr-4 py-4 bg-[#F9F9F9] border border-black/10 rounded-xl font-outfit text-base outline-none focus:border-black/30 transition-colors"
                             />
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)" }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="absolute left-4 top-1/2 -translate-y-1/2">
                                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
                             </svg>
 
                             {/* Suggestions */}
                             {suggestions.length > 0 && (
-                                <div style={{
-                                    position: "absolute", top: "100%", left: 0, right: 0,
-                                    background: "#fff", border: "1px solid #E6E6E6",
-                                    borderRadius: "0 0 6px 6px", boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
-                                    marginTop: 2,
-                                }}>
+                                <div className="absolute top-full left-0 right-0 bg-white border border-black/5 rounded-xl shadow-[0_10px_20px_rgba(0,0,0,0.05)] mt-2 overflow-hidden">
                                     {suggestions.map((s) => (
                                         <button
                                             key={s.id}
                                             type="button"
                                             onClick={() => handleSuggestionClick(s.id)}
-                                            style={{
-                                                display: "flex", justifyContent: "space-between", alignItems: "center",
-                                                width: "100%", padding: "0.75rem 1rem",
-                                                background: "none", border: "none", borderBottom: "1px solid #f5f5f5",
-                                                cursor: "pointer", textAlign: "left",
-                                            }}
-                                            onMouseEnter={e => e.currentTarget.style.background = "#fafafa"}
-                                            onMouseLeave={e => e.currentTarget.style.background = "none"}
+                                            className="w-full flex justify-between items-center px-4 py-3 border-b border-black/5 last:border-none hover:bg-[#F9F9F9] transition-colors text-left"
                                         >
-                                            <span style={{ fontSize: "0.9rem", fontWeight: 600, color: "#111", fontFamily: FO }}>{s.title}</span>
-                                            <span style={{ fontSize: "0.75rem", color: "#999", fontFamily: FM }}>{s.category}</span>
+                                            <span className="font-outfit font-medium text-black text-sm">{s.title}</span>
+                                            <span className="font-montserrat text-xs text-gray-500 uppercase tracking-wide">{s.category}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -257,95 +193,73 @@ export default function SiteHeader() {
             {drawerOpen && (
                 <div
                     onClick={() => setDrawerOpen(false)}
-                    style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 300, transition: "opacity 0.25s" }}
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[250] transition-opacity duration-300"
                 />
             )}
 
             {/* ── MOBILE SLIDE DRAWER ───────────────────────────────── */}
-            <div style={{
-                position: "fixed", top: 0, left: 0, bottom: 0,
-                width: 300,
-                background: "#fff",
-                zIndex: 400,
-                transform: drawerOpen ? "translateX(0)" : "translateX(-100%)",
-                transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                display: "flex", flexDirection: "column",
-                overflowY: "auto",
-            }}>
+            <div 
+                className={`fixed top-0 left-0 bottom-0 w-[82%] max-w-[320px] bg-white z-[300] flex flex-col transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] overflow-y-auto ${drawerOpen ? 'translate-x-0' : '-translate-x-full'}`}
+            >
                 {/* Drawer header */}
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 1.5rem", borderBottom: "1px solid #E6E6E6" }}>
-                    <div>
-                        <div style={{ fontSize: "0.875rem", fontWeight: 900, letterSpacing: "0.08em", color: "#111", textTransform: "uppercase", fontFamily: FM }}>SANRA LIVING</div>
-                        <div style={{ fontSize: "0.5rem", fontWeight: 600, letterSpacing: "0.2em", color: "#aaa", textTransform: "uppercase", fontFamily: FM }}>Steel Furniture Manufacturer</div>
+                <div className="flex items-center justify-between px-5 py-5 border-b border-black/5">
+                    <div className="flex flex-col">
+                        <div className="font-montserrat text-base font-black tracking-widest text-black uppercase leading-none">SANRA LIVING</div>
+                        <div className="font-montserrat text-[0.5rem] font-semibold tracking-[0.2em] text-black opacity-70 uppercase mt-1.5 leading-none">Engineered Steel</div>
                     </div>
-                    <button onClick={() => setDrawerOpen(false)} aria-label="Close menu" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.25rem", color: "#555", lineHeight: 1, padding: "0.25rem" }}>
-                        ✕
+                    <button onClick={() => setDrawerOpen(false)} aria-label="Close menu" className="text-gray-400 hover:text-black transition-colors p-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
 
                 {/* Drawer links */}
-                <nav style={{ padding: "0.75rem 0", flex: 1 }}>
+                <nav className="flex flex-col py-2 flex-1">
                     {NAV_LINKS.map((link) => (
-                        <Link key={link.href} href={link.href} onClick={() => setDrawerOpen(false)}
-                            style={{
-                                display: "block", padding: "0.9rem 1.5rem",
-                                fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.1em",
-                                textTransform: "uppercase", color: "#111", textDecoration: "none",
-                                fontFamily: FM, borderBottom: "1px solid #F5F5F5",
-                            }}>
+                        <Link 
+                            key={link.href} 
+                            href={link.href} 
+                            onClick={() => setDrawerOpen(false)}
+                            className="font-montserrat text-sm font-medium tracking-wide uppercase text-black py-4 px-5 border-b border-black/5 hover:bg-black/5 transition-colors"
+                        >
                             {link.label}
                         </Link>
                     ))}
-                    <Link href="/cart" onClick={() => setDrawerOpen(false)}
-                        style={{
-                            display: "flex", alignItems: "center", gap: "0.5rem",
-                            padding: "0.9rem 1.5rem",
-                            fontSize: "0.82rem", fontWeight: 600, letterSpacing: "0.1em",
-                            textTransform: "uppercase", color: "#111", textDecoration: "none",
-                            fontFamily: FM, borderBottom: "1px solid #F5F5F5",
-                        }}>
-                        🛒 Cart {totalItems > 0 && `(${totalItems})`}
+                    <Link 
+                        href="/cart" 
+                        onClick={() => setDrawerOpen(false)}
+                        className="flex items-center justify-between font-montserrat text-sm font-medium tracking-wide uppercase text-black py-4 px-5 border-b border-black/5 hover:bg-black/5 transition-colors"
+                    >
+                        <span>Cart</span>
+                        {totalItems > 0 && (
+                            <span className="bg-black text-white text-[0.65rem] font-bold px-2 py-0.5 rounded-full">
+                                {totalItems}
+                            </span>
+                        )}
                     </Link>
                 </nav>
 
                 {/* Drawer WhatsApp CTA */}
-                <div style={{ padding: "1rem 1.5rem", borderTop: "1px solid #E6E6E6" }}>
+                <div className="p-5 border-t border-black/5">
                     <a
                         href="https://wa.me/8300904920?text=Hi!%20I'm%20interested%20in%20SANRA%20LIVING%20steel%20furniture."
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{
-                            display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem",
-                            padding: "0.875rem", width: "100%",
-                            background: "#25D366", color: "#fff",
-                            fontSize: "0.78rem", fontWeight: 700,
-                            letterSpacing: "0.1em", textTransform: "uppercase",
-                            textDecoration: "none", fontFamily: FM,
-                            borderRadius: 4,
-                        }}
+                        className="flex items-center justify-center gap-2 w-full bg-[#25D366] hover:bg-[#20ba59] text-white font-montserrat text-xs font-bold tracking-widest uppercase py-4 rounded-xl transition-colors"
                     >
-                        💬 Chat on WhatsApp
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                        </svg>
+                        Chat on WhatsApp
                     </a>
                 </div>
 
                 {/* Drawer footer */}
-                <div style={{ padding: "0.75rem 1.5rem", borderTop: "1px solid #E6E6E6" }}>
-                    <p style={{ fontSize: "0.65rem", color: "#bbb", fontFamily: FM, letterSpacing: "0.1em", textTransform: "uppercase" }}>
+                <div className="px-5 pb-6 pt-2">
+                    <p className="text-[0.65rem] text-gray-400 font-montserrat tracking-widest uppercase text-center">
                         © {new Date().getFullYear()} SANRA LIVING™
                     </p>
                 </div>
             </div>
-
-            {/* Responsive style injection */}
-            <style>{`
-                .sl-mobile-only { display: flex !important; }
-                .sl-desktop-only { display: none !important; }
-                @media (min-width: 768px) {
-                    .sl-mobile-only { display: none !important; }
-                    .sl-desktop-only { display: flex !important; }
-                }
-            `}
-            </style>
         </>
     );
 }

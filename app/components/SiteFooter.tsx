@@ -5,10 +5,10 @@ export default function SiteFooter() {
 
     return (
         <footer className="bg-[#1C1C1C] text-white font-montserrat pb-20 lg:pb-0">
-            <div className="max-w-7xl mx-auto px-5 pt-6 lg:pt-8 lg:px-8">
+            <div className="max-w-7xl mx-auto px-5 pt-6 lg:pt-8 md:px-6 lg:px-8">
 
                 {/* ── MAIN CONTENT ──────────────────────────────────── */}
-                <div className="flex flex-col lg:grid lg:grid-cols-4 gap-8 lg:gap-12 mb-8 lg:mb-12">
+                <div className="flex flex-col md:grid md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 mb-8 lg:mb-12">
 
                     {/* Col 1 – Brand */}
                     <div>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import SiteFooter from "@/app/components/SiteFooter";
+import SiteHeader from "@/app/components/SiteHeader";
 import { optimizeImage } from "@/utils/cloudinary";
 import { useCart } from "@/app/context/CartContext";
 
@@ -69,24 +70,6 @@ function Accordion({ title, children, open = false }: { title: string, children:
     );
 }
 
-/* ── MINIMAL STICKY HEADER ── */
-function MinimalHeader({ cartCount }: { cartCount: number }) {
-    return (
-        <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/5 px-4 py-3 flex justify-between items-center">
-            <div className="flex items-center gap-4">
-                <Link href="/" className="text-black"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></Link>
-            </div>
-            <Link href="/" className="text-xl font-black font-montserrat text-black no-underline tracking-widest">SANRA</Link>
-            <div className="flex items-center gap-4">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <Link href="/cart" className="relative text-black">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                    {cartCount > 0 && <span className="absolute -top-2 -right-2 bg-black text-white text-[0.6rem] w-4 h-4 rounded-full flex items-center justify-center font-bold">{cartCount}</span>}
-                </Link>
-            </div>
-        </header>
-    );
-}
 
 /* ══════════════════════════════════════════════════════════════
    PAGE
@@ -202,22 +185,22 @@ export default function ProductDetailPage() {
 
     return (
         <main className="min-h-screen bg-white font-outfit break-words">
-            <MinimalHeader cartCount={cartCount} />
+            <SiteHeader />
 
-            <div className="max-w-7xl mx-auto pb-24 lg:pb-12 pt-0 lg:pt-8 px-0 lg:px-8">
-                <div className="flex flex-col lg:flex-row gap-0 lg:gap-12">
+            <div className="max-w-7xl mx-auto pb-24 lg:pb-12 pt-0 lg:pt-8 px-0 md:px-6 lg:px-8">
+                <div className="flex flex-col lg:flex-row lg:items-start gap-0 lg:gap-10 xl:gap-14 lg:justify-center">
                     
                     {/* 2. PRODUCT IMAGE SECTION */}
-                    <section className="w-full lg:w-1/2 relative bg-[#F4F4F4] lg:rounded-2xl overflow-hidden self-start sticky lg:top-24">
+                    <section className="w-full lg:w-[48%] relative bg-white md:rounded-2xl overflow-hidden self-start sticky lg:top-24">
                         {/* Swipe Gallery */}
                         <div 
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
-                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-[4/5] lg:aspect-square no-scrollbar"
+                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-[4/5] max-h-[85vh] overflow-hidden no-scrollbar"
                         >
                             {images.map((img, idx) => (
-                                <div key={idx} className="flex-[0_0_100%] w-full snap-start relative shrink-0">
-                                    <img src={optimizeImage(img, 1000)} alt={dbProduct.title} className="w-full h-full object-cover object-[center_top]" />
+                                <div key={idx} className="flex-[0_0_100%] w-full h-full snap-start relative shrink-0 bg-white">
+                                    <img src={optimizeImage(img, 1000)} alt={dbProduct.title} className="w-full h-full object-contain object-center" />
                                     {/* Watermark Overlay */}
                                     <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] z-10">
                                         <span className="text-[18vw] lg:text-[10vw] font-black font-montserrat -rotate-[30deg] text-black whitespace-nowrap">SANRA LIVING</span>
@@ -237,10 +220,10 @@ export default function ProductDetailPage() {
                     </section>
 
                     {/* DETAILS SECTION */}
-                    <div className="w-full lg:w-1/2 px-4 py-6 lg:px-0 lg:py-0 flex flex-col min-w-0">
+                    <div className="w-full lg:w-[52%] px-4 py-6 md:px-0 lg:py-0 flex flex-col min-w-0">
                         
                         {/* 3. PRODUCT TITLE AREA */}
-                        <section className="mb-6">
+                        <section className="mb-0 sm:mb-6">
                             {dbProduct.badge && (
                                 <span className="inline-block bg-black text-white px-2.5 py-1 text-[0.65rem] font-bold font-montserrat tracking-[0.1em] rounded-sm mb-3 uppercase">
                                     {dbProduct.badge}
@@ -265,7 +248,7 @@ export default function ProductDetailPage() {
                         </section>
 
                         {/* 4. QUICK TRUST ICONS */}
-                        <section className="flex justify-between py-6 border-y border-black/5 my-8 overflow-x-auto gap-4 no-scrollbar">
+                        <section className="flex justify-between sm:py-6 border-y border-black/5 my-8 overflow-x-auto gap-4 no-scrollbar">
                             {trustFeatures.slice(0, 4).map((feat, i) => (
                                 <div key={i} className="flex flex-col items-center gap-3 min-w-[70px] flex-1">
                                     <div className="w-10 h-10 rounded-full bg-[#F7F7F7] flex items-center justify-center shrink-0">
@@ -355,14 +338,14 @@ export default function ProductDetailPage() {
 
                 {/* 9. RELATED PRODUCTS */}
                 {relatedProducts.length > 0 && (
-                    <section className="mt-16 lg:mt-24 px-4 lg:px-0">
+                    <section className="mt-12 lg:mt-20 px-4 md:px-0">
                         <h2 className="text-xl lg:text-2xl font-medium font-montserrat text-black mb-6 tracking-wide">Complete The Look</h2>
                         
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
                             {relatedProducts.map(rp => (
                                 <Link key={rp.id} href={`/shop/${rp.id}`} className="group flex flex-col justify-between h-full bg-white p-2 lg:p-3 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 min-w-0">
-                                    <div className="bg-[#F7F7F7] rounded-lg aspect-[4/5] mb-3 overflow-hidden relative shrink-0">
-                                        <img src={optimizeImage(rp.image_url, 400)} alt={rp.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                    <div className="bg-white rounded-lg aspect-[4/5] mb-3 overflow-hidden relative shrink-0">
+                                        <img src={optimizeImage(rp.image_url, 400)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 group-hover:scale-105" />
                                     </div>
                                     <div className="px-1 min-w-0 flex flex-col justify-between flex-1">
                                         <p className="text-sm lg:text-base font-medium font-montserrat text-black mb-1 line-clamp-2 leading-snug min-h-[40px]">{rp.title}</p>
@@ -375,7 +358,7 @@ export default function ProductDetailPage() {
                 )}
 
                 {/* 10. SOCIAL PROOF */}
-                <section className="py-8 mt-8 border-t border-black/5 text-center px-4">
+                <section className="py-8 mt-6 border-t border-black/5 text-center px-4 md:px-0">
                     <p className="text-base lg:text-lg font-medium font-montserrat text-black m-0 tracking-wide">Trusted by 10,000+ customers<br className="lg:hidden"/> across India.</p>
                 </section>
             </div>
