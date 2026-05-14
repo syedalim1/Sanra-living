@@ -1,16 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import SiteFooter from "@/app/components/SiteFooter";
 import { optimizeImage } from "@/utils/cloudinary";
 import { useCart } from "@/app/context/CartContext";
-
-/* ── FONTS ── */
-const FM = "var(--font-montserrat), Montserrat, Inter, sans-serif";
-const FO = "var(--font-outfit), Outfit, Inter, sans-serif";
 
 /* ── DB PRODUCT TYPE ── */
 interface DbProduct {
@@ -54,19 +50,21 @@ const WHATSAPP_NUMBER = "8300904920";
 function Accordion({ title, children, open = false }: { title: string, children: React.ReactNode, open?: boolean }) {
     const [isOpen, setIsOpen] = useState(open);
     return (
-        <div style={{ borderBottom: "1px solid #EAEAEA", padding: "1.2rem 0" }}>
+        <div className="border-b border-black/5 py-4">
             <button 
                 onClick={() => setIsOpen(!isOpen)} 
-                style={{ width: "100%", display: "flex", justifyContent: "space-between", alignItems: "center", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                className="w-full flex justify-between items-center bg-transparent border-none cursor-pointer p-0"
             >
-                <span style={{ fontWeight: 600, fontFamily: FM, fontSize: "0.95rem", color: "#111", letterSpacing: "0.02em" }}>{title}</span>
-                <span style={{ fontSize: "1.2rem", color: "#111", transform: isOpen ? "rotate(45deg)" : "none", transition: "transform 0.2s ease", fontWeight: 300 }}>+</span>
+                <span className="font-semibold font-montserrat text-[0.95rem] text-black tracking-wide text-left">{title}</span>
+                <span className={`text-xl text-black font-light transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'rotate-45' : ''}`}>+</span>
             </button>
-            {isOpen && (
-                <div style={{ marginTop: "1rem", color: "#555", fontSize: "0.9rem", fontFamily: FO, lineHeight: 1.6 }}>
-                    {children}
+            <div className="grid transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]" style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}>
+                <div className="overflow-hidden">
+                    <div className={`text-[#555] text-sm font-outfit leading-relaxed font-light transition-all duration-300 ${isOpen ? 'mt-3 pb-1' : 'mt-0 pb-0'}`}>
+                        {children}
+                    </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 }
@@ -74,16 +72,16 @@ function Accordion({ title, children, open = false }: { title: string, children:
 /* ── MINIMAL STICKY HEADER ── */
 function MinimalHeader({ cartCount }: { cartCount: number }) {
     return (
-        <header style={{ position: "sticky", top: 0, zIndex: 100, background: "rgba(255,255,255,0.95)", backdropFilter: "blur(10px)", borderBottom: "1px solid rgba(0,0,0,0.05)", padding: "0.75rem 1rem", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                <Link href="/" style={{ color: "#111" }}><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></Link>
+        <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-black/5 px-4 py-3 flex justify-between items-center">
+            <div className="flex items-center gap-4">
+                <Link href="/" className="text-black"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></Link>
             </div>
-            <Link href="/" style={{ fontSize: "1.25rem", fontWeight: 900, fontFamily: FM, color: "#111", textDecoration: "none", letterSpacing: "0.05em" }}>SANRA</Link>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <Link href="/" className="text-xl font-black font-montserrat text-black no-underline tracking-widest">SANRA</Link>
+            <div className="flex items-center gap-4">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                <Link href="/cart" style={{ position: "relative", color: "#111" }}>
+                <Link href="/cart" className="relative text-black">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                    {cartCount > 0 && <span style={{ position: "absolute", top: -8, right: -8, background: "#111", color: "#fff", fontSize: "0.6rem", width: 16, height: 16, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700 }}>{cartCount}</span>}
+                    {cartCount > 0 && <span className="absolute -top-2 -right-2 bg-black text-white text-[0.6rem] w-4 h-4 rounded-full flex items-center justify-center font-bold">{cartCount}</span>}
                 </Link>
             </div>
         </header>
@@ -103,6 +101,7 @@ export default function ProductDetailPage() {
     const cartCount = totalItems;
 
     const [dbProduct, setDbProduct] = useState<DbProduct | null>(null);
+    const [relatedProducts, setRelatedProducts] = useState<DbProduct[]>([]);
     const [loading, setLoading] = useState(true);
     const [notFound, setNotFound] = useState(false);
     const [activeImg, setActiveImg] = useState(0);
@@ -119,7 +118,19 @@ export default function ProductDetailPage() {
                 const json = await res.json();
                 if (!cancelled) {
                     if (json.product?.is_active === false) setNotFound(true);
-                    else setDbProduct(json.product);
+                    else {
+                        setDbProduct(json.product);
+                        // Fetch related products
+                        if (json.product.category) {
+                            fetch(`/api/products?category=${encodeURIComponent(json.product.category)}&limit=5`)
+                                .then(r => r.json())
+                                .then(data => {
+                                    if (!cancelled && data.products) {
+                                        setRelatedProducts(data.products.filter((p: DbProduct) => p.id !== json.product.id).slice(0, 4));
+                                    }
+                                }).catch(console.error);
+                        }
+                    }
                 }
             } catch {
                 if (!cancelled) setNotFound(true);
@@ -132,17 +143,16 @@ export default function ProductDetailPage() {
 
     if (loading) {
         return (
-            <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#FFFFFF" }}>
-                <div style={{ width: 32, height: 32, border: "2px solid #EAEAEA", borderTopColor: "#111", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
-                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+            <div className="min-h-screen flex items-center justify-center bg-white">
+                <div className="w-8 h-8 border-2 border-[#EAEAEA] border-t-black rounded-full animate-spin" />
             </div>
         );
     }
     if (notFound || !dbProduct) {
         return (
-            <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", background: "#FFFFFF", fontFamily: FO }}>
-                <p style={{ fontSize: "1.2rem", fontWeight: 600, color: "#111" }}>Product Not Found</p>
-                <Link href="/" style={{ marginTop: "1rem", color: "#666", textDecoration: "underline" }}>Back to Home</Link>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-white font-outfit">
+                <p className="text-xl font-semibold text-black">Product Not Found</p>
+                <Link href="/" className="mt-4 text-gray-600 underline">Back to Home</Link>
             </div>
         );
     }
@@ -191,26 +201,26 @@ export default function ProductDetailPage() {
     };
 
     return (
-        <main style={{ background: "#FFFFFF", minHeight: "100vh", fontFamily: FO }}>
+        <main className="min-h-screen bg-white font-outfit break-words">
             <MinimalHeader cartCount={cartCount} />
 
-            <div style={{ maxWidth: 1200, margin: "0 auto" }}>
-                <div style={{ display: "flex", flexDirection: "column", paddingBottom: "4rem" }}>
+            <div className="max-w-7xl mx-auto pb-24 lg:pb-12 pt-0 lg:pt-8 px-0 lg:px-8">
+                <div className="flex flex-col lg:flex-row gap-0 lg:gap-12">
                     
-                    {/* 2. PRODUCT IMAGE SECTION (Mobile First) */}
-                    <section style={{ width: "100%", background: "#F9F9F9", position: "relative" }}>
+                    {/* 2. PRODUCT IMAGE SECTION */}
+                    <section className="w-full lg:w-1/2 relative bg-[#F4F4F4] lg:rounded-2xl overflow-hidden self-start sticky lg:top-24">
                         {/* Swipe Gallery */}
                         <div 
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
-                            style={{ display: "flex", overflowX: "auto", scrollSnapType: "x mandatory", scrollBehavior: "smooth", width: "100%", aspectRatio: "4/5" }}
+                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-[4/5] lg:aspect-square no-scrollbar"
                         >
                             {images.map((img, idx) => (
-                                <div key={idx} style={{ flex: "0 0 100%", width: "100%", scrollSnapAlign: "start", position: "relative" }}>
-                                    <img src={optimizeImage(img, 800)} alt={dbProduct.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                <div key={idx} className="flex-[0_0_100%] w-full snap-start relative shrink-0">
+                                    <img src={optimizeImage(img, 1000)} alt={dbProduct.title} className="w-full h-full object-cover object-[center_top]" />
                                     {/* Watermark Overlay */}
-                                    <div style={{ position: "absolute", inset: 0, pointerEvents: "none", display: "flex", alignItems: "center", justifyContent: "center", opacity: 0.04, zIndex: 10 }}>
-                                        <span style={{ fontSize: "15vw", fontWeight: 900, fontFamily: FM, transform: "rotate(-30deg)", color: "#000", whiteSpace: "nowrap" }}>SANRA LIVING</span>
+                                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.03] z-10">
+                                        <span className="text-[18vw] lg:text-[10vw] font-black font-montserrat -rotate-[30deg] text-black whitespace-nowrap">SANRA LIVING</span>
                                     </div>
                                 </div>
                             ))}
@@ -218,173 +228,179 @@ export default function ProductDetailPage() {
                         
                         {/* Dots */}
                         {images.length > 1 && (
-                            <div style={{ position: "absolute", bottom: "1.5rem", left: 0, right: 0, display: "flex", justifyContent: "center", gap: "6px", zIndex: 20 }}>
+                            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5 z-20">
                                 {images.map((_, idx) => (
-                                    <div key={idx} style={{ width: activeImg === idx ? 20 : 6, height: 6, borderRadius: 3, background: activeImg === idx ? "#111" : "rgba(0,0,0,0.2)", transition: "all 0.3s ease" }} />
+                                    <div key={idx} className={`h-1.5 rounded-full transition-all duration-300 ${activeImg === idx ? "w-5 bg-black" : "w-1.5 bg-black/20"}`} />
                                 ))}
                             </div>
                         )}
                     </section>
 
-                    <div style={{ padding: "1.5rem 1.25rem" }}>
+                    {/* DETAILS SECTION */}
+                    <div className="w-full lg:w-1/2 px-4 py-6 lg:px-0 lg:py-0 flex flex-col min-w-0">
                         
                         {/* 3. PRODUCT TITLE AREA */}
-                        <section style={{ marginBottom: "2rem" }}>
+                        <section className="mb-6">
                             {dbProduct.badge && (
-                                <span style={{ display: "inline-block", background: "#F5F5F5", color: "#111", padding: "0.25rem 0.75rem", fontSize: "0.7rem", fontWeight: 800, fontFamily: FM, letterSpacing: "0.05em", borderRadius: "4px", marginBottom: "0.75rem" }}>
-                                    {dbProduct.badge.toUpperCase()}
+                                <span className="inline-block bg-black text-white px-2.5 py-1 text-[0.65rem] font-bold font-montserrat tracking-[0.1em] rounded-sm mb-3 uppercase">
+                                    {dbProduct.badge}
                                 </span>
                             )}
-                            <h1 style={{ fontSize: "1.75rem", fontWeight: 500, fontFamily: FM, color: "#111", margin: "0 0 0.25rem", lineHeight: 1.2, letterSpacing: "-0.02em" }}>
+                            <h1 className="text-[1.75rem] lg:text-[2.2rem] font-semibold font-montserrat text-black mb-1 leading-tight tracking-tight">
                                 {dbProduct.title}
                             </h1>
                             {dbProduct.subtitle && (
-                                <p style={{ fontSize: "0.95rem", color: "#666", margin: "0 0 1rem", fontFamily: FO, lineHeight: 1.4 }}>
+                                <p className="text-base text-gray-600 mb-4 font-outfit leading-relaxed font-light">
                                     {dbProduct.subtitle}
                                 </p>
                             )}
                             
-                            <div style={{ display: "flex", alignItems: "baseline", gap: "0.75rem", marginTop: "1rem" }}>
-                                <span style={{ fontSize: "1.5rem", fontWeight: 700, fontFamily: FM, color: "#111" }}>₹{dbProduct.price.toLocaleString("en-IN")}</span>
+                            <div className="flex items-baseline gap-3 mt-4">
+                                <span className="text-2xl lg:text-3xl font-medium font-montserrat text-black tracking-tight">₹{dbProduct.price.toLocaleString("en-IN")}</span>
                                 {dbProduct.compare_at_price && (
-                                    <span style={{ fontSize: "1rem", color: "#999", textDecoration: "line-through", fontFamily: FO }}>₹{dbProduct.compare_at_price.toLocaleString("en-IN")}</span>
+                                    <span className="text-lg text-gray-400 line-through font-outfit font-light">₹{dbProduct.compare_at_price.toLocaleString("en-IN")}</span>
                                 )}
                             </div>
-                            <p style={{ fontSize: "0.75rem", color: "#999", margin: "0.25rem 0 0", fontFamily: FO }}>Inclusive of all taxes</p>
+                            <p className="text-xs text-gray-500 mt-1 font-outfit font-light">Inclusive of all taxes</p>
                         </section>
 
                         {/* 4. QUICK TRUST ICONS */}
-                        <section style={{ display: "flex", justifyContent: "space-between", padding: "1.5rem 0", borderTop: "1px solid #EAEAEA", borderBottom: "1px solid #EAEAEA", marginBottom: "2rem" }}>
+                        <section className="flex justify-between py-6 border-y border-black/5 my-8 overflow-x-auto gap-4 no-scrollbar">
                             {trustFeatures.slice(0, 4).map((feat, i) => (
-                                <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem", flex: 1 }}>
-                                    <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#F9F9F9", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5"><path d="M20 6L9 17l-5-5"></path></svg>
+                                <div key={i} className="flex flex-col items-center gap-3 min-w-[70px] flex-1">
+                                    <div className="w-10 h-10 rounded-full bg-[#F7F7F7] flex items-center justify-center shrink-0">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                            {i === 0 && <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>}
+                                            {i === 1 && <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>}
+                                            {i === 2 && <><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></>}
+                                            {i === 3 && <><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></>}
+                                            {i > 3 && <path d="M5 12l5 5l10 -10"></path>}
+                                        </svg>
                                     </div>
-                                    <span style={{ fontSize: "0.65rem", fontFamily: FM, fontWeight: 600, color: "#555", textAlign: "center", lineHeight: 1.2 }}>{feat}</span>
+                                    <span className="text-[0.7rem] font-montserrat font-semibold text-[#222] text-center leading-tight tracking-wide uppercase">{feat}</span>
                                 </div>
                             ))}
                         </section>
 
-                        {/* 5. QUANTITY + BUY SECTION */}
-                        <section style={{ marginBottom: "2rem" }}>
-                            <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+                        {/* 5. QUANTITY + BUY SECTION (Inline) */}
+                        <section className="mb-10">
+                            <div className="flex gap-4 mb-4">
                                 {/* Quantity selector */}
-                                <div style={{ display: "flex", alignItems: "center", border: "1px solid #EAEAEA", borderRadius: "8px", background: "#F9F9F9", padding: "0.25rem", width: "120px" }}>
-                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ flex: 1, height: "44px", background: "none", border: "none", fontSize: "1.2rem", color: "#111" }}>−</button>
-                                    <span style={{ flex: 1, textAlign: "center", fontSize: "1rem", fontWeight: 600, fontFamily: FO }}>{quantity}</span>
-                                    <button onClick={() => setQuantity(quantity + 1)} style={{ flex: 1, height: "44px", background: "none", border: "none", fontSize: "1.2rem", color: "#111" }}>+</button>
+                                <div className="flex items-center border border-black/10 rounded-md bg-white p-1 w-[120px] shrink-0">
+                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="flex-1 h-11 bg-transparent border-none text-xl text-black cursor-pointer">−</button>
+                                    <span className="flex-1 text-center text-base font-medium font-outfit">{quantity}</span>
+                                    <button onClick={() => setQuantity(quantity + 1)} className="flex-1 h-11 bg-transparent border-none text-xl text-black cursor-pointer">+</button>
                                 </div>
                                 {/* Add to cart */}
-                                <button onClick={handleAddToCart} style={{ flex: 1, height: "56px", background: "#111", color: "#fff", border: "none", borderRadius: "8px", fontSize: "0.9rem", fontWeight: 700, fontFamily: FM, textTransform: "uppercase", letterSpacing: "0.05em", cursor: "pointer" }}>
+                                <button onClick={handleAddToCart} className="flex-1 h-[52px] bg-black text-white border-none rounded-md text-sm font-semibold font-montserrat uppercase tracking-wide cursor-pointer hover:bg-black/90 transition-colors">
                                     Add to Cart
                                 </button>
                             </div>
                             
                             {/* Buy on WhatsApp */}
-                            <button onClick={handleWhatsApp} style={{ width: "100%", height: "56px", background: "#25D366", color: "#fff", border: "none", borderRadius: "8px", fontSize: "0.95rem", fontWeight: 700, fontFamily: FM, textTransform: "uppercase", letterSpacing: "0.05em", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem" }}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            <button onClick={handleWhatsApp} className="w-full h-[52px] bg-[#25D366] text-white border-none rounded-md text-sm font-semibold font-montserrat uppercase tracking-wide cursor-pointer flex items-center justify-center gap-2 hover:bg-[#20ba59] transition-colors">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                                 Buy On WhatsApp
                             </button>
 
                             {/* 6. TRUST MESSAGE */}
-                            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "0.75rem", marginTop: "1.25rem" }}>
-                                <span style={{ fontSize: "0.75rem", color: "#666", fontFamily: FO, display: "flex", alignItems: "center", gap: "0.25rem" }}>🔒 Secure Checkout</span>
-                                <span style={{ color: "#D1D5DB" }}>•</span>
-                                <span style={{ fontSize: "0.75rem", color: "#666", fontFamily: FO, display: "flex", alignItems: "center", gap: "0.25rem" }}>🚚 Fast Delivery</span>
-                                <span style={{ color: "#D1D5DB" }}>•</span>
-                                <span style={{ fontSize: "0.75rem", color: "#666", fontFamily: FO, display: "flex", alignItems: "center", gap: "0.25rem" }}>↩ Easy Returns</span>
-                            </div>
-                        </section>
-
-                        {/* 7. PREMIUM FEATURE GRID */}
-                        <section style={{ margin: "3rem 0" }}>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-                                {highlights.slice(0, 4).map((highlight, i) => (
-                                    <div key={i} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                                        <div style={{ width: 40, height: 40, background: "#F9F9F9", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
-                                        </div>
-                                        <div>
-                                            <p style={{ fontSize: "0.85rem", fontWeight: 700, fontFamily: FM, color: "#111", margin: "0 0 0.25rem" }}>{highlight}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                            <div className="flex justify-center items-center gap-3 mt-6">
+                                <span className="text-xs text-gray-500 font-outfit flex items-center gap-1 font-light"><span className="text-[10px]">🔒</span> Secure Checkout</span>
+                                <span className="text-gray-300">|</span>
+                                <span className="text-xs text-gray-500 font-outfit flex items-center gap-1 font-light"><span className="text-[10px]">🚚</span> Fast Delivery</span>
+                                <span className="text-gray-300">|</span>
+                                <span className="text-xs text-gray-500 font-outfit flex items-center gap-1 font-light"><span className="text-[10px]">↩</span> Easy Returns</span>
                             </div>
                         </section>
 
                         {/* 8. ACCORDION INFORMATION SECTION */}
-                        <section style={{ marginBottom: "3rem", borderTop: "1px solid #EAEAEA" }}>
+                        <section className="mb-12 border-t border-black/5">
                             <Accordion title="Materials & Finish" open>
-                                <ul style={{ paddingLeft: "1.2rem", margin: 0 }}>
-                                    {dbProduct.material && <li style={{ marginBottom: "0.5rem" }}>Material: {dbProduct.material}</li>}
-                                    {dbProduct.pipe_type && <li style={{ marginBottom: "0.5rem" }}>Structure: {dbProduct.pipe_type}</li>}
-                                    {dbProduct.finish && <li style={{ marginBottom: "0.5rem" }}>Finish: {dbProduct.finish}</li>}
-                                    {dbProduct.color && <li style={{ marginBottom: "0.5rem" }}>Color: {dbProduct.color}</li>}
+                                <ul className="pl-5 m-0 list-disc">
+                                    {dbProduct.material && <li className="mb-2">Material: {dbProduct.material}</li>}
+                                    {dbProduct.pipe_type && <li className="mb-2">Structure: {dbProduct.pipe_type}</li>}
+                                    {dbProduct.finish && <li className="mb-2">Finish: {dbProduct.finish}</li>}
+                                    {dbProduct.color && <li className="mb-2">Color: {dbProduct.color}</li>}
                                     {!dbProduct.material && !dbProduct.finish && <li>Premium stainless steel with expert powder coating.</li>}
                                 </ul>
                             </Accordion>
                             
                             <Accordion title="Dimensions">
                                 {dbProduct.dimensions ? (
-                                    <p style={{ margin: 0 }}>{dbProduct.dimensions}</p>
+                                    <p className="m-0">{dbProduct.dimensions}</p>
                                 ) : (
-                                    <p style={{ margin: 0 }}>Please check product images for detailed dimensions.</p>
+                                    <p className="m-0">Please check product images for detailed dimensions.</p>
                                 )}
-                                {dbProduct.weight_kg && <p style={{ margin: "0.5rem 0 0" }}>Weight Capacity: {dbProduct.weight_kg}kg</p>}
+                                {dbProduct.weight_kg && <p className="mt-2 mb-0">Weight Capacity: {dbProduct.weight_kg}kg</p>}
                             </Accordion>
                             
                             <Accordion title="Delivery & Installation">
-                                <p style={{ margin: 0 }}>{dbProduct.delivery_info || "Pan India delivery available within 5-7 business days. No complex installation required."}</p>
+                                <p className="m-0">{dbProduct.delivery_info || "Pan India delivery available within 5-7 business days. No complex installation required."}</p>
                             </Accordion>
                             
                             <Accordion title="Warranty">
-                                <p style={{ margin: 0 }}>{dbProduct.warranty || "Standard 3 Year structural warranty included."}</p>
+                                <p className="m-0">{dbProduct.warranty || "Standard 3 Year structural warranty included."}</p>
                             </Accordion>
                             
                             <Accordion title="Care Instructions">
-                                <ul style={{ paddingLeft: "1.2rem", margin: 0 }}>
-                                    <li style={{ marginBottom: "0.5rem" }}>Wipe clean with a damp cloth.</li>
-                                    <li style={{ marginBottom: "0.5rem" }}>Avoid using harsh chemicals or abrasives.</li>
+                                <ul className="pl-5 m-0 list-disc">
+                                    <li className="mb-2">Wipe clean with a damp cloth.</li>
+                                    <li className="mb-2">Avoid using harsh chemicals or abrasives.</li>
                                 </ul>
                             </Accordion>
                         </section>
 
-                        {/* 9. RELATED PRODUCTS */}
-                        <section style={{ marginBottom: "2rem" }}>
-                            <h2 style={{ fontSize: "1.25rem", fontWeight: 600, fontFamily: FM, color: "#111", margin: "0 0 1.5rem" }}>Related Products</h2>
-                            
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                                {/* Example related product block */}
-                                <Link href="/shop" style={{ textDecoration: "none" }}>
-                                    <div style={{ background: "#F9F9F9", borderRadius: "8px", aspectRatio: "1/1", marginBottom: "0.75rem", overflow: "hidden" }}>
-                                        <img src="/images/sanra_stool.png" alt="Related" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                    </div>
-                                    <p style={{ fontSize: "0.85rem", fontWeight: 600, fontFamily: FM, color: "#111", margin: "0 0 0.25rem" }}>SANRA Stool</p>
-                                    <p style={{ fontSize: "0.85rem", color: "#666", fontFamily: FO, margin: 0 }}>₹1,299</p>
-                                </Link>
-                                <Link href="/shop" style={{ textDecoration: "none" }}>
-                                    <div style={{ background: "#F9F9F9", borderRadius: "8px", aspectRatio: "1/1", marginBottom: "0.75rem", overflow: "hidden" }}>
-                                        <img src="/images/sanra_chair.png" alt="Related" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                    </div>
-                                    <p style={{ fontSize: "0.85rem", fontWeight: 600, fontFamily: FM, color: "#111", margin: "0 0 0.25rem" }}>Lounge Chair</p>
-                                    <p style={{ fontSize: "0.85rem", color: "#666", fontFamily: FO, margin: 0 }}>₹4,999</p>
-                                </Link>
-                            </div>
-                        </section>
-
-                        {/* 10. SOCIAL PROOF */}
-                        <section style={{ padding: "3rem 0", borderTop: "1px solid #EAEAEA", textAlign: "center" }}>
-                            <p style={{ fontSize: "1rem", fontWeight: 600, fontFamily: FM, color: "#111", margin: 0 }}>Trusted by 10,000+ customers<br/>across India.</p>
-                        </section>
-
                     </div>
                 </div>
+
+                {/* 9. RELATED PRODUCTS */}
+                {relatedProducts.length > 0 && (
+                    <section className="mt-16 lg:mt-24 px-4 lg:px-0">
+                        <h2 className="text-xl lg:text-2xl font-medium font-montserrat text-black mb-6 tracking-wide">Complete The Look</h2>
+                        
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+                            {relatedProducts.map(rp => (
+                                <Link key={rp.id} href={`/shop/${rp.id}`} className="group flex flex-col justify-between h-full bg-white p-2 lg:p-3 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 min-w-0">
+                                    <div className="bg-[#F7F7F7] rounded-lg aspect-[4/5] mb-3 overflow-hidden relative shrink-0">
+                                        <img src={optimizeImage(rp.image_url, 400)} alt={rp.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                                    </div>
+                                    <div className="px-1 min-w-0 flex flex-col justify-between flex-1">
+                                        <p className="text-sm lg:text-base font-medium font-montserrat text-black mb-1 line-clamp-2 leading-snug min-h-[40px]">{rp.title}</p>
+                                        <p className="text-sm lg:text-sm text-gray-600 font-light font-outfit mt-auto">₹{rp.price.toLocaleString("en-IN")}</p>
+                                    </div>
+                                </Link>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {/* 10. SOCIAL PROOF */}
+                <section className="py-8 mt-8 border-t border-black/5 text-center px-4">
+                    <p className="text-base lg:text-lg font-medium font-montserrat text-black m-0 tracking-wide">Trusted by 10,000+ customers<br className="lg:hidden"/> across India.</p>
+                </section>
             </div>
             
             <SiteFooter />
+
+            {/* STICKY BOTTOM BAR (MOBILE ONLY) */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-black/5 px-4 py-2.5 flex items-center justify-between z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.04)] pb-[calc(0.5rem+env(safe-area-inset-bottom))] lg:hidden">
+                <div className="flex flex-col">
+                    <span className="text-[0.65rem] text-gray-500 font-outfit uppercase tracking-wider font-medium">Price</span>
+                    <span className="text-lg font-semibold font-montserrat text-black tracking-tight">₹{dbProduct?.price?.toLocaleString("en-IN")}</span>
+                </div>
+                <div className="flex gap-2">
+                    <button onClick={handleAddToCart} className="px-5 h-11 bg-black text-white border-none rounded-md text-xs font-semibold font-montserrat uppercase tracking-wide cursor-pointer hover:bg-black/90 transition-colors">
+                        Add to Cart
+                    </button>
+                    <button onClick={handleWhatsApp} className="w-11 h-11 bg-[#25D366] text-white border-none rounded-md flex items-center justify-center cursor-pointer hover:bg-[#20ba59] transition-colors">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    </button>
+                </div>
+            </div>
             
             <style>{`
-                ::-webkit-scrollbar { width: 0; background: transparent; }
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
             `}</style>
         </main>
     );

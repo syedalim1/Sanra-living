@@ -38,7 +38,8 @@ export async function POST(req: NextRequest) {
             weight_kg, dimensions, delivery_info, tags, badge,
             seo_title, seo_description, seo_keywords, faqs, whatsapp_link, related_products, slug,
             image_style_preset, watermark_strength, care_instructions,
-            assembly_required, usage_environment, weight_capacity, premium_finish, height, width, depth
+            assembly_required, usage_environment, weight_capacity, premium_finish, height, width, depth,
+            collection, is_featured, is_best_seller
         } = body;
 
         if (!title || !price || !category) {
@@ -96,15 +97,21 @@ export async function POST(req: NextRequest) {
                 height: height ?? "",
                 width: width ?? "",
                 depth: depth ?? "",
+                collection: collection ?? "",
+                is_featured: is_featured ?? false,
+                is_best_seller: is_best_seller ?? false,
             })
             .select()
             .single();
 
-        if (error) throw error;
+        if (error) {
+            console.error("[admin/products POST Supabase Error]", error);
+            throw error;
+        }
         return NextResponse.json({ product: data }, { status: 201 });
-    } catch (err) {
-        console.error("[admin/products POST]", err);
-        return NextResponse.json({ error: "Failed to create product" }, { status: 500 });
+    } catch (err: any) {
+        console.error("[admin/products POST Catch]", err);
+        return NextResponse.json({ error: "Failed to create product: " + (err.message || JSON.stringify(err)) }, { status: 500 });
     }
 }
 
