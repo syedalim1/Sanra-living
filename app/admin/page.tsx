@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 import { C, FM, FO, fmt, ADMIN_EMAIL, ORDER_STATUSES } from "./constants";
+import "./admin-product.css";
 import DashboardTab from "./tabs/DashboardTab";
 import OrdersTab from "./tabs/OrdersTab";
 import MessagesTab from "./tabs/MessagesTab";

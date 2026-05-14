@@ -53,15 +53,19 @@ export interface Product {
     id: string;
     slug?: string;
     title: string;
+    subtitle?: string;
     price: number;
     compare_at_price?: number | null;
     category: string;
+    product_type?: string;
     finish: string;
     stock_status: string;
     stock_qty: number;
-    image_url: string;
-    hover_image_url: string;
-    images?: string[];
+    image_url: string; // Used for Hero Image
+    hover_image_url: string; // Used for Alternate Angle
+    lifestyle_image?: string;
+    mobile_thumbnail?: string;
+    images?: string[]; // Used for Gallery
     video_url?: string;
     video_thumbnail?: string;
     description?: string;
@@ -73,16 +77,29 @@ export interface Product {
     is_active: boolean;
     sku?: string;
     highlights?: string[];
+    trust_features?: string[];
     material?: string;
+    pipe_type?: string;
+    color?: string;
     steel_thickness?: string;
     warranty?: string;
-    dispatch_time?: string;
-    badges?: string[];
+    delivery_info?: string;
+    badge?: string;
     seo_title?: string;
     seo_description?: string;
     seo_keywords?: string;
     faqs?: { question: string; answer: string }[];
+    whatsapp_link?: string;
+    related_products?: string;
+    image_style_preset?: string;
+    watermark_strength?: string;
+    care_instructions?: string;
+    dispatch_time?: string;
+    badges?: string[];
     whatsapp_message?: string;
+    collection?: string;
+    is_featured?: boolean;
+    is_best_seller?: boolean;
     created_at: string;
 }
 

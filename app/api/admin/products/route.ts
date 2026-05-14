@@ -31,12 +31,13 @@ export async function POST(req: NextRequest) {
     try {
         const body = await req.json();
         const {
-            title, price, category, finish,
-            stock_status, stock_qty, image_url, hover_image_url,
+            title, subtitle, price, category, product_type, finish,
+            stock_status, stock_qty, image_url, hover_image_url, lifestyle_image, mobile_thumbnail,
             is_new, images, description, video_url, video_thumbnail,
-            sku, compare_at_price, highlights, material, steel_thickness, warranty,
-            weight_kg, dimensions, dispatch_time, tags, badges,
-            seo_title, seo_description, seo_keywords, faqs, whatsapp_message, slug
+            sku, compare_at_price, highlights, trust_features, material, pipe_type, color, steel_thickness, warranty,
+            weight_kg, dimensions, delivery_info, tags, badge,
+            seo_title, seo_description, seo_keywords, faqs, whatsapp_link, related_products, slug,
+            image_style_preset, watermark_strength, care_instructions
         } = body;
 
         if (!title || !price || !category) {
@@ -47,13 +48,17 @@ export async function POST(req: NextRequest) {
             .from("products")
             .insert({
                 title,
+                subtitle: subtitle ?? "",
                 price: Number(price),
                 category,
+                product_type: product_type ?? "",
                 finish: finish ?? "Matte Black",
                 stock_status: stock_status ?? "In Stock",
                 stock_qty: stock_qty ? Number(stock_qty) : 99,
                 image_url: image_url ?? (images?.[0] ?? ""),
                 hover_image_url: hover_image_url ?? (images?.[1] ?? ""),
+                lifestyle_image: lifestyle_image ?? "",
+                mobile_thumbnail: mobile_thumbnail ?? "",
                 images: images ?? [],
                 video_url: video_url ?? "",
                 video_thumbnail: video_thumbnail ?? "",
@@ -63,20 +68,27 @@ export async function POST(req: NextRequest) {
                 sku: sku ?? "",
                 compare_at_price: compare_at_price ? Number(compare_at_price) : null,
                 highlights: highlights ?? [],
+                trust_features: trust_features ?? [],
                 material: material ?? "",
+                pipe_type: pipe_type ?? "",
+                color: color ?? "",
                 steel_thickness: steel_thickness ?? "",
                 warranty: warranty ?? "",
                 weight_kg: weight_kg ? Number(weight_kg) : null,
                 dimensions: dimensions ?? "",
-                dispatch_time: dispatch_time ?? "2-5 Business Days",
+                delivery_info: delivery_info ?? "Pan India Delivery Available",
                 tags: tags ?? [],
-                badges: badges ?? [],
+                badge: badge ?? "",
                 seo_title: seo_title ?? "",
                 seo_description: seo_description ?? "",
                 seo_keywords: seo_keywords ?? "",
                 faqs: faqs ?? [],
-                whatsapp_message: whatsapp_message ?? "",
+                whatsapp_link: whatsapp_link ?? "",
+                related_products: related_products ?? "",
                 slug: slug ?? "",
+                image_style_preset: image_style_preset ?? "",
+                watermark_strength: watermark_strength ?? "Medium",
+                care_instructions: care_instructions ?? "",
             })
             .select()
             .single();

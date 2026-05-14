@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { C, FM, FO, CATEGORIES } from "../constants";
-import ImageUploader from "../components/ImageUploader";
-import VideoUploader from "../components/VideoUploader";
+import BasicProductInfo from "../components/BasicProductInfo";
+import ProductMediaSection from "../components/ProductMediaSection";
 
 interface Props {
     adminKey: string;
@@ -11,158 +11,68 @@ interface Props {
     onCancel: () => void;
 }
 
-interface AplusBlock {
-    title: string;
-    description: string;
-    image_url: string;
-}
+const PRODUCT_TYPES = ["SS", "MS", "Luxury", "Foldable", "Commercial"];
+const BADGES = ["Bestseller", "New Arrival", "Premium Choice", "Limited Edition"];
+const IMAGE_PRESETS = ["Studio White", "Luxury Interior", "Warm Minimal", "Dark Premium"];
+const WATERMARK_OPTIONS = ["Soft", "Medium", "Strong"];
+const TRUST_OPTIONS = [
+    "Jindal Steel", "Rust Resistant", "3 Year Warranty",
+    "Premium Finish", "Pan India Delivery", "Heavy Duty", "Easy Maintenance"
+];
 
-const FINISHES = ["Matte Black", "Graphite Grey", "White", "Bronze", "Natural Wood", "Walnut"];
-const STOCK_STATUSES = ["In Stock", "Only 12 Left", "Only 3 Left", "New", "Limited", "Out of Stock"];
+const inp: React.CSSProperties = {
+    background: "#FFFFFF", border: "1px solid #E5E7EB", color: "#111",
+    fontSize: "0.9rem", fontFamily: FO, borderRadius: "8px",
+    padding: "0.75rem 1rem", width: "100%", boxSizing: "border-box",
+    outline: "none", transition: "border-color 0.2s ease",
+};
+const lbl: React.CSSProperties = {
+    display: "block", fontSize: "0.7rem", fontWeight: 700, color: "#374151",
+    fontFamily: FM, marginBottom: "0.5rem", textTransform: "uppercase", letterSpacing: "0.04em",
+};
 
 export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
     const [saving, setSaving] = useState(false);
     const [success, setSuccess] = useState(false);
-    const [publishedId, setPublishedId] = useState("");
     const [error, setError] = useState("");
-    const [tagInput, setTagInput] = useState("");
-    const [showKeywords, setShowKeywords] = useState(false);
-
-    const [aplusBlocks, setAplusBlocks] = useState<AplusBlock[]>([]);
-    const [aplusError, setAplusError] = useState("");
+    const [openSection, setOpenSection] = useState<string>("basic");
 
     const [form, setForm] = useState({
-        title: "",
-        price: "",
-        compare_at_price: "",
-        category: CATEGORIES[0],
-        finish: "Matte Black",
-        stock_status: "In Stock",
-        stock_qty: "99",
-        images: [] as string[],
-        video_url: "",
-        video_thumbnail: "",
-        description: "",
-        weight_kg: "",
-        dimensions: "",
-        tags: [] as string[],
-        is_new: false,
-        sku: "",
-        highlights: [] as string[],
-        material: "",
-        steel_thickness: "",
-        warranty: "",
-        dispatch_time: "2-5 Business Days",
-        badges: [] as string[],
-        seo_title: "",
-        seo_description: "",
-        seo_keywords: "",
-        faqs: [] as { question: string, answer: string }[],
-        whatsapp_message: "",
+        title: "", subtitle: "", category: CATEGORIES[0],
+        badge: "", price: "", compare_at_price: "", stock_status: "In Stock",
+        stock_qty: "99", image_url: "", images: [] as string[],
+        image_style_preset: "Studio White", watermark_strength: "Medium",
+        description: "", highlights: [] as string[],
+        material: "", pipe_type: "", finish: "Matte Black", color: "",
+        dimensions: "", weight_kg: "", warranty: "No Warranty",
+        delivery_info: "Pan India Delivery Available", care_instructions: "",
+        trust_features: [] as string[], related_products: ["", "", "", ""],
+        seo_title: "", seo_description: "",
+        faqs: [{ question: "", answer: "" }, { question: "", answer: "" }, { question: "", answer: "" }],
+        is_active: true,
+        collection: "",
+        is_featured: false,
+        is_best_seller: false,
     });
 
-    React.useEffect(() => {
-        const draft = localStorage.getItem("sanra_product_draft");
-        if (draft) {
-            try {
-                const parsed = JSON.parse(draft);
-                if (parsed.form) setForm(parsed.form);
-                if (parsed.aplusBlocks) setAplusBlocks(parsed.aplusBlocks);
-            } catch (e) {}
-        }
-    }, []);
+    const set = (field: string, value: unknown) => setForm(f => ({ ...f, [field]: value }));
 
-    React.useEffect(() => {
-        const timer = setTimeout(() => {
-            if (form.title || form.price) {
-                localStorage.setItem("sanra_product_draft", JSON.stringify({
-                    form,
-                    aplusBlocks,
-                }));
-            }
-        }, 5000);
-        return () => clearTimeout(timer);
-    }, [form, aplusBlocks]);
-
-    const [highlightInput, setHighlightInput] = useState("");
-    const [badgeInput, setBadgeInput] = useState("");
-
-    const inp: React.CSSProperties = {
-        background: "#fff", border: `1px solid ${C.border}`, color: C.text,
-        fontSize: "0.85rem", fontFamily: FO, borderRadius: 6,
-        padding: "0.75rem 1rem", width: "100%", boxSizing: "border-box",
-    };
-    const lbl: React.CSSProperties = {
-        display: "block", fontSize: "0.6rem", fontWeight: 700, color: C.muted,
-        fontFamily: FM, letterSpacing: "0.12em", textTransform: "uppercase",
-        marginBottom: "0.4rem",
-    };
-    const sectionTitle: React.CSSProperties = {
-        fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.2em",
-        textTransform: "uppercase", color: C.accent, fontFamily: FM, marginBottom: "1rem",
+    const handleTrust = (feat: string) => {
+        const cur = form.trust_features;
+        if (cur.includes(feat)) set("trust_features", cur.filter(f => f !== feat));
+        else if (cur.length < 6) set("trust_features", [...cur, feat]);
     };
 
-    const addTag = () => {
-        if (form.tags.length >= 10) return;
-        const t = tagInput.trim();
-        if (!t || form.tags.includes(t)) return;
-        setForm(f => ({ ...f, tags: [...f.tags, t] }));
-        setTagInput("");
-    };
-    const removeTag = (tag: string) => {
-        setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }));
+    const setRelatedSlot = (idx: number, val: string) => {
+        const slots = [...form.related_products];
+        slots[idx] = val.trim();
+        set("related_products", slots);
     };
 
-    const addHighlight = () => {
-        setForm(f => ({ ...f, highlights: [...f.highlights, ""] }));
-    };
-    const updateHighlight = (index: number, value: string) => {
-        setForm(f => {
-            const h = [...f.highlights];
-            h[index] = value;
-            return { ...f, highlights: h };
-        });
-    };
-    const removeHighlight = (index: number) => {
-        setForm(f => ({ ...f, highlights: f.highlights.filter((_, i) => i !== index) }));
-    };
-
-    const addBadge = () => {
-        const b = badgeInput.trim();
-        if (!b || form.badges.includes(b)) return;
-        setForm(f => ({ ...f, badges: [...f.badges, b] }));
-        setBadgeInput("");
-    };
-    const removeBadge = (b: string) => {
-        setForm(f => ({ ...f, badges: f.badges.filter(x => x !== b) }));
-    };
-
-    const addFaq = () => {
-        if (form.faqs.length >= 3) return;
-        setForm(f => ({ ...f, faqs: [...f.faqs, { question: "", answer: "" }] }));
-    };
-    const updateFaq = (index: number, field: "question" | "answer", value: string) => {
-        setForm(f => {
-            const newFaqs = [...f.faqs];
-            newFaqs[index][field] = value;
-            return { ...f, faqs: newFaqs };
-        });
-    };
-    const removeFaq = (index: number) => {
-        setForm(f => ({ ...f, faqs: f.faqs.filter((_, i) => i !== index) }));
-    };
-
-    const addAplusBlock = () => {
-        if (aplusBlocks.length >= 7) return;
-        setAplusBlocks(prev => [...prev, { title: "", description: "", image_url: "" }]);
-    };
-
-    const updateAplusBlock = (index: number, field: keyof AplusBlock, value: string) => {
-        setAplusBlocks(prev => prev.map((b, i) => i === index ? { ...b, [field]: value } : b));
-    };
-
-    const removeAplusBlock = (index: number) => {
-        setAplusBlocks(prev => prev.filter((_, i) => i !== index));
+    const setFaq = (idx: number, field: "question" | "answer", val: string) => {
+        const updated = [...form.faqs];
+        updated[idx] = { ...updated[idx], [field]: val };
+        set("faqs", updated);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -171,459 +81,231 @@ export default function AddProductPage({ adminKey, onSaved, onCancel }: Props) {
             setError("Title, Price, and Category are required.");
             return;
         }
-        if (aplusBlocks.length > 0 && aplusBlocks.length < 3) {
-            setAplusError("Minimum 3 A+ blocks required. Add more or remove all.");
-            return;
-        }
-        
-        setSaving(true);
-        setError("");
-        setAplusError("");
+        setSaving(true); setError("");
         try {
-            const generatedSlug = form.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const slug = form.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
             const body = {
-                title: form.title,
-                price: Number(form.price),
+                title: form.title, subtitle: form.subtitle, price: Number(form.price),
                 compare_at_price: form.compare_at_price ? Number(form.compare_at_price) : null,
-                category: form.category,
-                finish: form.finish,
-                stock_status: form.stock_status,
-                stock_qty: Number(form.stock_qty),
-                image_url: form.images[0] ?? "",
+                category: form.category, badge: form.badge,
+                finish: form.finish, stock_status: form.stock_status, stock_qty: Number(form.stock_qty),
+                image_url: form.image_url || (form.images[0] ?? ""),
+                collection: form.collection || null,
+                is_featured: form.is_featured,
+                is_best_seller: form.is_best_seller,
                 hover_image_url: form.images[1] ?? "",
-                images: form.images,
-                video_url: form.video_url,
-                video_thumbnail: form.video_thumbnail,
-                description: form.description,
+                images: form.images, image_style_preset: form.image_style_preset,
+                watermark_strength: form.watermark_strength, description: form.description,
+                highlights: form.highlights.filter(Boolean), material: form.material,
+                pipe_type: form.pipe_type, color: form.color, dimensions: form.dimensions,
                 weight_kg: form.weight_kg ? Number(form.weight_kg) : null,
-                dimensions: form.dimensions,
-                tags: form.tags,
-                is_new: form.is_new,
-                sku: form.sku,
-                highlights: form.highlights,
-                material: form.material,
-                steel_thickness: form.steel_thickness,
-                warranty: form.warranty,
-                dispatch_time: form.dispatch_time,
-                badges: form.badges,
-                seo_title: form.seo_title,
-                seo_description: form.seo_description,
-                seo_keywords: form.seo_keywords,
-                faqs: form.faqs,
-                whatsapp_message: form.whatsapp_message,
-                slug: generatedSlug,
+                warranty: form.warranty, delivery_info: form.delivery_info,
+                care_instructions: form.care_instructions, trust_features: form.trust_features,
+                related_products: form.related_products.filter(Boolean).join(", "),
+                seo_title: form.seo_title, seo_description: form.seo_description,
+                faqs: form.faqs.filter(f => f.question || f.answer),
+                is_active: form.is_active, is_new: true, slug,
             };
             const res = await fetch("/api/admin/products", {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
                 body: JSON.stringify(body),
             });
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || "Failed to create product");
-            }
-            
-            const productData = await res.json();
-            const newProductId = productData.product?.id;
-
-            if (newProductId && aplusBlocks.length >= 3) {
-                const aplusRes = await fetch("/api/admin/aplus", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "x-admin-key": adminKey },
-                    body: JSON.stringify({ product_id: newProductId, blocks: aplusBlocks }),
-                });
-                if (!aplusRes.ok) {
-                    throw new Error("Product created, but failed to save A+ content.");
-                }
-            }
-
+            if (!res.ok) { const d = await res.json(); throw new Error(d.error || "Failed"); }
             localStorage.removeItem("sanra_product_draft");
-            setPublishedId(newProductId);
             setSuccess(true);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Failed to create product");
-        } finally {
-            setSaving(false);
-        }
+        } finally { setSaving(false); }
     };
+
+    /* ── Accordion ── */
+    const Section = ({ id, num, title, children }: { id: string; num: number; title: string; children: React.ReactNode }) => {
+        const isOpen = openSection === id;
+        return (
+            <div style={{ background: "#fff", borderRadius: "12px", marginBottom: "0.75rem", border: "1px solid #E5E7EB", overflow: "hidden", boxShadow: isOpen ? "0 4px 20px rgba(0,0,0,0.04)" : "none" }}>
+                <button type="button" onClick={() => setOpenSection(isOpen ? "" : id)} style={{ width: "100%", textAlign: "left", padding: "1.25rem 1.5rem", background: "#fff", border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+                        <span style={{ width: 28, height: 28, borderRadius: "50%", background: isOpen ? "#111" : "#F3F4F6", color: isOpen ? "#fff" : "#6B7280", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.75rem", fontWeight: 800, fontFamily: FM, transition: "all 0.2s" }}>{num}</span>
+                        <span style={{ fontSize: "0.95rem", fontWeight: 700, fontFamily: FM, color: "#111" }}>{title}</span>
+                    </div>
+                    <span style={{ fontSize: "1rem", color: "#9CA3AF", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.2s" }}>▾</span>
+                </button>
+                {isOpen && <div style={{ padding: "0 1.5rem 1.5rem", borderTop: "1px solid #F3F4F6" }}><div style={{ paddingTop: "1.5rem" }}>{children}</div></div>}
+            </div>
+        );
+    };
+
+    /* ── Mobile Preview ── */
+    const MobilePreview = () => (
+        <div style={{ background: "#F9FAFB", borderRadius: "12px", border: "1px solid #E5E7EB", padding: "1.5rem", marginBottom: "0.75rem" }}>
+            <p style={{ fontSize: "0.7rem", fontWeight: 700, fontFamily: FM, color: "#9CA3AF", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: "1rem" }}>📱 Mobile Live Preview</p>
+            <div style={{ width: "100%", maxWidth: 320, margin: "0 auto", background: "#fff", borderRadius: "24px", border: "3px solid #111", overflow: "hidden", boxShadow: "0 8px 32px rgba(0,0,0,0.08)" }}>
+                <div style={{ background: "#111", padding: "0.4rem 1rem", display: "flex", justifyContent: "space-between" }}><span style={{ color: "#fff", fontSize: "0.6rem", fontWeight: 600 }}>9:41</span><span style={{ color: "#fff", fontSize: "0.6rem" }}>●●●</span></div>
+                <div style={{ width: "100%", aspectRatio: "4/5", background: "#F3F4F6", overflow: "hidden" }}>
+                    {form.image_url ? <img src={form.image_url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} /> : <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", color: "#D1D5DB", fontSize: "0.8rem", fontFamily: FO }}>No image</div>}
+                </div>
+                <div style={{ padding: "1rem" }}>
+                    <p style={{ fontSize: "0.9rem", fontWeight: 600, fontFamily: FM, color: "#111", margin: "0 0 0.15rem", lineHeight: 1.2 }}>{form.title || "Product Title"}</p>
+                    {form.subtitle && <p style={{ fontSize: "0.65rem", color: "#6B7280", fontFamily: FO, margin: "0 0 0.5rem" }}>{form.subtitle}</p>}
+                    <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem", marginBottom: "0.75rem" }}>
+                        <span style={{ fontSize: "1rem", fontWeight: 800, fontFamily: FM, color: "#111" }}>₹{form.price ? Number(form.price).toLocaleString("en-IN") : "0"}</span>
+                        {form.compare_at_price && <span style={{ fontSize: "0.7rem", color: "#9CA3AF", textDecoration: "line-through" }}>₹{Number(form.compare_at_price).toLocaleString("en-IN")}</span>}
+                    </div>
+                    <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
+                        {form.trust_features.slice(0, 4).map((f, i) => (
+                            <span key={i} style={{ fontSize: "0.45rem", background: "#F3F4F6", padding: "0.15rem 0.35rem", borderRadius: "4px", fontFamily: FM, fontWeight: 600, color: "#374151" }}>{f}</span>
+                        ))}
+                    </div>
+                    <div style={{ background: "#111", color: "#fff", textAlign: "center", padding: "0.5rem", borderRadius: "6px", fontSize: "0.55rem", fontWeight: 700, fontFamily: FM, marginBottom: "0.35rem" }}>ADD TO CART</div>
+                    <div style={{ background: "#25D366", color: "#fff", textAlign: "center", padding: "0.5rem", borderRadius: "6px", fontSize: "0.55rem", fontWeight: 700, fontFamily: FM }}>BUY ON WHATSAPP</div>
+                </div>
+            </div>
+        </div>
+    );
 
     if (success) {
         return (
-            <div style={{ maxWidth: 600, margin: "4rem auto", textAlign: "center", background: C.card, border: `1px solid ${C.border}`, padding: "3rem 2rem", borderRadius: 12 }}>
-                <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>✅</div>
-                <h2 style={{ fontSize: "1.5rem", fontWeight: 900, color: C.text, fontFamily: FM, marginBottom: "0.5rem" }}>Product Published Successfully</h2>
-                <p style={{ color: C.muted, fontFamily: FO, fontSize: "0.9rem", marginBottom: "2rem" }}>Your product is now live on the store.</p>
-                <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
-                    <button onClick={onSaved} style={{ padding: "0.75rem 1.5rem", background: "transparent", border: `1px solid ${C.border}`, color: C.text, fontWeight: 700, borderRadius: 6, cursor: "pointer", fontFamily: FM }}>← Back to Products</button>
-                    <button onClick={() => window.open(`/shop`, "_blank")} style={{ padding: "0.75rem 1.5rem", background: C.accent, border: "none", color: "#111", fontWeight: 900, borderRadius: 6, cursor: "pointer", fontFamily: FM }}>View Product ↗</button>
+            <div style={{ maxWidth: 500, margin: "5rem auto", textAlign: "center", background: "#fff", border: "1px solid #E5E7EB", padding: "3rem 2rem", borderRadius: 16 }}>
+                <div style={{ width: 56, height: 56, borderRadius: "50%", background: "#10B98118", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 1.5rem", fontSize: "1.5rem" }}>✓</div>
+                <h2 style={{ fontSize: "1.3rem", fontWeight: 800, color: "#111", fontFamily: FM, margin: "0 0 0.5rem" }}>Product Published</h2>
+                <p style={{ color: "#9CA3AF", fontFamily: FO, fontSize: "0.9rem", marginBottom: "2rem" }}>Your product is now live on the store.</p>
+                <div style={{ display: "flex", gap: "0.75rem", justifyContent: "center" }}>
+                    <button onClick={onSaved} style={{ padding: "0.75rem 1.5rem", background: "#111", border: "none", color: "#fff", fontWeight: 700, borderRadius: 8, cursor: "pointer", fontFamily: FM, fontSize: "0.85rem" }}>← Back to Products</button>
+                    <button onClick={() => window.open("/shop", "_blank")} style={{ padding: "0.75rem 1.5rem", background: "transparent", border: "1px solid #E5E7EB", color: "#111", fontWeight: 600, borderRadius: 8, cursor: "pointer", fontFamily: FM, fontSize: "0.85rem" }}>View Store ↗</button>
                 </div>
             </div>
         );
     }
 
     return (
-        <div style={{ maxWidth: 900, margin: "0 auto" }}>
-            <style>{`
-                @media (max-width: 768px) {
-                    .admin-grid { grid-template-columns: 1fr !important; }
-                }
-            `}</style>
+        <div style={{ maxWidth: 820, margin: "0 auto" }}>
             {/* Header */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
                 <div>
-                    <button onClick={onCancel} style={{ background: "none", border: "none", color: C.muted, cursor: "pointer", fontFamily: FM, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", padding: 0, marginBottom: "0.5rem", display: "block" }}>
-                        ← Back to Products
-                    </button>
-                    <h2 style={{ fontSize: "1.4rem", fontWeight: 900, color: C.text, fontFamily: FM }}>Add New Product</h2>
+                    <button onClick={onCancel} style={{ background: "none", border: "none", color: "#9CA3AF", cursor: "pointer", fontFamily: FM, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", padding: 0, marginBottom: "0.5rem", display: "block" }}>← Back to Products</button>
+                    <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#111", fontFamily: FM, margin: 0 }}>Publish New Product</h2>
                 </div>
+                <button onClick={handleSubmit as any} disabled={saving} style={{ padding: "0.7rem 2rem", background: "#111", color: "#fff", fontWeight: 700, fontSize: "0.85rem", border: "none", cursor: saving ? "not-allowed" : "pointer", borderRadius: "8px", fontFamily: FM, opacity: saving ? 0.7 : 1 }}>{saving ? "Publishing…" : "Publish Product"}</button>
             </div>
 
-            {error && (
-                <div style={{ background: `${C.red}15`, border: `1px solid ${C.red}44`, padding: "0.75rem 1rem", borderRadius: 8, marginBottom: "1.25rem", fontSize: "0.82rem", color: C.red, fontFamily: FO }}>
-                    {error}
-                </div>
-            )}
+            {error && <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", padding: "0.75rem 1rem", borderRadius: 8, marginBottom: "1rem", fontSize: "0.85rem", color: "#EF4444", fontFamily: FO }}>{error}</div>}
 
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <form onSubmit={handleSubmit}>
+                {/* 1. BASIC INFO — Premium Component */}
+                <BasicProductInfo
+                    title={form.title}
+                    subtitle={form.subtitle}
+                    category={form.category}
+                    stockStatus={form.stock_status}
+                    price={form.price}
+                    comparePrice={form.compare_at_price}
+                    collection={form.collection}
+                    isFeatured={form.is_featured}
+                    isBestSeller={form.is_best_seller}
+                    onChange={set}
+                    sectionNum={1}
+                    defaultOpen={true}
+                />
 
-                {/* BASIC INFO */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Basic Information</p>
-                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div style={{ gridColumn: "1/-1" }}>
-                            <label style={lbl}>Title *</label>
-                            <input value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="e.g. SL Edge Shelf" style={inp} required />
+                {/* 2. MEDIA — Premium Component */}
+                <ProductMediaSection
+                    images={form.images}
+                    onImagesChange={(imgs) => {
+                        set("images", imgs);
+                        if (imgs.length > 0) set("image_url", imgs[0]);
+                        else set("image_url", "");
+                    }}
+                    imageStylePreset={form.image_style_preset}
+                    watermarkStrength={form.watermark_strength}
+                    onSettingsChange={(field, val) => set(field, val)}
+                    adminKey={adminKey}
+                    sectionNum={2}
+                />
+
+                {/* 3. DESCRIPTION */}
+                <Section id="desc" num={3} title="Product Description">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                        <div><label style={lbl}>Short Description (2-3 lines)</label><textarea value={form.description} onChange={e => set("description", e.target.value)} rows={3} style={{ ...inp, resize: "vertical" }} /></div>
+                        <div><label style={lbl}>Key Highlights (one per line)</label><textarea value={form.highlights.join("\n")} onChange={e => set("highlights", e.target.value.split("\n").map(s => s.trim()))} rows={4} style={{ ...inp, resize: "vertical" }} placeholder={"Rust Resistant\nJindal Steel\nHeavy Duty"} /></div>
+                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
+                            <div><label style={lbl}>Material</label><input value={form.material} onChange={e => set("material", e.target.value)} style={inp} /></div>
+                            <div><label style={lbl}>Finish</label><input value={form.finish} onChange={e => set("finish", e.target.value)} style={inp} /></div>
+                            <div><label style={lbl}>Dimensions</label><input value={form.dimensions} onChange={e => set("dimensions", e.target.value)} style={inp} placeholder="H: 45cm × W: 35cm" /></div>
+                            <div><label style={lbl}>Color</label><input value={form.color} onChange={e => set("color", e.target.value)} style={inp} /></div>
                         </div>
-                        <div>
-                            <label style={lbl}>SKU / Product Code</label>
-                            <input value={form.sku} onChange={e => setForm(f => ({ ...f, sku: e.target.value }))} placeholder="e.g. SL-CHR-001" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Category *</label>
-                            <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))} style={{ ...inp, cursor: "pointer" }}>
-                                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label style={lbl}>Finish</label>
-                            <select value={form.finish} onChange={e => setForm(f => ({ ...f, finish: e.target.value }))} style={{ ...inp, cursor: "pointer" }}>
-                                {FINISHES.map(f => <option key={f}>{f}</option>)}
-                            </select>
-                        </div>
+                        <div><label style={lbl}>Warranty</label><select value={form.warranty} onChange={e => set("warranty", e.target.value)} style={inp}><option>No Warranty</option><option>1 Year Warranty</option><option>3 Year Warranty</option><option>5 Year Warranty</option></select></div>
+                        <div><label style={lbl}>Delivery Information</label><input value={form.delivery_info} onChange={e => set("delivery_info", e.target.value)} style={inp} /></div>
+                        <div><label style={lbl}>Care Instructions</label><textarea value={form.care_instructions} onChange={e => set("care_instructions", e.target.value)} rows={2} style={{ ...inp, resize: "vertical" }} placeholder="Wipe clean with a damp cloth." /></div>
                     </div>
-                </section>
+                </Section>
 
-                {/* PRICING */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Pricing</p>
-                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div>
-                            <label style={lbl}>Selling Price (₹) *</label>
-                            <input type="number" value={form.price} onChange={e => setForm(f => ({ ...f, price: e.target.value }))} placeholder="2499" style={inp} required />
-                        </div>
-                        <div>
-                            <label style={lbl}>Compare-at Price (₹)</label>
-                            <input type="number" value={form.compare_at_price} onChange={e => setForm(f => ({ ...f, compare_at_price: e.target.value }))} placeholder="e.g. 3999 (shown as strikethrough)" style={inp} />
-                            {form.compare_at_price && form.price && Number(form.compare_at_price) > Number(form.price) && (
-                                <p style={{ fontSize: "0.68rem", color: C.green, fontFamily: FM, marginTop: "0.4rem" }}>
-                                    💰 {Math.round((1 - Number(form.price) / Number(form.compare_at_price)) * 100)}% OFF
-                                </p>
-                            )}
-                        </div>
+                {/* 4. TRUST FEATURES */}
+                <Section id="trust" num={4} title="Trust & Premium Features">
+                    <p style={{ fontSize: "0.75rem", color: "#9CA3AF", fontFamily: FO, marginBottom: "1rem" }}>Select up to 6 features that appear on the product page.</p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                        {TRUST_OPTIONS.map(feat => {
+                            const active = form.trust_features.includes(feat);
+                            const atMax = form.trust_features.length >= 6 && !active;
+                            return (
+                                <button type="button" key={feat} onClick={() => handleTrust(feat)} disabled={atMax} style={{ display: "flex", alignItems: "center", gap: "0.75rem", padding: "0.85rem 1rem", background: active ? "#111" : "#fff", color: active ? "#fff" : atMax ? "#D1D5DB" : "#374151", border: `1px solid ${active ? "#111" : "#E5E7EB"}`, borderRadius: "8px", cursor: atMax ? "not-allowed" : "pointer", fontFamily: FO, fontSize: "0.85rem", fontWeight: active ? 700 : 500, textAlign: "left", transition: "all 0.15s ease" }}>
+                                    <span style={{ width: 20, height: 20, borderRadius: "4px", border: `2px solid ${active ? "#fff" : "#D1D5DB"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                        {active && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                                    </span>
+                                    {feat}
+                                </button>
+                            );
+                        })}
                     </div>
-                </section>
+                    <p style={{ fontSize: "0.7rem", color: "#9CA3AF", fontFamily: FO, marginTop: "0.75rem" }}>{form.trust_features.length}/6 selected</p>
+                </Section>
 
-                {/* IMAGES — CLOUDINARY UPLOAD */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Product Images</p>
-                    <ImageUploader
-                        images={form.images}
-                        onImagesChange={(imgs) => setForm(f => ({ ...f, images: imgs }))}
-                        adminKey={adminKey}
-                    />
-                </section>
-
-                {/* PRODUCT VIDEO */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Product Video (optional)</p>
-                    <p style={{ fontSize: "0.72rem", color: C.muted, fontFamily: FO, marginBottom: "1rem" }}>Upload a product showcase video. It will autoplay (muted) on the product page for a premium experience.</p>
-                    <VideoUploader
-                        videoUrl={form.video_url}
-                        videoThumbnail={form.video_thumbnail}
-                        onVideoChange={(url, thumb) => setForm(f => ({ ...f, video_url: url, video_thumbnail: thumb }))}
-                        adminKey={adminKey}
-                    />
-                </section>
-
-                {/* INVENTORY */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Inventory</p>
-                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "1rem" }}>
-                        <div>
-                            <label style={lbl}>Stock Qty</label>
-                            <input type="number" value={form.stock_qty} onChange={e => setForm(f => ({ ...f, stock_qty: e.target.value }))} style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Stock Status</label>
-                            <select value={form.stock_status} onChange={e => setForm(f => ({ ...f, stock_status: e.target.value }))} style={{ ...inp, cursor: "pointer" }}>
-                                {STOCK_STATUSES.map(s => <option key={s}>{s}</option>)}
-                            </select>
-                        </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.6rem", paddingTop: "1.5rem" }}>
-                            <input type="checkbox" id="is_new_add" checked={form.is_new} onChange={e => setForm(f => ({ ...f, is_new: e.target.checked }))} style={{ width: 18, height: 18, accentColor: C.accent }} />
-                            <label htmlFor="is_new_add" style={{ fontSize: "0.82rem", color: C.text, fontFamily: FO, cursor: "pointer" }}>New Arrival</label>
-                        </div>
+                {/* 5. RELATED */}
+                <Section id="related" num={5} title="Related Products">
+                    <p style={{ fontSize: "0.75rem", color: "#9CA3AF", fontFamily: FO, marginBottom: "1rem" }}>Add up to 4 related product slugs.</p>
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                        {[0, 1, 2, 3].map(i => (
+                            <div key={i}><label style={lbl}>Slot {i + 1}</label><input value={form.related_products[i]} onChange={e => setRelatedSlot(i, e.target.value)} style={inp} placeholder="product-slug" /></div>
+                        ))}
                     </div>
-                </section>
+                </Section>
 
-                {/* DESCRIPTION */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Description</p>
-                    <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={6} placeholder="Detailed product description…" style={{ ...inp, resize: "vertical", lineHeight: 1.7 }} />
-                </section>
-
-                {/* HIGHLIGHTS */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                        <p style={sectionTitle}>Product Highlights</p>
-                        <button type="button" onClick={addHighlight} style={{ padding: "0.5rem 1.25rem", background: "transparent", border: `1px solid ${C.accent}`, color: C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>
-                            + Add Bullet
-                        </button>
+                {/* 6. SEO */}
+                <Section id="seo" num={6} title="SEO">
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+                        <div><label style={lbl}>SEO Title</label><input value={form.seo_title} onChange={e => set("seo_title", e.target.value)} style={inp} placeholder="Buy Premium Stainless Steel Stool Online" /></div>
+                        <div><label style={lbl}>SEO Description</label><textarea value={form.seo_description} onChange={e => set("seo_description", e.target.value)} rows={2} style={{ ...inp, resize: "vertical" }} placeholder="Shop premium quality furniture..." /></div>
                     </div>
-                    {form.highlights.length === 0 ? (
-                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, textAlign: "center", padding: "1rem 0" }}>No highlights added.</p>
-                    ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
-                            {form.highlights.map((h, i) => (
-                                <div key={i} style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                    <span style={{ color: C.accent, fontSize: "1.2rem" }}>•</span>
-                                    <input value={h} onChange={e => updateHighlight(i, e.target.value)} placeholder="e.g. Heavy Duty Steel Frame" style={{ ...inp, flex: 1 }} />
-                                    <button type="button" onClick={() => removeHighlight(i)} style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: "0.82rem", fontWeight: 700, padding: "0.5rem" }}>✕</button>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
+                </Section>
 
-                {/* SHIPPING & SPECS */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Specifications & Shipping</p>
-                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div>
-                            <label style={lbl}>Material</label>
-                            <input value={form.material} onChange={e => setForm(f => ({ ...f, material: e.target.value }))} placeholder="e.g. Jindal Stainless Steel" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Steel Thickness</label>
-                            <input value={form.steel_thickness} onChange={e => setForm(f => ({ ...f, steel_thickness: e.target.value }))} placeholder="e.g. 1.2mm" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Weight (kg)</label>
-                            <input type="number" step="0.1" value={form.weight_kg} onChange={e => setForm(f => ({ ...f, weight_kg: e.target.value }))} placeholder="e.g. 4.5" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Dimensions (L × W × H cm)</label>
-                            <input value={form.dimensions} onChange={e => setForm(f => ({ ...f, dimensions: e.target.value }))} placeholder="e.g. 18 x 18 x 36 Inches" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Warranty (Optional)</label>
-                            <input value={form.warranty} onChange={e => setForm(f => ({ ...f, warranty: e.target.value }))} placeholder="e.g. 3 Years Replacement" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>Dispatch Time</label>
-                            <input value={form.dispatch_time} onChange={e => setForm(f => ({ ...f, dispatch_time: e.target.value }))} placeholder="e.g. 2-5 Business Days" style={inp} />
-                        </div>
+                {/* 7. FAQ */}
+                <Section id="faq" num={7} title="FAQ">
+                    <p style={{ fontSize: "0.75rem", color: "#9CA3AF", fontFamily: FO, marginBottom: "1rem" }}>Max 3 FAQs to build customer trust.</p>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                        {[0, 1, 2].map(i => (
+                            <div key={i} style={{ background: "#F9FAFB", borderRadius: "8px", padding: "1rem", border: "1px solid #F3F4F6" }}>
+                                <label style={lbl}>Question {i + 1}</label>
+                                <input value={form.faqs[i].question} onChange={e => setFaq(i, "question", e.target.value)} style={{ ...inp, marginBottom: "0.75rem" }} placeholder="Is this product rust proof?" />
+                                <label style={lbl}>Answer {i + 1}</label>
+                                <textarea value={form.faqs[i].answer} onChange={e => setFaq(i, "answer", e.target.value)} rows={2} style={{ ...inp, resize: "vertical" }} placeholder="Yes, 100% rust proof." />
+                            </div>
+                        ))}
                     </div>
-                </section>
+                </Section>
 
-                {/* A+ CONTENT */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                        <div>
-                            <p style={sectionTitle}>A+ Content</p>
-                            <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginTop: "-0.5rem" }}>
-                                Add rich content blocks displayed below the product. Min 3 blocks.
-                            </p>
-                        </div>
-                        <button type="button" disabled={aplusBlocks.length >= 7} onClick={addAplusBlock} style={{ padding: "0.5rem 1.25rem", background: aplusBlocks.length >= 7 ? "#ccc" : C.accent, color: aplusBlocks.length >= 7 ? "#666" : "#fff", fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: aplusBlocks.length >= 7 ? "not-allowed" : "pointer", borderRadius: 6, fontFamily: FM, border: "none", whiteSpace: "nowrap" }}>
-                            + Add Block
-                        </button>
+                {/* 8. MOBILE PREVIEW */}
+                <MobilePreview />
+
+                {/* Bottom Actions */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1.5rem 0", borderTop: "1px solid #E5E7EB", marginTop: "0.5rem", position: "sticky", bottom: 0, background: "#F5F5F5" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", fontFamily: FO, color: "#111", cursor: "pointer" }}>
+                        <input type="checkbox" checked={form.is_active} onChange={e => set("is_active", e.target.checked)} style={{ width: 18, height: 18, accentColor: "#111" }} />
+                        Publish immediately
+                    </label>
+                    <div style={{ display: "flex", gap: "0.75rem" }}>
+                        <button type="button" onClick={onCancel} style={{ padding: "0.7rem 1.5rem", background: "transparent", color: "#EF4444", fontWeight: 600, fontSize: "0.8rem", border: "none", cursor: "pointer", fontFamily: FM }}>Discard</button>
+                        <button type="submit" disabled={saving} style={{ padding: "0.7rem 2rem", background: "#111", color: "#fff", fontWeight: 700, fontSize: "0.85rem", border: "none", cursor: saving ? "not-allowed" : "pointer", borderRadius: "8px", fontFamily: FM, opacity: saving ? 0.7 : 1 }}>{saving ? "Publishing…" : "Publish Product"}</button>
                     </div>
-
-                    {aplusError && (
-                        <div style={{ background: `${C.red}15`, border: `1px solid ${C.red}44`, padding: "0.6rem 1rem", borderRadius: 6, marginBottom: "1rem", fontSize: "0.8rem", color: C.red, fontFamily: FO }}>
-                            {aplusError}
-                        </div>
-                    )}
-
-                    {aplusBlocks.length === 0 ? (
-                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, padding: "2rem 0", textAlign: "center" }}>No A+ blocks yet. Click &quot;+ Add Block&quot; to start.</p>
-                    ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            {aplusBlocks.map((block, i) => (
-                                <div key={i} style={{ background: "#fafafa", border: `1px solid ${C.border}`, borderRadius: 8, padding: "1.25rem" }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
-                                        <span style={{ fontSize: "0.7rem", fontWeight: 700, color: C.muted, fontFamily: FM, letterSpacing: "0.1em", textTransform: "uppercase" }}>Block {i + 1}</span>
-                                        <button type="button" onClick={() => removeAplusBlock(i)} style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: "0.75rem", fontWeight: 700, fontFamily: FM }}>✕ Remove</button>
-                                    </div>
-                                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                                        <div>
-                                            <label style={lbl}>Title</label>
-                                            <input value={block.title} onChange={e => updateAplusBlock(i, "title", e.target.value)} placeholder="e.g. Heavy Duty Steel Frame" style={inp} />
-                                        </div>
-                                        <div>
-                                            <label style={lbl}>Description</label>
-                                            <textarea value={block.description} onChange={e => updateAplusBlock(i, "description", e.target.value)} rows={2} placeholder="Short description for this feature…" style={{ ...inp, resize: "vertical" }} />
-                                        </div>
-                                        <div>
-                                            <label style={lbl}>Block Image</label>
-                                            <ImageUploader
-                                                images={block.image_url ? [block.image_url] : []}
-                                                onImagesChange={imgs => updateAplusBlock(i, "image_url", imgs[0] ?? "")}
-                                                maxImages={1}
-                                                adminKey={adminKey}
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* TAGS */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Tags (Max 10)</p>
-                    {form.tags.length > 0 && (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.875rem" }}>
-                            {form.tags.map(tag => (
-                                <span key={tag} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.3rem 0.7rem", background: `${C.accent}15`, border: `1px solid ${C.accent}33`, borderRadius: 20, fontSize: "0.72rem", color: C.accent, fontFamily: FM, fontWeight: 600 }}>
-                                    {tag}
-                                    <button type="button" onClick={() => removeTag(tag)} style={{ background: "none", border: "none", color: C.muted, cursor: "pointer", fontSize: "0.72rem", padding: 0, lineHeight: 1 }}>✕</button>
-                                </span>
-                            ))}
-                        </div>
-                    )}
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <input value={tagInput} onChange={e => setTagInput(e.target.value)} placeholder="Add tag (e.g. bestseller, modern, steel)" onKeyDown={e => e.key === "Enter" && (e.preventDefault(), addTag())} style={{ ...inp, flex: 1, fontSize: "0.82rem" }} />
-                        <button type="button" onClick={addTag} style={{ padding: "0 1.25rem", background: "transparent", border: `1px solid ${C.accent}`, color: C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>+ Tag</button>
-                    </div>
-                </section>
-
-                {/* BADGES */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Product Badges</p>
-                    <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginBottom: "1rem" }}>e.g. Best Seller, Premium, Commercial Grade</p>
-                    {form.badges.length > 0 && (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem", marginBottom: "0.875rem" }}>
-                            {form.badges.map(b => (
-                                <span key={b} style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", padding: "0.3rem 0.7rem", background: `${C.black}`, borderRadius: 4, fontSize: "0.72rem", color: "#fff", fontFamily: FM, fontWeight: 600 }}>
-                                    {b}
-                                    <button type="button" onClick={() => removeBadge(b)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", fontSize: "0.72rem", padding: 0, lineHeight: 1 }}>✕</button>
-                                </span>
-                            ))}
-                        </div>
-                    )}
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                        <select value={badgeInput} onChange={e => setBadgeInput(e.target.value)} style={{ ...inp, flex: 1, cursor: "pointer" }}>
-                            <option value="">Select a badge...</option>
-                            <option value="Best Seller">Best Seller</option>
-                            <option value="New Arrival">New Arrival</option>
-                            <option value="Premium">Premium</option>
-                            <option value="Commercial Grade">Commercial Grade</option>
-                            <option value="Luxury Collection">Luxury Collection</option>
-                        </select>
-                        <button type="button" onClick={addBadge} style={{ padding: "0 1.25rem", background: "transparent", border: `1px solid ${C.accent}`, color: C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>+ Add</button>
-                    </div>
-                </section>
-
-                {/* SEO */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Search Engine Optimization</p>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                        <div>
-                            <label style={lbl}>SEO Title</label>
-                            <input value={form.seo_title} onChange={e => setForm(f => ({ ...f, seo_title: e.target.value }))} placeholder="Title for Google Search" style={inp} />
-                        </div>
-                        <div>
-                            <label style={lbl}>SEO Meta Description</label>
-                            <textarea value={form.seo_description} onChange={e => setForm(f => ({ ...f, seo_description: e.target.value }))} rows={2} placeholder="Brief summary of the product for search results..." style={{ ...inp, resize: "vertical" }} />
-                        </div>
-                        
-                        <div style={{ marginTop: "0.5rem" }}>
-                            <button type="button" onClick={() => setShowKeywords(!showKeywords)} style={{ background: "none", border: "none", color: C.accent, fontWeight: 700, fontSize: "0.72rem", cursor: "pointer", fontFamily: FM, textTransform: "uppercase", letterSpacing: "0.1em", padding: 0 }}>
-                                {showKeywords ? "− Hide Advanced Keywords" : "+ Show Advanced Keywords"}
-                            </button>
-                            {showKeywords && (
-                                <div style={{ marginTop: "1rem" }}>
-                                    <label style={lbl}>SEO Keywords</label>
-                                    <input value={form.seo_keywords} onChange={e => setForm(f => ({ ...f, seo_keywords: e.target.value }))} placeholder="e.g. steel chair, banquet chair, hotel furniture" style={inp} />
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </section>
-
-                {/* FAQS */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                        <p style={sectionTitle}>FAQ Section (Max 3)</p>
-                        <button type="button" disabled={form.faqs.length >= 3} onClick={addFaq} style={{ padding: "0.5rem 1.25rem", background: "transparent", border: `1px solid ${form.faqs.length >= 3 ? "#ccc" : C.accent}`, color: form.faqs.length >= 3 ? "#999" : C.accent, fontWeight: 700, fontSize: "0.72rem", letterSpacing: "0.1em", textTransform: "uppercase", cursor: form.faqs.length >= 3 ? "not-allowed" : "pointer", borderRadius: 6, fontFamily: FM, whiteSpace: "nowrap" }}>
-                            + Add FAQ
-                        </button>
-                    </div>
-                    {form.faqs.length === 0 ? (
-                        <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, textAlign: "center", padding: "1rem 0" }}>No FAQs added.</p>
-                    ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-                            {form.faqs.map((faq, i) => (
-                                <div key={i} style={{ background: "#fdfdfd", border: `1px solid ${C.border}`, borderRadius: 8, padding: "1rem" }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                                        <span style={lbl}>Q&A {i + 1}</span>
-                                        <button type="button" onClick={() => removeFaq(i)} style={{ background: "none", border: "none", color: C.red, cursor: "pointer", fontSize: "0.7rem", fontWeight: 700, fontFamily: FM }}>✕ Remove</button>
-                                    </div>
-                                    <input value={faq.question} onChange={e => updateFaq(i, "question", e.target.value)} placeholder="Question" style={{ ...inp, marginBottom: "0.5rem" }} />
-                                    <textarea value={faq.answer} onChange={e => updateFaq(i, "answer", e.target.value)} placeholder="Answer" rows={2} style={{ ...inp, resize: "vertical" }} />
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </section>
-
-                {/* MARKETING */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Marketing & Enquiries</p>
-                    <div>
-                        <label style={lbl}>WhatsApp Custom Message</label>
-                        <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginBottom: "0.5rem" }}>Pre-filled message when a customer clicks WhatsApp CTA</p>
-                        <input value={form.whatsapp_message} onChange={e => setForm(f => ({ ...f, whatsapp_message: e.target.value }))} placeholder="e.g. Hi SANRA Living, I need this chair." style={inp} />
-                    </div>
-                </section>
-
-                {/* SUBMIT */}
-                <div style={{ display: "flex", gap: "0.75rem", position: "sticky", bottom: 0, background: C.bg, padding: "1.25rem 0", borderTop: `1px solid ${C.border}` }}>
-                    <button type="submit" disabled={saving} style={{
-                        flex: 1, padding: "1rem", background: C.accent, color: "#fff", fontWeight: 900,
-                        fontSize: "0.85rem", letterSpacing: "0.12em", textTransform: "uppercase",
-                        border: "none", cursor: saving ? "not-allowed" : "pointer", borderRadius: 8,
-                        fontFamily: FM, opacity: saving ? 0.7 : 1, transition: "all 0.2s",
-                    }}>
-                        {saving ? "Creating Product…" : "✓ Create Product"}
-                    </button>
-                    <button type="button" onClick={() => window.open(`/shop/preview?draft=true`, "_blank")} style={{
-                        padding: "1rem 1.5rem", background: "transparent", color: C.accent,
-                        fontWeight: 900, fontSize: "0.85rem", border: `1px solid ${C.accent}`,
-                        cursor: "pointer", borderRadius: 8, fontFamily: FM, textTransform: "uppercase", letterSpacing: "0.05em",
-                    }}>
-                        Preview
-                    </button>
-                    <button type="button" onClick={onCancel} style={{
-                        padding: "1rem 1.5rem", background: "transparent", color: C.muted,
-                        fontWeight: 700, fontSize: "0.85rem", border: `1px solid ${C.border}`,
-                        cursor: "pointer", borderRadius: 8, fontFamily: FM,
-                    }}>
-                        Cancel
-                    </button>
                 </div>
             </form>
         </div>

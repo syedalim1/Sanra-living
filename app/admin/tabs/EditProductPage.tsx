@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { C, FM, FO, CATEGORIES } from "../constants";
-import ImageUploader from "../components/ImageUploader";
 import VideoUploader from "../components/VideoUploader";
+import BasicProductInfo from "../components/BasicProductInfo";
+import ProductMediaSection from "../components/ProductMediaSection";
 import type { Product } from "../types";
 
 interface AplusBlock {
@@ -94,6 +95,10 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
         seo_keywords: product.seo_keywords ?? "",
         faqs: product.faqs ?? [],
         whatsapp_message: product.whatsapp_message ?? "",
+        collection: product.collection ?? "",
+        is_featured: product.is_featured ?? false,
+        is_best_seller: product.is_best_seller ?? false,
+        subtitle: product.subtitle ?? "",
     });
 
 
@@ -294,6 +299,10 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                 seo_keywords: form.seo_keywords,
                 faqs: form.faqs,
                 whatsapp_message: form.whatsapp_message,
+                collection: form.collection || null,
+                is_featured: form.is_featured,
+                is_best_seller: form.is_best_seller,
+                subtitle: form.subtitle,
             };
 
             const res = await fetch(`/api/admin/products?id=${product.id}`, {
@@ -422,51 +431,21 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
 
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
 
-                {/* ── BASIC INFO ── */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Basic Information</p>
-                    <div className="admin-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                        <div style={{ gridColumn: "1/-1" }}>
-                            <label style={lbl}>Title *</label>
-                            <input
-                                value={form.title}
-                                onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-                                placeholder="e.g. SL Edge Shelf"
-                                style={inp}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label style={lbl}>SKU / Product Code</label>
-                            <input
-                                value={form.sku}
-                                onChange={e => setForm(f => ({ ...f, sku: e.target.value }))}
-                                placeholder="e.g. SL-CHR-001"
-                                style={inp}
-                            />
-                        </div>
-                        <div>
-                            <label style={lbl}>Category *</label>
-                            <select
-                                value={form.category}
-                                onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
-                                style={{ ...inp, cursor: "pointer" }}
-                            >
-                                {CATEGORIES.map(c => <option key={c}>{c}</option>)}
-                            </select>
-                        </div>
-                        <div>
-                            <label style={lbl}>Finish</label>
-                            <select
-                                value={form.finish}
-                                onChange={e => setForm(f => ({ ...f, finish: e.target.value }))}
-                                style={{ ...inp, cursor: "pointer" }}
-                            >
-                                {FINISHES.map(f => <option key={f}>{f}</option>)}
-                            </select>
-                        </div>
-                    </div>
-                </section>
+                {/* ── BASIC INFO — Premium Component ── */}
+                <BasicProductInfo
+                    title={form.title}
+                    subtitle={form.subtitle ?? ""}
+                    category={form.category}
+                    stockStatus={form.stock_status}
+                    price={form.price}
+                    comparePrice={form.compare_at_price}
+                    collection={form.collection}
+                    isFeatured={form.is_featured}
+                    isBestSeller={form.is_best_seller}
+                    onChange={(field, value) => setForm(f => ({ ...f, [field]: value }))}
+                    sectionNum={1}
+                    defaultOpen={true}
+                />
 
                 {/* ── PRICING ── */}
                 <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
@@ -501,15 +480,22 @@ export default function EditProductPage({ product, adminKey, onSaved, onCancel, 
                     </div>
                 </section>
 
-                {/* ── PRODUCT IMAGES ── */}
-                <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
-                    <p style={sectionTitle}>Product Images</p>
-                    <ImageUploader
-                        images={form.images}
-                        onImagesChange={imgs => setForm(f => ({ ...f, images: imgs }))}
-                        adminKey={adminKey}
-                    />
-                </section>
+                {/* ── PRODUCT MEDIA — Premium Component ── */}
+                <ProductMediaSection
+                    images={form.images}
+                    onImagesChange={(imgs) => {
+                        setForm(f => ({
+                            ...f,
+                            images: imgs,
+                            image_url: imgs.length > 0 ? imgs[0] : "",
+                        }));
+                    }}
+                    imageStylePreset={form.image_style_preset}
+                    watermarkStrength={form.watermark_strength}
+                    onSettingsChange={(field, val) => setForm(f => ({ ...f, [field]: val }))}
+                    adminKey={adminKey}
+                    sectionNum={2}
+                />
 
                 {/* ── PRODUCT VIDEO ── */}
                 <section style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 10, padding: "1.25rem" }}>
