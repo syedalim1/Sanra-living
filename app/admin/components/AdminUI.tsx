@@ -1,17 +1,16 @@
 "use client";
 
 import React from "react";
-import { C, FM, STATUS_COLORS, STATUS_LABELS, FO } from "../constants";
+import { STATUS_COLORS, STATUS_LABELS } from "../constants";
 
 // ── Badge ─────────────────────────────────────────────────────────────
 export function Badge({ status }: { status: string }) {
     const color = STATUS_COLORS[status] ?? "#555";
     return (
-        <span style={{
-            display: "inline-block", padding: "0.2rem 0.6rem", borderRadius: 4,
-            fontSize: "0.65rem", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase",
-            background: `${color}18`, color, fontFamily: FM,
-        }}>
+        <span
+            className="inline-block px-2.5 py-1 rounded text-[0.65rem] font-bold tracking-wider uppercase font-[family-name:var(--ap-font-heading)]"
+            style={{ background: `${color}18`, color }}
+        >
             {STATUS_LABELS[status] ?? status}
         </span>
     );
@@ -22,10 +21,21 @@ export function StatCard({
     label, value, sub, color,
 }: { label: string; value: string | number; sub?: string; color?: string }) {
     return (
-        <div style={{ background: "#fff", border: `1px solid ${C.border}`, padding: "1.75rem 2rem", borderRadius: 12 }}>
-            <p style={{ fontSize: "0.75rem", fontWeight: 700, letterSpacing: "0.15em", textTransform: "uppercase", color: C.muted, fontFamily: FM, marginBottom: "0.75rem" }}>{label}</p>
-            <p style={{ fontSize: "2rem", fontWeight: 900, color: color ?? C.accent, fontFamily: FM, lineHeight: 1 }}>{value}</p>
-            {sub && <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, marginTop: "0.5rem" }}>{sub}</p>}
+        <div className="bg-white border border-[var(--ap-border)] p-5 md:p-6 rounded-xl">
+            <p className="text-[0.75rem] font-bold tracking-[0.15em] uppercase text-[var(--ap-muted)] font-[family-name:var(--ap-font-heading)] mb-3">
+                {label}
+            </p>
+            <p
+                className="text-2xl md:text-3xl font-black font-[family-name:var(--ap-font-heading)] leading-none"
+                style={{ color: color ?? "var(--ap-accent)" }}
+            >
+                {value}
+            </p>
+            {sub && (
+                <p className="text-sm text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] mt-2">
+                    {sub}
+                </p>
+            )}
         </div>
     );
 }
@@ -33,11 +43,7 @@ export function StatCard({
 // ── Table helpers ─────────────────────────────────────────────────────
 export function Th({ children }: { children: React.ReactNode }) {
     return (
-        <th style={{
-            padding: "0.875rem 1rem", textAlign: "left", fontSize: "0.7rem", fontWeight: 700,
-            letterSpacing: "0.12em", textTransform: "uppercase", color: C.muted, fontFamily: FM,
-            borderBottom: `1px solid ${C.border}`, whiteSpace: "nowrap", background: "#fafafa",
-        }}>
+        <th className="py-3 px-4 text-left text-[0.7rem] font-bold tracking-[0.12em] uppercase text-[var(--ap-muted)] font-[family-name:var(--ap-font-heading)] border-b border-[var(--ap-border)] whitespace-nowrap bg-[#fafafa]">
             {children}
         </th>
     );
@@ -51,16 +57,8 @@ export function Td({
     onClick?: (e: React.MouseEvent<HTMLTableCellElement>) => void;
 }) {
     return (
-        <td onClick={onClick} style={{ padding: "1rem", verticalAlign: "middle", ...style }}>
+        <td onClick={onClick} className="p-4 align-middle" style={style}>
             {children}
         </td>
     );
 }
-
-// ── Shared input/select styles factory ───────────────────────────────
-export const inputStyle: React.CSSProperties = {
-    background: "#fff", border: `1px solid ${C.border}`, color: C.text,
-    fontSize: "0.9rem", fontFamily: FO, borderRadius: 6, padding: "0.625rem 0.875rem", width: "100%",
-    outline: "none",
-};
-export const selectStyle: React.CSSProperties = { ...inputStyle, cursor: "pointer" };

@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { C, FM, FO, fmtDate } from "../constants";
-import { inputStyle } from "../components/AdminUI";
+import { fmtDate } from "../constants";
 import type { Message } from "../types";
 
 interface Props {
@@ -18,32 +17,32 @@ export default function MessagesTab({ messages, searchQuery, setSearchQuery }: P
     });
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div className="flex flex-col gap-3 md:gap-4">
             <input
                 placeholder="Search messages (name, email, subject)…"
                 value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                style={{ ...inputStyle, maxWidth: 360, padding: "0.5rem 0.875rem", marginBottom: "0.25rem" }}
+                className="w-full max-w-[360px] px-3.5 py-2.5 bg-white border border-[var(--ap-border)] text-[var(--ap-text)] text-sm font-[family-name:var(--ap-font-body)] rounded-lg outline-none focus:border-[var(--ap-accent)] transition-colors mb-1"
             />
             {messages.length === 0 && (
-                <p style={{ color: C.muted, fontFamily: FO, padding: "5rem", textAlign: "center" }}>No messages yet.</p>
+                <p className="text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] py-16 text-center">No messages yet.</p>
             )}
             {filtered.map((msg) => (
-                <div key={msg.id} style={{ background: C.card, border: `1px solid ${C.border}`, padding: "1.25rem 1.5rem", borderRadius: 10 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem", marginBottom: "0.875rem" }}>
-                        <div>
-                            <p style={{ fontSize: "0.92rem", fontWeight: 700, color: C.text, fontFamily: FM }}>{msg.full_name}</p>
-                            <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginTop: "0.2rem" }}>{msg.email}{msg.phone && ` · ${msg.phone}`}</p>
+                <div key={msg.id} className="bg-white border border-[var(--ap-border)] p-4 md:p-5 rounded-xl ap-animate-fadeIn">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-3 mb-3">
+                        <div className="min-w-0">
+                            <p className="text-[0.92rem] font-bold text-[var(--ap-text)] font-[family-name:var(--ap-font-heading)]">{msg.full_name}</p>
+                            <p className="text-xs text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] mt-0.5 truncate">{msg.email}{msg.phone && ` · ${msg.phone}`}</p>
                         </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem", flexWrap: "wrap" }}>
+                        <div className="flex items-center gap-2 flex-wrap">
                             {msg.subject && (
-                                <span style={{ fontSize: "0.62rem", fontWeight: 700, padding: "0.2rem 0.6rem", background: `${C.blue}22`, color: C.blue, borderRadius: 4, fontFamily: FM, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+                                <span className="text-[0.62rem] font-bold px-2.5 py-1 bg-[#3B82F622] text-[#3B82F6] rounded font-[family-name:var(--ap-font-heading)] tracking-wider uppercase">
                                     {msg.subject}
                                 </span>
                             )}
-                            <span style={{ fontSize: "0.72rem", color: C.muted, fontFamily: FO }}>{fmtDate(msg.created_at)}</span>
+                            <span className="text-xs text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)]">{fmtDate(msg.created_at)}</span>
                             <a
                                 href={`mailto:${msg.email}?subject=Re: ${encodeURIComponent(msg.subject ?? "Your Enquiry — SANRA LIVING™")}&body=${encodeURIComponent(`Hi ${msg.full_name},\n\nThank you for reaching out to SANRA LIVING™.\n\n`)}`}
-                                style={{ display: "inline-block", padding: "0.35rem 0.875rem", background: C.accentDim, border: `1px solid ${C.accent}`, color: C.accent, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, borderRadius: 4, letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}
+                                className="inline-block px-3.5 py-1.5 bg-[var(--ap-accent-dim)] border border-[var(--ap-accent)] text-[var(--ap-accent)] text-[0.65rem] font-bold font-[family-name:var(--ap-font-heading)] rounded tracking-wider uppercase no-underline"
                             >
                                 ✉ Reply
                             </a>
@@ -51,14 +50,14 @@ export default function MessagesTab({ messages, searchQuery, setSearchQuery }: P
                                 <a
                                     href={`https://wa.me/${msg.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi ${msg.full_name}, regarding your message to SANRA LIVING™...`)}`}
                                     target="_blank" rel="noopener"
-                                    style={{ display: "inline-block", padding: "0.35rem 0.875rem", background: "#25D36622", border: "1px solid #25D366", color: "#25D366", fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, borderRadius: 4, letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}
+                                    className="inline-block px-3.5 py-1.5 bg-[#25D36622] border border-[#25D366] text-[#25D366] text-[0.65rem] font-bold font-[family-name:var(--ap-font-heading)] rounded tracking-wider uppercase no-underline"
                                 >
                                     WhatsApp
                                 </a>
                             )}
                         </div>
                     </div>
-                    <p style={{ fontSize: "0.875rem", color: "#ccc", fontFamily: FO, lineHeight: 1.75, whiteSpace: "pre-wrap" }}>{msg.message}</p>
+                    <p className="text-[0.875rem] text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] leading-relaxed whitespace-pre-wrap">{msg.message}</p>
                 </div>
             ))}
         </div>

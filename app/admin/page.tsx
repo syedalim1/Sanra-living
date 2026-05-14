@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 import { C, FM, FO, fmt, ADMIN_EMAIL, ORDER_STATUSES } from "./constants";
-import "./admin-product.css";
+import "./admin.css";
 import DashboardTab from "./tabs/DashboardTab";
 import OrdersTab from "./tabs/OrdersTab";
 import MessagesTab from "./tabs/MessagesTab";
@@ -29,6 +29,11 @@ const TAB_ICONS: Record<Tab, string> = {
     products: "🏷", coupons: "🎟", customers: "👤", analytics: "📊",
     activity: "📝", settings: "⚙",
 };
+
+// Primary tabs shown in the mobile bottom bar (max 5)
+const PRIMARY_TABS: Tab[] = ["dashboard", "orders", "products", "messages", "settings"];
+// Secondary tabs shown in the scrollable pill bar on mobile
+const SECONDARY_TABS: Tab[] = ["enquiries", "coupons", "customers", "analytics", "activity"];
 
 /* ── MAIN ──────────────────────────────────────────────────── */
 export default function AdminPage() {
@@ -131,8 +136,8 @@ export default function AdminPage() {
     /* ── LOADING ──────────────────────────────────────────────── */
     if (!isLoaded) {
         return (
-            <main style={{ background: C.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: FO }}>
-                <div style={{ color: C.muted, fontSize: "0.9rem" }}>Loading…</div>
+            <main className="min-h-screen flex items-center justify-center font-[family-name:var(--ap-font-body)]" style={{ background: "var(--ap-bg)" }}>
+                <div className="text-[var(--ap-muted)] text-sm">Loading…</div>
             </main>
         );
     }
@@ -140,19 +145,25 @@ export default function AdminPage() {
     /* ── ACCESS DENIED ──────────────────────────────────────── */
     if (!isAdmin) {
         return (
-            <main style={{ background: C.bg, minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "2rem", fontFamily: FO }}>
-                <div style={{ background: C.panel, border: `1px solid ${C.border}`, padding: "2.5rem", width: "100%", maxWidth: 400, borderRadius: 14, textAlign: "center" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.75rem", marginBottom: "2rem" }}>
-                        <div style={{ width: 8, height: 8, borderRadius: "50%", background: C.red }} />
-                        <span style={{ fontSize: "0.62rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: C.muted, fontFamily: FM }}>SANRA LIVING™ · Admin</span>
+            <main className="min-h-screen flex items-center justify-center p-6 font-[family-name:var(--ap-font-body)]" style={{ background: "var(--ap-bg)" }}>
+                <div className="bg-white border border-[var(--ap-border)] p-8 w-full max-w-[400px] rounded-[14px] text-center">
+                    <div className="flex items-center justify-center gap-3 mb-6">
+                        <div className="w-2 h-2 rounded-full bg-[var(--ap-danger)]" />
+                        <span className="text-[0.62rem] font-bold tracking-[0.25em] uppercase text-[var(--ap-muted)] font-[family-name:var(--ap-font-heading)]">
+                            SANRA LIVING™ · Admin
+                        </span>
                     </div>
-                    <h1 style={{ fontSize: "1.4rem", fontWeight: 900, color: C.text, fontFamily: FM, marginBottom: "0.75rem" }}>Access Denied</h1>
-                    <p style={{ fontSize: "0.85rem", color: C.muted, fontFamily: FO, marginBottom: "1.5rem", lineHeight: 1.6 }}>
+                    <h1 className="text-2xl font-black text-[var(--ap-text)] font-[family-name:var(--ap-font-heading)] mb-3">
+                        Access Denied
+                    </h1>
+                    <p className="text-sm text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] mb-6 leading-relaxed">
                         {isSignedIn ? `Signed in as ${userEmail}. Not authorized.` : "Sign in with an authorized account."}
                     </p>
                     {isSignedIn && (
                         <SignOutButton>
-                            <button style={{ padding: "0.75rem 1.5rem", background: C.accent, color: "#111", fontWeight: 900, fontSize: "0.75rem", letterSpacing: "0.12em", textTransform: "uppercase", border: "none", cursor: "pointer", borderRadius: 6, fontFamily: FM }}>Sign Out</button>
+                            <button className="px-6 py-3 bg-[var(--ap-accent)] text-white font-black text-xs tracking-[0.12em] uppercase border-none cursor-pointer rounded-md font-[family-name:var(--ap-font-heading)]">
+                                Sign Out
+                            </button>
                         </SignOutButton>
                     )}
                 </div>
@@ -251,46 +262,101 @@ export default function AdminPage() {
 
     /* ── RENDER ──────────────────────────────────────────────── */
     return (
-        <main style={{ background: "#F7F6F3", minHeight: "100vh", fontFamily: FO, color: C.text, WebkitFontSmoothing: "antialiased" }}>
-            {/* Header */}
-            <header className="admin-topbar" style={{ padding: "0 1.5rem" }}>
-                <div style={{ maxWidth: 1400, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", height: 56 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.875rem" }}>
-                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#111" }} />
-                        <span style={{ fontSize: "0.6rem", fontWeight: 700, letterSpacing: "0.25em", textTransform: "uppercase", color: "#111", fontFamily: FM }}>SANRA LIVING™</span>
-                        <span style={{ color: "#E8E4DC", fontSize: "0.8rem" }}>|</span>
-                        <span style={{ fontSize: "0.72rem", color: "#8C8C8C", fontFamily: FM, fontWeight: 500 }}>Admin</span>
+        <main className="min-h-screen font-[family-name:var(--ap-font-body)] text-[var(--ap-text)] antialiased" style={{ background: "var(--ap-bg)" }}>
+            {/* ── Header ── */}
+            <header className="bg-white/95 backdrop-blur-xl saturate-[180%] border-b border-[var(--ap-border-light)] sticky top-0 z-[100] transition-shadow duration-300">
+                <div className="max-w-[1400px] mx-auto flex items-center justify-between h-14 px-4 md:px-6">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[var(--ap-accent)]" />
+                        <span className="text-[0.6rem] font-bold tracking-[0.25em] uppercase text-[var(--ap-accent)] font-[family-name:var(--ap-font-heading)]">
+                            SANRA LIVING™
+                        </span>
+                        <span className="text-[var(--ap-border)] text-xs">|</span>
+                        <span className="text-[0.72rem] text-[var(--ap-muted)] font-[family-name:var(--ap-font-heading)] font-medium">
+                            Admin
+                        </span>
                     </div>
-                    <div style={{ display: "flex", gap: "0.6rem", alignItems: "center" }}>
-                        {lastRefreshed && <span style={{ fontSize: "0.58rem", color: "#B8B3AC", fontFamily: FO }}>Updated {lastRefreshed.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}</span>}
-                        <a href="/" target="_blank" rel="noopener" className="admin-btn-secondary" style={{ padding: "0.35rem 0.75rem", fontSize: "0.62rem", letterSpacing: "0.08em", textTransform: "uppercase", textDecoration: "none", borderWidth: 1 }}>↗ Store</a>
-                        <button onClick={() => fetchData(tab)} className="admin-btn-secondary" style={{ padding: "0.35rem 0.75rem", fontSize: "0.62rem", letterSpacing: "0.08em", textTransform: "uppercase", borderWidth: 1 }}>↻</button>
+                    <div className="flex gap-2.5 items-center">
+                        {lastRefreshed && (
+                            <span className="hidden md:inline text-[0.58rem] text-[var(--ap-muted-light)] font-[family-name:var(--ap-font-body)]">
+                                Updated {lastRefreshed.toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })}
+                            </span>
+                        )}
+                        <a
+                            href="/" target="_blank" rel="noopener"
+                            className="hidden md:inline-flex items-center justify-center gap-1 px-3 py-1.5 text-[0.62rem] tracking-wider uppercase border border-[var(--ap-border)] rounded-lg text-[var(--ap-text)] font-bold font-[family-name:var(--ap-font-heading)] no-underline hover:border-[var(--ap-accent)] transition-colors"
+                        >
+                            ↗ Store
+                        </a>
+                        <button
+                            onClick={() => fetchData(tab)}
+                            className="hidden md:inline-flex items-center justify-center px-3 py-1.5 text-[0.62rem] tracking-wider uppercase border border-[var(--ap-border)] rounded-lg text-[var(--ap-text)] font-bold font-[family-name:var(--ap-font-heading)] bg-transparent cursor-pointer hover:border-[var(--ap-accent)] transition-colors"
+                        >
+                            ↻
+                        </button>
                         <UserButton />
                     </div>
                 </div>
             </header>
 
-            <div style={{ maxWidth: 1400, margin: "0 auto", padding: "2rem 1.5rem" }}>
+            <div className="max-w-[1400px] mx-auto px-3 py-4 md:px-6 md:py-8 pb-[calc(80px+env(safe-area-inset-bottom,0px))] md:pb-8">
 
-                {/* Tabs */}
-                <div className="admin-tab-bar" style={{ marginBottom: "2rem" }}>
+                {/* ── Desktop Tab Bar ── */}
+                <div className="hidden md:flex border-b border-[var(--ap-border-light)] overflow-x-auto hide-scrollbar mb-8 scroll-smooth">
                     {allTabs.map((t) => {
                         const count = badgeCounts[t];
                         return (
-                            <button key={t} onClick={() => setTab(t)} className={`admin-tab${tab === t ? " admin-tab-active" : ""}`}>
+                            <button
+                                key={t}
+                                onClick={() => setTab(t)}
+                                className={`py-3.5 px-5 bg-transparent border-none cursor-pointer text-[0.68rem] font-bold tracking-[0.12em] uppercase font-[family-name:var(--ap-font-heading)] border-b-2 transition-all duration-200 -mb-px whitespace-nowrap flex items-center gap-2 relative
+                                    ${tab === t
+                                        ? "text-[var(--ap-text)] border-b-[var(--ap-accent)]"
+                                        : "text-[var(--ap-muted)] border-b-transparent hover:text-[var(--ap-text)]"
+                                    }`}
+                            >
                                 {TAB_ICONS[t]} {t}
                                 {count != null && count > 0 && (
-                                    <span className="admin-tab-badge">{count}</span>
+                                    <span className="bg-[var(--ap-danger)] text-white text-[0.48rem] font-black font-[family-name:var(--ap-font-heading)] px-1.5 py-px rounded-full min-w-[14px] text-center leading-tight">
+                                        {count}
+                                    </span>
                                 )}
                             </button>
                         );
                     })}
                 </div>
 
+                {/* ── Mobile secondary pill bar ── */}
+                <div className="flex md:hidden gap-2 overflow-x-auto hide-scrollbar snap-x snap-mandatory px-1 py-3 bg-[var(--ap-bg)] border-b border-[var(--ap-border-light)] mb-4 -mx-3">
+                    {SECONDARY_TABS.map((t) => {
+                        const count = badgeCounts[t];
+                        return (
+                            <button
+                                key={t}
+                                onClick={() => setTab(t)}
+                                className={`tap-none inline-flex items-center gap-1.5 px-4 py-2 border-[1.5px] rounded-full text-[0.65rem] font-bold font-[family-name:var(--ap-font-heading)] tracking-wider uppercase whitespace-nowrap cursor-pointer snap-start transition-all duration-200
+                                    ${tab === t
+                                        ? "bg-[var(--ap-accent)] border-[var(--ap-accent)] text-white"
+                                        : "bg-white border-[var(--ap-border)] text-[var(--ap-muted)]"
+                                    }`}
+                            >
+                                {TAB_ICONS[t]} {t}
+                                {count != null && count > 0 && (
+                                    <span className={`text-[0.48rem] font-black px-1 py-px rounded-md min-w-[13px] text-center leading-snug
+                                        ${tab === t ? "bg-white/30 text-white" : "bg-[var(--ap-danger)] text-white"}`}>
+                                        {count}
+                                    </span>
+                                )}
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* ── Loading ── */}
                 {loading && (
-                    <div className="admin-loading">
-                        <div className="admin-loading-spinner" />
-                        <p style={{ fontSize: "0.82rem", margin: 0 }}>Loading…</p>
+                    <div className="text-center py-24 text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] ap-animate-fadeIn">
+                        <div className="w-7 h-7 border-[2.5px] border-[var(--ap-border)] border-t-[var(--ap-accent)] rounded-full ap-animate-spin mx-auto mb-5" />
+                        <p className="text-sm m-0">Loading…</p>
                     </div>
                 )}
 
@@ -369,6 +435,37 @@ export default function AdminPage() {
                     <SettingsTab settings={storeSettings} adminKey={adminKey} onSaved={() => { fetchData("settings"); logActivity("settings_update", "Updated store settings"); }} />
                 )}
             </div>
+
+            {/* ── Mobile bottom navigation bar ── */}
+            <nav
+                className="fixed bottom-0 left-0 right-0 z-[200] bg-white/[0.98] backdrop-blur-xl saturate-[180%] border-t border-[var(--ap-border-light)] flex justify-around items-center md:hidden"
+                style={{ padding: "0.35rem 0 env(safe-area-inset-bottom, 0.35rem)", boxShadow: "0 -4px 24px rgba(0,0,0,0.06)" }}
+                role="navigation"
+                aria-label="Mobile navigation"
+            >
+                {PRIMARY_TABS.map((t) => {
+                    const count = badgeCounts[t];
+                    const isActive = tab === t;
+                    return (
+                        <button
+                            key={t}
+                            onClick={() => setTab(t)}
+                            className="tap-none flex flex-col items-center gap-1 py-2 px-2.5 bg-transparent border-none cursor-pointer min-w-[52px] rounded-xl transition-colors duration-150 relative active:bg-[var(--ap-accent-dim)]"
+                            aria-label={t}
+                        >
+                            {count != null && count > 0 && (
+                                <span className="absolute top-1.5 right-2 w-[7px] h-[7px] bg-[var(--ap-danger)] rounded-full border-[1.5px] border-white" />
+                            )}
+                            <span className={`text-xl leading-none transition-transform duration-200 ${isActive ? "scale-[1.15]" : ""}`} style={{ transitionTimingFunction: "var(--ap-spring)" }}>
+                                {TAB_ICONS[t]}
+                            </span>
+                            <span className={`text-[0.52rem] font-bold font-[family-name:var(--ap-font-heading)] tracking-wider uppercase transition-colors duration-150 ${isActive ? "text-[var(--ap-accent)]" : "text-[var(--ap-muted)]"}`}>
+                                {t}
+                            </span>
+                        </button>
+                    );
+                })}
+            </nav>
         </main>
     );
 }

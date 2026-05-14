@@ -1,8 +1,7 @@
 "use client";
 
 import React from "react";
-import { C, FM, FO, fmtDate } from "../constants";
-import { inputStyle } from "../components/AdminUI";
+import { fmtDate } from "../constants";
 import type { Enquiry } from "../types";
 
 interface Props {
@@ -18,52 +17,52 @@ export default function EnquiriesTab({ enquiries, searchQuery, setSearchQuery }:
     });
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+        <div className="flex flex-col gap-3 md:gap-4">
             <input
                 placeholder="Search enquiries (company, person, product)…"
                 value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                style={{ ...inputStyle, maxWidth: 360, padding: "0.5rem 0.875rem", marginBottom: "0.25rem" }}
+                className="w-full max-w-[360px] px-3.5 py-2.5 bg-white border border-[var(--ap-border)] text-[var(--ap-text)] text-sm font-[family-name:var(--ap-font-body)] rounded-lg outline-none focus:border-[var(--ap-accent)] transition-colors mb-1"
             />
             {enquiries.length === 0 && (
-                <p style={{ color: C.muted, fontFamily: FO, padding: "5rem", textAlign: "center" }}>No bulk enquiries yet.</p>
+                <p className="text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] py-16 text-center">No bulk enquiries yet.</p>
             )}
             {filtered.map((enq) => (
-                <div key={enq.id} style={{ background: C.card, border: `1px solid ${C.border}`, padding: "1.25rem 1.5rem", borderRadius: 10 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1rem" }}>
-                        <div>
-                            <p style={{ fontSize: "0.92rem", fontWeight: 700, color: C.text, fontFamily: FM }}>
-                                {enq.company_name || "—"} <span style={{ fontWeight: 400, color: C.muted }}>· {enq.contact_person}</span>
+                <div key={enq.id} className="bg-white border border-[var(--ap-border)] p-4 md:p-5 rounded-xl ap-animate-fadeIn">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-start gap-3 mb-4">
+                        <div className="min-w-0">
+                            <p className="text-[0.92rem] font-bold text-[var(--ap-text)] font-[family-name:var(--ap-font-heading)]">
+                                {enq.company_name || "—"} <span className="font-normal text-[var(--ap-muted)]">· {enq.contact_person}</span>
                             </p>
-                            <p style={{ fontSize: "0.75rem", color: C.muted, fontFamily: FO, marginTop: "0.2rem" }}>
+                            <p className="text-xs text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] mt-0.5 truncate">
                                 {enq.email} · {enq.phone}{enq.city && ` · ${enq.city}`}
                             </p>
                         </div>
-                        <div style={{ display: "flex", alignItems: "center", gap: "0.625rem" }}>
-                            <span style={{ fontSize: "0.72rem", color: C.muted, fontFamily: FO }}>{fmtDate(enq.created_at)}</span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xs text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)]">{fmtDate(enq.created_at)}</span>
                             <a
                                 href={`mailto:${enq.email}?subject=Re: Bulk Enquiry — SANRA LIVING™&body=${encodeURIComponent(`Hi ${enq.contact_person},\n\nThank you for your bulk enquiry at SANRA LIVING™.\n\n`)}`}
-                                style={{ display: "inline-block", padding: "0.35rem 0.875rem", background: C.accentDim, border: `1px solid ${C.accent}`, color: C.accent, fontSize: "0.65rem", fontWeight: 700, fontFamily: FM, borderRadius: 4, letterSpacing: "0.1em", textTransform: "uppercase", textDecoration: "none" }}
+                                className="inline-block px-3.5 py-1.5 bg-[var(--ap-accent-dim)] border border-[var(--ap-accent)] text-[var(--ap-accent)] text-[0.65rem] font-bold font-[family-name:var(--ap-font-heading)] rounded tracking-wider uppercase no-underline"
                             >
                                 ✉ Reply
                             </a>
                         </div>
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "0.75rem", marginBottom: enq.message ? "1rem" : 0 }}>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
                         {enq.product_interest && (
                             <div>
-                                <p style={{ fontSize: "0.58rem", color: C.muted, fontFamily: FM, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "0.25rem" }}>Product</p>
-                                <p style={{ fontSize: "0.82rem", color: C.text, fontFamily: FO }}>{enq.product_interest}</p>
+                                <p className="text-[0.58rem] text-[var(--ap-muted)] font-[family-name:var(--ap-font-heading)] tracking-[0.14em] uppercase mb-1">Product</p>
+                                <p className="text-sm text-[var(--ap-text)] font-[family-name:var(--ap-font-body)]">{enq.product_interest}</p>
                             </div>
                         )}
                         {enq.quantity && (
                             <div>
-                                <p style={{ fontSize: "0.58rem", color: C.muted, fontFamily: FM, letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: "0.25rem" }}>Quantity</p>
-                                <p style={{ fontSize: "0.82rem", color: C.accent, fontFamily: FM, fontWeight: 700 }}>{enq.quantity} units</p>
+                                <p className="text-[0.58rem] text-[var(--ap-muted)] font-[family-name:var(--ap-font-heading)] tracking-[0.14em] uppercase mb-1">Quantity</p>
+                                <p className="text-sm text-[var(--ap-accent)] font-[family-name:var(--ap-font-heading)] font-bold">{enq.quantity} units</p>
                             </div>
                         )}
                     </div>
                     {enq.message && (
-                        <p style={{ fontSize: "0.875rem", color: "#ccc", fontFamily: FO, lineHeight: 1.75, borderTop: `1px solid ${C.border}`, paddingTop: "0.875rem", whiteSpace: "pre-wrap" }}>
+                        <p className="text-[0.875rem] text-[var(--ap-muted)] font-[family-name:var(--ap-font-body)] leading-relaxed border-t border-[var(--ap-border)] pt-3 whitespace-pre-wrap">
                             {enq.message}
                         </p>
                     )}
