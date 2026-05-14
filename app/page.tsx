@@ -9,34 +9,19 @@ import WhatsAppFloat from "./components/WhatsAppFloat";
 import HeroSection from "./components/home/HeroSection";
 import CategoryGrid from "./components/home/CategoryGrid";
 import FeaturedProducts from "./components/home/FeaturedProducts";
-import CollectionShowcase from "./components/home/CollectionShowcase";
 import ApplicationShowcase from "./components/home/ApplicationShowcase";
 
-/* ═══════════════════════════════════════════════════════════════
-   PAGE EXPORT
-═══════════════════════════════════════════════════════════════ */
 export default function Homepage() {
   return (
-    <div style={{ background: "#f5f5f5", minHeight: "100vh" }}>
+    <div className="bg-white min-h-screen">
       <SiteHeader />
       
       {/* 1. Hero Banner */}
       <HeroSection />
 
       {/* 1.5. TRUST BADGES STRIP */}
-      <section style={{ background: "#fff", borderBottom: "1px solid #f0f0f0" }}>
-        <div
-          style={{
-            maxWidth: 1280,
-            margin: "0 auto",
-            padding: "1.5rem",
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: "2.5rem",
-            alignItems: "center",
-          }}
-        >
+      <section className="bg-white border-b border-black/5">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8 flex flex-wrap justify-center gap-6 lg:gap-12 items-center">
           {[
             { icon: "🏭", text: "Premium Jindal Steel" },
             { icon: "🛡️", text: "10 Year Warranty" },
@@ -44,26 +29,9 @@ export default function Homepage() {
             { icon: "💳", text: "Secure Payments" },
             { icon: "🇮🇳", text: "Made in Coimbatore" },
           ].map((badge) => (
-            <div
-              key={badge.text}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-              }}
-            >
-              <span style={{ fontSize: "1.1rem" }}>{badge.icon}</span>
-              <span
-                style={{
-                  fontSize: "0.7rem",
-                  fontWeight: 600,
-                  color: "#555",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  whiteSpace: "nowrap",
-                  fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif",
-                }}
-              >
+            <div key={badge.text} className="flex items-center gap-2.5">
+              <span className="text-xl">{badge.icon}</span>
+              <span className="text-[0.65rem] font-bold text-gray-500 tracking-[0.15em] uppercase font-montserrat whitespace-nowrap">
                 {badge.text}
               </span>
             </div>
@@ -78,88 +46,62 @@ export default function Homepage() {
       <FeaturedProducts 
         title="Best Sellers" 
         filterBy="bestseller" 
-        limit={12} 
+        limit={9} 
       />
 
-      {/* 4. New Arrivals Carousel */}
-      <FeaturedProducts 
-        title="New Arrivals" 
-        filterBy="new" 
-        limit={12} 
-      />
-
-      {/* 5. Price-based Collections */}
-      <CollectionShowcase />
-
-      {/* 6. Application/Space Showcase */}
+      {/* 4. Application/Space Showcase */}
       <ApplicationShowcase />
 
-      {/* 6.5. Factory/Workshop Section */}
-      <section style={{ display: "flex", flexWrap: "wrap", background: "#111", color: "#fff" }}>
-        <div style={{ flex: "1 1 50%", minWidth: "300px", position: "relative" }}>
+      {/* 5. Factory/Workshop Section */}
+      <section className="grid grid-cols-1 lg:grid-cols-2 bg-[#0A0A0A] text-white">
+        <div className="relative min-h-[400px] lg:min-h-[600px] w-full">
             <img 
-                src="https://images.unsplash.com/photo-1565615833203-8dce288b20ce?w=800&q=80" 
+                src="https://images.unsplash.com/photo-1565615833203-8dce288b20ce?w=1200&q=80" 
                 alt="Sanra Steel Factory" 
-                style={{ width: "100%", height: "100%", objectFit: "cover", minHeight: "500px", filter: "grayscale(100%) contrast(1.2)" }} 
+                className="absolute inset-0 w-full h-full object-cover filter grayscale opacity-60 mix-blend-luminosity"
             />
-            <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }} />
+            <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/80 to-transparent opacity-100" />
+            <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
         </div>
-        <div style={{ flex: "1 1 50%", padding: "clamp(4rem, 8vw, 8rem) clamp(2rem, 8vw, 6rem)", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <h2 style={{ fontSize: "clamp(2rem, 4vw, 3.5rem)", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#fff", lineHeight: 1.1, marginBottom: "1.5rem", letterSpacing: "-0.02em" }}>
+        <div className="flex flex-col justify-center px-8 py-20 lg:px-24 lg:py-32 relative z-10">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-black font-montserrat text-white leading-[1.1] tracking-tight mb-6">
                 Forged in Excellence.<br />Crafted in Coimbatore.
             </h2>
-            <p style={{ fontSize: "1.1rem", color: "#ccc", fontFamily: "var(--font-outfit), Outfit, Inter, sans-serif", marginBottom: "3rem", lineHeight: 1.6, maxWidth: "500px" }}>
+            <p className="text-base lg:text-lg text-gray-400 font-outfit font-light leading-relaxed max-w-lg mb-14">
                 Our state-of-the-art manufacturing facility combines traditional craftsmanship with precision engineering. We use only premium Jindal Steel to create furniture that lasts generations.
             </p>
-            <div style={{ display: "flex", gap: "3rem" }}>
+            <div className="flex items-center gap-12 lg:gap-20">
                 <div>
-                    <h4 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#fff", marginBottom: "0.25rem" }}>15+</h4>
-                    <p style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", fontWeight: 600, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif" }}>Years Expertise</p>
+                    <h4 className="text-4xl lg:text-5xl font-black font-montserrat text-white mb-2 tracking-tight">15+</h4>
+                    <p className="text-[0.65rem] lg:text-xs uppercase tracking-[0.2em] text-gray-500 font-bold font-montserrat">Years Expertise</p>
                 </div>
                 <div>
-                    <h4 style={{ fontSize: "2rem", fontWeight: 800, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", color: "#fff", marginBottom: "0.25rem" }}>10k+</h4>
-                    <p style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "#888", fontWeight: 600, fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif" }}>Happy Homes</p>
+                    <h4 className="text-4xl lg:text-5xl font-black font-montserrat text-white mb-2 tracking-tight">10k+</h4>
+                    <p className="text-[0.65rem] lg:text-xs uppercase tracking-[0.2em] text-gray-500 font-bold font-montserrat">Happy Homes</p>
                 </div>
             </div>
         </div>
       </section>
 
-      {/* 8. WhatsApp / Bulk CTA section */}
-      <section style={{ padding: "6rem 1.5rem", background: "#F5F5F5", textAlign: "center" }}>
-          <div style={{ maxWidth: 800, margin: "0 auto" }}>
-              <h2 style={{ fontSize: "2.5rem", fontWeight: 800, color: "#111", fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif", marginBottom: "1.5rem", letterSpacing: "-0.02em" }}>
+      {/* 6. WhatsApp / Bulk CTA section */}
+      <section className="py-20 lg:py-28 px-6 bg-[#F9F9F9] text-center relative overflow-hidden">
+          {/* Subtle background texture */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, black 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
+          
+          <div className="max-w-2xl mx-auto relative z-10">
+              <h2 className="text-3xl md:text-4xl font-black text-black font-montserrat tracking-tight mb-4">
                   Need Bulk Orders or Custom Quotes?
               </h2>
-              <p style={{ fontSize: "1.1rem", color: "#666", marginBottom: "3rem", fontFamily: "var(--font-outfit), Outfit, Inter, sans-serif", maxWidth: "600px", margin: "0 auto 3rem" }}>
+              <p className="text-base md:text-lg text-gray-500 font-outfit font-light mb-10 max-w-xl mx-auto">
                   Get special pricing for commercial spaces, offices, and bulk home purchases directly via WhatsApp.
               </p>
               <a 
                   href="https://wa.me/8300904920" 
-                  style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      padding: "1.25rem 3rem",
-                      background: "#111",
-                      color: "#fff",
-                      fontWeight: 600,
-                      fontSize: "0.95rem",
-                      textTransform: "uppercase",
-                      letterSpacing: "0.05em",
-                      textDecoration: "none",
-                      borderRadius: "40px",
-                      fontFamily: "var(--font-montserrat), Montserrat, Inter, sans-serif",
-                      transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = "scale(1.02)";
-                      e.currentTarget.style.boxShadow = "0 12px 24px rgba(0,0,0,0.1)";
-                  }}
-                  onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = "scale(1)";
-                      e.currentTarget.style.boxShadow = "none";
-                  }}
+                  className="inline-flex items-center gap-3 px-8 py-4 bg-black text-white rounded-xl font-montserrat text-sm font-semibold tracking-widest uppercase transition-all duration-300 hover:bg-[#1C1C1C] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:-translate-y-1"
               >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                  </svg>
                   Contact on WhatsApp
               </a>
           </div>

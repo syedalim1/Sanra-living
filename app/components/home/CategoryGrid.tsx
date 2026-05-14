@@ -2,109 +2,63 @@
 
 import React from "react";
 import Link from "next/link";
-import { FM, FO } from "../../shop/ShopComponents";
 
 const categories = [
     {
-        name: "Chairs",
-        href: "/shop/seating",
-        image: "/images/CHAIRS.png",
-    },
-    {
-        name: "Tables",
-        href: "/shop/tables",
-        image: "/images/TABLES.png",
-    },
-    {
-        name: "Sets",
-        href: "/shop/commercial",
-        image: "/images/SETS.png",
-    },
-    {
-        name: "Office",
-        href: "/shop/workspace",
-        image: "/images/OFFICES.png",
-    },
-    {
-        name: "Home",
+        name: "Living Room",
         href: "/shop/living",
-        image: "/images/HOME.png",
+        image: "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?w=800&q=80",
+    },
+    {
+        name: "Workspace",
+        href: "/shop/workspace",
+        image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=80",
+    },
+    {
+        name: "Dining",
+        href: "/shop/tables",
+        image: "https://images.unsplash.com/photo-1617806118233-18e1c0945594?w=800&q=80",
     },
     {
         name: "Commercial",
         href: "/shop/commercial",
-        image: "/images/COMMERCIAL.png",
+        image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
     },
 ];
 
 export default function CategoryGrid() {
     return (
-        <section style={{ padding: "8rem 1.5rem", background: "#fff" }}>
-            <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "3rem" }}>
+        <section className="py-16 lg:py-24 bg-white border-b border-black/5 px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-10 lg:mb-12">
                     <div>
-                        <h2 style={{
-                            fontSize: "2rem",
-                            fontWeight: 800,
-                            color: "#111",
-                            fontFamily: FM,
-                            letterSpacing: "-0.02em",
-                            marginBottom: "0.5rem"
-                        }}>
+                        <h2 className="text-2xl md:text-3xl font-black text-black font-montserrat tracking-tight mb-2">
                             Shop by Category
                         </h2>
-                        <p style={{ fontFamily: FO, color: "#666", fontSize: "1.05rem" }}>
+                        <p className="font-outfit text-gray-500 text-sm md:text-base font-light">
                             Explore our engineered steel collections.
                         </p>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-6 gap-y-10">
+                <div className="flex overflow-x-auto lg:grid lg:grid-cols-4 gap-6 lg:gap-8 snap-x snap-mandatory no-scrollbar -mx-6 px-6 lg:mx-0 lg:px-0 pb-6 lg:pb-0">
                     {categories.map((cat) => (
                         <Link
                             key={cat.name}
                             href={cat.href}
-                            className="group block w-full text-center"
-                            style={{ textDecoration: "none" }}
+                            className="group block w-[75vw] sm:w-[45vw] lg:w-full flex-shrink-0 snap-center lg:snap-align-none text-center"
                         >
-                            <div 
-                                style={{
-                                    width: "100%",
-                                    aspectRatio: "1/1",
-                                    background: "#F5F5F5",
-                                    borderRadius: "12px",
-                                    overflow: "hidden",
-                                    marginBottom: "1.25rem",
-                                    position: "relative",
-                                }}
-                            >
+                            <div className="w-full aspect-[4/5] bg-[#F9F9F9] rounded-2xl overflow-hidden mb-6 relative shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-shadow duration-500 group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]">
                                 <img
                                     src={cat.image}
                                     alt={cat.name}
                                     loading="lazy"
-                                    style={{
-                                        position: "absolute",
-                                        inset: 0,
-                                        width: "100%",
-                                        height: "100%",
-                                        objectFit: "cover",
-                                        transition: "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
-                                    }}
-                                    className="group-hover:scale-105"
+                                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-1000 group-hover:scale-105"
                                 />
+                                <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-colors duration-500" />
                             </div>
                             
-                            <h3
-                                style={{ 
-                                    fontFamily: FM, 
-                                    fontSize: "0.95rem",
-                                    fontWeight: 700,
-                                    color: "#111",
-                                    letterSpacing: "0.05em",
-                                    textTransform: "uppercase",
-                                    transition: "color 0.2s ease"
-                                }}
-                            >
+                            <h3 className="font-montserrat text-sm md:text-base font-bold text-black tracking-[0.15em] uppercase transition-colors duration-300">
                                 {cat.name}
                             </h3>
                         </Link>

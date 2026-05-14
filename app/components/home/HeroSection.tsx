@@ -2,119 +2,31 @@
 
 import React from "react";
 import Link from "next/link";
-import { FM, FO } from "../../shop/ShopComponents";
 
 export default function HeroSection() {
     return (
-        <section
-            className="sl-hero"
-            style={{
-                position: "relative",
-                background: "#F8F6F2", // Premium light beige
-                minHeight: "85vh",
-                display: "flex",
-                alignItems: "center",
-                overflow: "hidden",
-            }}
-        >
-            <div 
-                className="sl-container" 
-                style={{ 
-                    maxWidth: 1280, 
-                    margin: "0 auto", 
-                    padding: "4rem 1.5rem", 
-                    width: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    textAlign: "center",
-                    position: "relative",
-                    zIndex: 2,
-                }}
-            >
-                <div style={{ maxWidth: 800, marginBottom: "3rem" }}>
-                    <h1
-                        style={{
-                            fontSize: "clamp(3rem, 8vw, 5.5rem)",
-                            fontWeight: 800,
-                            lineHeight: 1.05,
-                            letterSpacing: "-0.03em",
-                            color: "#111",
-                            fontFamily: FM,
-                            marginBottom: "1.5rem",
-                        }}
-                    >
+        <section className="relative bg-[#FAFAFA] pt-16 pb-20 lg:pt-24 lg:pb-32 overflow-hidden flex flex-col items-center">
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 w-full flex flex-col items-center text-center relative z-10">
+                <div className="max-w-3xl mb-12 lg:mb-16">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-black font-montserrat leading-[1.05] tracking-tight mb-6">
                         Masterpiece in Steel.
                     </h1>
 
-                    <p style={{ 
-                        color: "#555", 
-                        fontSize: "clamp(1.1rem, 2vw, 1.35rem)", 
-                        fontFamily: FO,
-                        maxWidth: 600,
-                        margin: "0 auto 2.5rem",
-                        lineHeight: 1.5,
-                        fontWeight: 400,
-                    }}>
-                        Engineered for modern Indian spaces. <br className="hidden md:block" />
+                    <p className="text-lg md:text-xl lg:text-2xl text-gray-500 font-outfit font-light leading-relaxed max-w-xl mx-auto mb-10 opacity-90">
+                        Engineered for modern spaces. <br className="hidden md:block" />
                         Built to last generations.
                     </p>
 
-                    <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <Link
                             href="/shop"
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                padding: "1rem 2.5rem",
-                                background: "#111",
-                                color: "#fff",
-                                fontWeight: 600,
-                                fontSize: "0.9rem",
-                                letterSpacing: "0.05em",
-                                textTransform: "uppercase",
-                                textDecoration: "none",
-                                fontFamily: FM,
-                                transition: "all 0.3s ease",
-                                borderRadius: "40px",
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "#333";
-                                e.currentTarget.style.transform = "scale(1.02)";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background = "#111";
-                                e.currentTarget.style.transform = "scale(1)";
-                            }}
+                            className="w-full sm:w-auto inline-flex items-center justify-center h-12 px-8 bg-black text-white font-montserrat text-xs md:text-sm font-semibold tracking-widest uppercase transition-all duration-300 rounded-xl hover:bg-[#1C1C1C] hover:shadow-[0_8px_30px_rgba(0,0,0,0.15)] hover:-translate-y-0.5"
                         >
                             Shop Collection
                         </Link>
                         <Link
                             href="/shop/living"
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                padding: "1rem 2.5rem",
-                                background: "transparent",
-                                color: "#111",
-                                fontWeight: 600,
-                                fontSize: "0.9rem",
-                                letterSpacing: "0.05em",
-                                textTransform: "uppercase",
-                                textDecoration: "none",
-                                fontFamily: FM,
-                                transition: "all 0.3s ease",
-                                border: "1px solid #111",
-                                borderRadius: "40px",
-                            }}
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.background = "rgba(0,0,0,0.05)";
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.background = "transparent";
-                            }}
+                            className="w-full sm:w-auto inline-flex items-center justify-center h-12 px-8 bg-transparent text-black border border-black/20 font-montserrat text-xs md:text-sm font-semibold tracking-widest uppercase transition-all duration-300 rounded-xl hover:bg-black/5 hover:border-black/30"
                         >
                             View Best Sellers
                         </Link>
@@ -122,26 +34,15 @@ export default function HeroSection() {
                 </div>
 
                 {/* Hero Image Focus */}
-                <div style={{ width: "100%", maxWidth: 1000, position: "relative" }}>
-                    <div style={{
-                        position: "relative",
-                        width: "100%",
-                        aspectRatio: "16/9",
-                        borderRadius: "16px",
-                        overflow: "hidden",
-                        boxShadow: "0 24px 64px rgba(0,0,0,0.08)",
-                    }}>
-                        {/* Placeholder for a high-quality cinematic beige interior shot */}
+                <div className="w-full max-w-[1200px] relative group px-0 md:px-6">
+                    <div className="relative w-full aspect-[4/5] md:aspect-[16/9] lg:aspect-[21/9] md:rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-transform duration-1000 ease-out hover:scale-[1.01]">
                         <img 
-                            src="https://images.unsplash.com/photo-1592078615290-033ee584e267?w=1600&q=80" 
+                            src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?w=2000&q=80" 
                             alt="Luxury Steel Furniture"
-                            style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                filter: "contrast(1.05) saturate(1.1)",
-                            }}
+                            className="w-full h-full object-cover object-center scale-105"
                         />
+                        {/* Soft overlay gradient to blend bottom edge subtly if needed */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
                     </div>
                 </div>
             </div>

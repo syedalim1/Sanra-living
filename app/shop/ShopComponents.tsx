@@ -75,9 +75,7 @@ export function StockBadge({ status }: { status: string }) {
     );
 }
 
-/* ── PRODUCT CARD ──────────────────────────────────────────── */
 export function ProductCard({ product, index, badge, buttonText = "View Details" }: { product: Product; index: number; badge?: string; buttonText?: string }) {
-    const [hovered, setHovered] = useState(false);
     const priceDisplay = `₹${product.price.toLocaleString("en-IN")}`;
     const router = useRouter();
 
@@ -96,32 +94,11 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: index * 0.06 }}
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
             onClick={handleCardClick}
-            style={{
-                background: C.white,
-                display: "flex",
-                flexDirection: "column",
-                cursor: "pointer",
-                boxShadow: hovered
-                    ? "0 20px 40px rgba(0,0,0,0.04)"
-                    : "0 0 0 rgba(0,0,0,0)",
-                transition: "box-shadow 0.4s ease, transform 0.4s ease",
-                transform: hovered ? "translateY(-4px)" : "translateY(0)",
-                borderRadius: "12px",
-                overflow: "hidden",
-            }}
+            className="group flex flex-col cursor-pointer bg-transparent overflow-hidden h-full"
         >
             {/* Image Area */}
-            <div
-                style={{
-                    position: "relative",
-                    aspectRatio: "1/1",
-                    overflow: "hidden",
-                    background: "#F5F5F3",
-                }}
-            >
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#F9F9F9] rounded-2xl mb-5">
                 {badge ? (
                     <StockBadge status={badge} />
                 ) : (
@@ -134,17 +111,7 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
                     }
                     alt={product.title}
                     loading="lazy"
-                    style={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        filter: "brightness(0.96) contrast(1.02) saturate(1.05)",
-                        opacity: hovered ? 0 : 1,
-                        transition: "opacity 0.6s ease, transform 0.6s ease",
-                        transform: hovered ? "scale(1.03)" : "scale(1)",
-                    }}
+                    className="absolute inset-0 w-full h-full object-contain object-center transition-all duration-700 group-hover:opacity-0 group-hover:scale-105"
                 />
                 <img
                     src={
@@ -154,91 +121,30 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
                     }
                     alt=""
                     loading="lazy"
-                    style={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        filter: "brightness(0.96) contrast(1.02) saturate(1.05)",
-                        opacity: hovered ? 1 : 0,
-                        transition: "opacity 0.6s ease, transform 0.6s ease",
-                        transform: hovered ? "scale(1.03)" : "scale(1)",
-                    }}
+                    className="absolute inset-0 w-full h-full object-contain object-center opacity-0 transition-all duration-700 group-hover:opacity-100 group-hover:scale-105"
                 />
             </div>
 
             {/* Card Body */}
-            <div
-                style={{
-                    padding: "1.25rem 1rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    flex: 1,
-                    textAlign: "center",
-                }}
-            >
-                <h3
-                    style={{
-                        fontSize: "0.95rem",
-                        fontWeight: 600,
-                        color: C.black,
-                        letterSpacing: "0.01em",
-                        fontFamily: FM,
-                        marginBottom: "0.25rem",
-                        lineHeight: 1.3,
-                    }}
-                >
+            <div className="flex flex-col flex-1 text-center px-2">
+                <h3 className="text-sm md:text-base font-semibold text-black font-montserrat mb-1.5 line-clamp-2 leading-snug tracking-tight">
                     {product.title}
                 </h3>
-                <p
-                    style={{
-                        fontSize: "0.85rem",
-                        color: "#777",
-                        fontWeight: 400,
-                        marginBottom: "1rem",
-                        fontFamily: FO,
-                        lineHeight: 1.4,
-                    }}
-                >
+                <p className="text-[0.7rem] text-gray-500 font-outfit mb-4 uppercase tracking-[0.15em]">
                     {product.category}
                 </p>
 
-                <div style={{ marginTop: "auto" }}>
-                    <p
-                        style={{
-                            fontSize: "1.1rem",
-                            fontWeight: 700,
-                            color: "#111",
-                            fontFamily: FO,
-                            marginBottom: "1rem",
-                        }}
-                    >
+                <div className="mt-auto">
+                    <p className="text-sm md:text-base font-bold text-black font-montserrat tracking-tight mb-5">
                         {priceDisplay}
                     </p>
 
-                    <div style={{ display: "flex", justifyContent: "center" }}>
+                    <div className="flex justify-center opacity-0 -translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
                         <button
                             onClick={handleAddToCart}
-                            style={{
-                                width: "100%",
-                                maxWidth: "200px",
-                                padding: "0.75rem",
-                                fontSize: "0.75rem",
-                                fontWeight: 700,
-                                letterSpacing: "0.05em",
-                                textTransform: "uppercase",
-                                cursor: "pointer",
-                                fontFamily: FM,
-                                background: hovered ? C.black : "transparent",
-                                color: hovered ? "#fff" : C.black,
-                                border: `1px solid ${C.black}`,
-                                borderRadius: "4px",
-                                transition: "all 0.3s ease",
-                                opacity: hovered ? 1 : 0.8,
-                            }}
+                            className="w-fit px-8 h-9 text-[0.65rem] font-bold tracking-[0.2em] uppercase font-montserrat text-black border border-black rounded-full transition-all duration-300 hover:bg-black hover:text-white"
                         >
-                            Add To Cart
+                            {buttonText}
                         </button>
                     </div>
                 </div>
