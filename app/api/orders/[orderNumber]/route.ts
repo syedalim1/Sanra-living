@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase";
 
-export async function GET(req: NextRequest, { params }: { params: { orderNumber: string } }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ orderNumber: string }> }) {
     try {
-        const { orderNumber } = params;
+        const { orderNumber } = await params;
 
         if (!orderNumber) {
             return NextResponse.json({ error: "Order number is required" }, { status: 400 });
