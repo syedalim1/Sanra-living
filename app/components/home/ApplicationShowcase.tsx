@@ -7,7 +7,7 @@ const spaces = [
     {
         title: "Modern Living",
         subtitle: "Minimalist steel furniture for contemporary homes.",
-        image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=80",
+        image: "/large-feature.png",
         href: "/shop",
         gridClass: "md:col-span-2 md:row-span-2",
         aspect: "aspect-square md:aspect-auto md:h-[600px]",
@@ -15,7 +15,7 @@ const spaces = [
     {
         title: "Workspace",
         subtitle: "Engineered for focus.",
-        image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80",
+        image: "/small-workspace.png",
         href: "/shop/workspace",
         gridClass: "md:col-span-1 md:row-span-1",
         aspect: "aspect-square md:h-[288px]",
@@ -23,7 +23,7 @@ const spaces = [
     {
         title: "Commercial",
         subtitle: "Durable seating for cafes.",
-        image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
+        image: "/small-commercial.png",
         href: "/shop/commercial",
         gridClass: "md:col-span-1 md:row-span-1",
         aspect: "aspect-square md:h-[288px]",

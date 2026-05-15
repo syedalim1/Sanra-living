@@ -61,7 +61,7 @@ export default function Homepage() {
       <section className="grid grid-cols-1 lg:grid-cols-2 bg-[#0A0A0A] text-white">
         <div className="relative min-h-[400px] lg:min-h-[600px] w-full">
             <img 
-                src="https://images.unsplash.com/photo-1565615833203-8dce288b20ce?w=1200&q=80" 
+                src="/steel-welding.png" 
                 alt="Sanra Steel Factory" 
                 className="absolute inset-0 w-full h-full object-cover filter grayscale opacity-60 mix-blend-luminosity"
             />

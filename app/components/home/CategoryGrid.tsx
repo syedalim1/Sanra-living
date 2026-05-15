@@ -7,22 +7,22 @@ const categories = [
     {
         name: "Living Room",
         href: "/shop/living",
-        image: "https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?w=800&q=80",
+        image: "/living.png",
     },
     {
         name: "Workspace",
         href: "/shop/workspace",
-        image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&q=80",
+        image: "/workspace.png",
     },
     {
         name: "Dining",
         href: "/shop/tables",
-        image: "https://images.unsplash.com/photo-1617806118233-18e1c0945594?w=800&q=80",
+        image: "/dining.png",
     },
     {
         name: "Commercial",
         href: "/shop/commercial",
-        image: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
+        image: "/commercial.png",
     },
 ];
 

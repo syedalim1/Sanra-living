@@ -37,7 +37,7 @@ export default function HeroSection() {
                 <div className="w-full max-w-[1200px] relative group px-0 md:px-6">
                     <div className="relative w-full aspect-[4/5] md:aspect-[16/9] lg:aspect-[21/9] md:rounded-2xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-transform duration-1000 ease-out hover:scale-[1.01]">
                         <img 
-                            src="https://images.unsplash.com/photo-1600607688969-a5bfcd646154?w=2000&q=80" 
+                            src="/hero-banner.png" 
                             alt="Luxury Steel Furniture"
                             className="w-full h-full object-cover object-center scale-105"
                         />
