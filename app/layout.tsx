@@ -111,16 +111,16 @@ export const metadata: Metadata = {
 /* ── STRUCTURED DATA (LD+JSON) ──────────────────────── */
 const organizationSchema = {
   "@context": "https://schema.org",
-  "@type": ["Organization", "FurnitureStore"],
+  "@type": ["Organization", "FurnitureStore", "LocalBusiness"],
   name: "SANRA LIVING",
   legalName: "Indian Make Steel Industries",
   url: "https://www.sanraliving.com",
   logo: "https://www.sanraliving.com/logo.png",
   image: "https://www.sanraliving.com/og-image.jpg",
-  description:
-    "Premium and luxury steel furniture brand in India offering 100+ modern, custom and designer metal furniture models for homes, offices and resellers. State-wise delivery across India.",
+  description: "Premium luxury steel furniture brand. Manufacturer of modern stainless steel and powder-coated furniture in Coimbatore, India. Perfect for homes, restaurants, hostels, and hotels.",
   telephone: ["+91-9585745303", "+91-8300904920"],
   email: "hello@sanraliving.com",
+  taxID: "33FAXPM0581G1ZC",
   foundingDate: "2024",
   address: {
     "@type": "PostalAddress",
@@ -139,26 +139,27 @@ const organizationSchema = {
     "@type": "Country",
     name: "India",
   },
-  priceRange: "₹₹",
+  priceRange: "₹₹₹",
   currenciesAccepted: "INR",
   paymentAccepted: "UPI, Credit Card, Debit Card, Net Banking, Cash on Delivery",
-  openingHours: "Mo-Sa 10:00-18:00",
+  openingHours: "Mo-Sa 09:00-18:00",
   sameAs: [
     "https://www.instagram.com/sanraliving",
+    "https://www.facebook.com/sanraliving",
+    "https://www.pinterest.com/sanraliving",
     "https://www.youtube.com/@sanraliving",
+    "https://www.linkedin.com/company/sanraliving"
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
     name: "Premium Steel Furniture Collection",
     itemListElement: [
-      { "@type": "OfferCatalog", name: "Seating", url: "https://www.sanraliving.com/shop/seating" },
-      { "@type": "OfferCatalog", name: "Tables", url: "https://www.sanraliving.com/shop/tables" },
-      { "@type": "OfferCatalog", name: "Storage", url: "https://www.sanraliving.com/shop/storage" },
-      { "@type": "OfferCatalog", name: "Bedroom", url: "https://www.sanraliving.com/shop/bedroom" },
-      { "@type": "OfferCatalog", name: "Workspace", url: "https://www.sanraliving.com/shop/workspace" },
-      { "@type": "OfferCatalog", name: "Balcony & Outdoor", url: "https://www.sanraliving.com/shop/balcony-outdoor" },
-      { "@type": "OfferCatalog", name: "Modular Systems", url: "https://www.sanraliving.com/shop/modular" },
-      { "@type": "OfferCatalog", name: "CNC & Custom", url: "https://www.sanraliving.com/shop/cnc-decor" },
+      { "@type": "OfferCatalog", name: "Steel Chairs", url: "https://www.sanraliving.com/shop/seating" },
+      { "@type": "OfferCatalog", name: "Steel Tables", url: "https://www.sanraliving.com/shop/tables" },
+      { "@type": "OfferCatalog", name: "Steel Storage", url: "https://www.sanraliving.com/shop/storage" },
+      { "@type": "OfferCatalog", name: "Steel Bedroom Furniture", url: "https://www.sanraliving.com/shop/bedroom" },
+      { "@type": "OfferCatalog", name: "Workspace Furniture", url: "https://www.sanraliving.com/shop/workspace" },
+      { "@type": "OfferCatalog", name: "Bulk Commercial Furniture", url: "https://www.sanraliving.com/bulk-orders" },
     ],
   },
 };

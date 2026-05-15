@@ -7,10 +7,14 @@ export async function GET(
 ) {
     try {
         const { id } = await params;
+        
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+        const matchColumn = isUUID ? "id" : "slug";
+
         const { data, error } = await supabaseAdmin
             .from("products")
             .select("*")
-            .eq("id", id)
+            .eq(matchColumn, id)
             .eq("is_active", true)
             .single();
 

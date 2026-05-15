@@ -1,6 +1,5 @@
-"use client";
-
 import React from "react";
+import type { Metadata } from "next";
 import SiteHeader from "./components/SiteHeader";
 import SiteFooter from "./components/SiteFooter";
 import WhatsAppFloat from "./components/WhatsAppFloat";
@@ -10,6 +9,12 @@ import HeroSection from "./components/home/HeroSection";
 import CategoryGrid from "./components/home/CategoryGrid";
 import FeaturedProducts from "./components/home/FeaturedProducts";
 import ApplicationShowcase from "./components/home/ApplicationShowcase";
+
+export const metadata: Metadata = {
+  title: "SANRA LIVING | Premium Steel Furniture Manufacturer Coimbatore",
+  description: "Modern luxury stainless steel and powder-coated furniture. Dining chairs, tables, and bulk restaurant/hotel furniture manufactured in Coimbatore. Buy online.",
+  alternates: { canonical: "https://www.sanraliving.com/" }
+};
 
 export default function Homepage() {
   return (

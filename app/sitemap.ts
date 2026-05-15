@@ -5,6 +5,7 @@ const BASE = "https://www.sanraliving.com";
 const categories = [
     "seating", "tables", "storage", "bedroom", "workspace",
     "balcony-outdoor", "modular", "cnc-decor", "commercial",
+    "dining-furniture"
 ];
 
 const staticPages = [
@@ -39,10 +40,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (res.ok) {
             const data = await res.json();
             const products = data.products ?? data ?? [];
-            products.forEach((p: { id: string; created_at?: string }) => {
+            products.forEach((p: { id: string; slug?: string; created_at?: string; updated_at?: string }) => {
                 pages.push({
-                    url: `${BASE}/shop/${p.id}`,
-                    lastModified: p.created_at ?? now,
+                    url: `${BASE}/shop/${p.slug || p.id}`,
+                    lastModified: p.updated_at ?? p.created_at ?? now,
                     changeFrequency: "weekly",
                     priority: 0.7,
                 });
