@@ -206,7 +206,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
         <main className="min-h-screen bg-white font-outfit break-words">
             <SiteHeader />
 
-            <div className="max-w-7xl mx-auto pb-24 lg:pb-12 pt-0 lg:pt-8 px-0 md:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto pb-10 lg:pb-0 pt-0 lg:pt-8 px-0 md:px-6 lg:px-8">
                 <div className="flex flex-col lg:flex-row lg:items-start gap-0 lg:gap-10 xl:gap-14 lg:justify-center">
                     
                     {/* 2. PRODUCT IMAGE SECTION */}
@@ -215,12 +215,12 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         <div 
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
-                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-square md:aspect-[4/5] lg:aspect-[3/4] max-h-[85vh] no-scrollbar md:rounded-3xl md:bg-[#F5F5F7] transition-all duration-700"
+                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-[3/4] lg:aspect-[4/5] max-h-[90vh] no-scrollbar md:rounded-3xl md:bg-[#F5F5F7] transition-all duration-700"
                         >
                             {images.map((img, idx) => (
                                 <div 
                                     key={idx} 
-                                    className="flex-[0_0_100%] w-full h-full snap-start snap-always relative shrink-0 flex items-center justify-center p-8 sm:p-14 md:p-20 cursor-zoom-in group/img"
+                                    className="flex-[0_0_100%] w-full h-full snap-start snap-always relative shrink-0 flex items-center justify-center p-0 md:p-6 lg:p-10 cursor-zoom-in group/img"
                                     onClick={() => setFullscreenImage(idx)}
                                 >
                                     <div className="relative w-full h-full transition-transform duration-[800ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover/img:scale-[1.03] active:scale-[0.98]">
@@ -232,10 +232,6 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                             sizes="(max-width: 768px) 100vw, 50vw"
                                             priority={idx === 0}
                                         />
-                                    </div>
-                                    {/* Watermark Overlay */}
-                                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.02] z-10 mix-blend-darken">
-                                        <span className="text-[18vw] lg:text-[10vw] font-black font-montserrat -rotate-[30deg] text-black whitespace-nowrap">SANRA LIVING</span>
                                     </div>
                                 </div>
                             ))}
@@ -287,11 +283,11 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                         </span>
                                     </div>
                                 )}
-                                <h1 className="text-[1.6rem] md:text-[1.85rem] lg:text-[2.2rem] font-medium font-montserrat text-[#111] leading-[1.1] tracking-[-0.01em] pr-4">
+                                <h1 className="text-[1.6rem] md:text-[1.85rem] lg:text-[2.2rem] font-normal font-montserrat text-[#111] leading-[1.2] tracking-normal pr-4 max-w-[95%]">
                                     {dbProduct.title}
                                 </h1>
                                 {dbProduct.subtitle && (
-                                    <p className="text-[0.9rem] md:text-[1rem] text-black/50 font-outfit leading-[1.6] font-light max-w-[90%] md:max-w-xl mt-1">
+                                    <p className="text-[0.9rem] md:text-[1rem] text-black/50 font-outfit leading-[1.7] font-light max-w-[90%] md:max-w-xl mt-2">
                                         {dbProduct.subtitle}
                                     </p>
                                 )}
@@ -320,11 +316,11 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         </section>
 
                         {/* 4. QUICK TRUST ICONS */}
-                        <section className="flex justify-between py-6 my-6 border-y border-black/[0.03] overflow-x-auto gap-2 md:gap-4 no-scrollbar animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
+                        <section className="grid grid-cols-4 py-8 my-8 border-y border-black/[0.03] gap-2 md:gap-4 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
                             {trustFeatures.slice(0, 4).map((feat, i) => (
-                                <div key={i} className="flex flex-col items-center gap-3 min-w-[72px] flex-1 group">
-                                    <div className="w-9 h-9 md:w-11 md:h-11 rounded-full bg-[#F5F5F7] flex items-center justify-center shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-105">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
+                                <div key={i} className="flex flex-col items-center gap-4 group">
+                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-black/5 flex items-center justify-center shrink-0 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-black/5 group-hover:border-transparent">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 group-hover:opacity-100 transition-opacity duration-700">
                                             {i === 0 && <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>}
                                             {i === 1 && <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>}
                                             {i === 2 && <><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></>}
@@ -332,7 +328,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                             {i > 3 && <path d="M5 12l5 5l10 -10"></path>}
                                         </svg>
                                     </div>
-                                    <span className="text-[0.55rem] md:text-[0.6rem] font-montserrat font-medium text-gray-400 text-center leading-tight tracking-[0.1em] uppercase">{feat}</span>
+                                    <span className="text-[0.55rem] md:text-[0.6rem] font-montserrat text-black/50 text-center leading-[1.3] tracking-[0.15em] uppercase max-w-[80px]">{feat}</span>
                                 </div>
                             ))}
                         </section>
@@ -379,7 +375,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         </section>
 
                         {/* 8. ACCORDION INFORMATION SECTION */}
-                        <section className="mb-16 mt-2">
+                        <section className="mb-10 mt-2">
                             <div className="-mx-4 md:mx-0 border-y md:border border-black/[0.04] md:rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both bg-white md:shadow-[0_2px_10px_rgba(0,0,0,0.01)]">
                                 <Accordion title="Materials & Finish" open>
                                     <ul className="pl-2 m-0 space-y-2.5">
@@ -454,23 +450,23 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
 
                 {/* 9. RELATED PRODUCTS */}
                 {relatedProducts.length > 0 && (
-                    <section className="mt-16 lg:mt-24 mb-10">
+                    <section className="mt-10 lg:mt-12 mb-10">
                         <div className="px-5 md:px-0 mb-6 lg:mb-8">
                             <h2 className="text-[1.3rem] lg:text-[1.8rem] font-semibold font-montserrat text-black tracking-[-0.02em] leading-none">Complete The Look</h2>
                         </div>
                         
-                        <div className="flex overflow-x-auto gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 pb-8 px-5 md:px-0 no-scrollbar snap-x snap-mandatory pr-10">
+                        <div className="flex overflow-x-auto gap-4 md:gap-5 pb-8 px-5 md:px-0 no-scrollbar snap-x snap-mandatory lg:pr-5">
                             {relatedProducts.map(rp => (
-                                <Link key={rp.id} href={`/shop/${rp.id}`} className="snap-start shrink-0 w-[70vw] sm:w-[45vw] md:w-auto group flex flex-col h-full focus:outline-none">
-                                    <div className="bg-[#F5F5F7] rounded-[1.5rem] aspect-[4/5] lg:aspect-[3/4] mb-5 overflow-hidden relative flex items-center justify-center p-8 transition-colors duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-[#EAEAEB]">
+                                <Link key={rp.id} href={`/shop/${rp.id}`} className="snap-start shrink-0 w-[65vw] sm:w-[40vw] md:w-[30vw] lg:w-[22vw] group flex flex-col h-full focus:outline-none">
+                                    <div className="bg-[#F5F5F7] rounded-2xl aspect-[4/5] mb-4 overflow-hidden relative flex items-center justify-center p-6 md:p-8 transition-colors duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-[#EAEAEB]">
                                         <img src={optimizeImage(rp.image_url, 600)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.03] mix-blend-darken" />
-                                        <div className="absolute bottom-5 right-5 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-sm border border-black/5">
-                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black/80"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                        <div className="absolute bottom-4 right-4 w-9 h-9 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-sm border border-black/5">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black/80"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                                         </div>
                                     </div>
                                     <div className="px-1 flex flex-col flex-1">
-                                        <p className="text-[0.9rem] lg:text-[0.95rem] font-medium font-montserrat text-[#111] mb-1.5 line-clamp-2 leading-[1.4] tracking-tight group-hover:text-black/60 transition-colors">{rp.title}</p>
-                                        <p className="text-[0.85rem] lg:text-[0.95rem] text-black/50 font-outfit mt-auto font-light">₹{rp.price.toLocaleString("en-IN")}</p>
+                                        <p className="text-[0.85rem] lg:text-[0.95rem] font-medium font-montserrat text-[#111] mb-1.5 line-clamp-1 leading-[1.4] tracking-tight group-hover:text-black/60 transition-colors">{rp.title}</p>
+                                        <p className="text-[0.85rem] lg:text-[0.9rem] text-black/50 font-outfit mt-auto font-light">₹{rp.price.toLocaleString("en-IN")}</p>
                                     </div>
                                 </Link>
                             ))}
@@ -479,7 +475,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                 )}
 
                 {/* 10. CINEMATIC BRAND STORY */}
-                <section className="mt-10 lg:mt-16 mb-6">
+                <section className="mt-8 lg:mt-10 mb-0">
                     <div className="bg-[#111] text-white rounded-3xl mx-4 md:mx-0 p-8 md:p-12 flex flex-col items-center justify-center text-center overflow-hidden relative min-h-[300px]">
                         <div className="relative z-10 flex flex-col items-center">
                             <span className="text-[0.6rem] font-semibold font-montserrat tracking-[0.3em] uppercase text-white/50 mb-4">SANRA LIVING</span>
