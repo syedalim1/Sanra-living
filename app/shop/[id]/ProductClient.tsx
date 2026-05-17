@@ -51,22 +51,22 @@ const WHATSAPP_NUMBER = "918300904920";
 function Accordion({ title, children, open = false }: { title: string, children: React.ReactNode, open?: boolean }) {
     const [isOpen, setIsOpen] = useState(open);
     return (
-        <div className={`border-b border-black/[0.04] transition-colors duration-500 ${isOpen ? 'bg-[#FAFAFA]' : 'bg-transparent'}`}>
+        <div className={`border-b border-black/[0.04] transition-colors duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${isOpen ? 'bg-[#FCFCFC]' : 'bg-transparent'}`}>
             <button 
                 onClick={() => setIsOpen(!isOpen)} 
-                className="w-full flex justify-between items-center bg-transparent border-none cursor-pointer py-5 px-5 md:px-6 group"
+                className="w-full flex justify-between items-center bg-transparent border-none cursor-pointer py-6 px-5 md:px-6 group"
                 aria-expanded={isOpen}
             >
-                <span className="font-medium font-montserrat text-[0.8rem] md:text-[0.85rem] text-[#111] tracking-[0.05em] uppercase text-left group-hover:text-black/60 transition-colors">{title}</span>
-                <span className={`relative flex items-center justify-center w-7 h-7 rounded-full transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${isOpen ? 'bg-black/5 rotate-180' : 'bg-transparent rotate-0 group-hover:bg-black/5'}`}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-black/60">
+                <span className="font-semibold font-montserrat text-[0.75rem] md:text-[0.8rem] text-black/80 tracking-[0.15em] uppercase text-left group-hover:text-black transition-colors">{title}</span>
+                <span className={`relative flex items-center justify-center w-8 h-8 rounded-full transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] ${isOpen ? 'bg-black/5 rotate-180' : 'bg-transparent rotate-0 group-hover:bg-black/5'}`}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-black/50 transition-colors group-hover:text-black/80">
                         <path d="M6 9l6 6 6-6"/>
                     </svg>
                 </span>
             </button>
-            <div className="grid transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]" style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}>
+            <div className="grid transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]" style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}>
                 <div className="overflow-hidden">
-                    <div className={`text-gray-500 text-[0.9rem] md:text-[0.95rem] font-outfit leading-[1.8] font-light transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] px-5 md:px-6 ${isOpen ? 'pb-7 opacity-100 translate-y-0' : 'pb-0 opacity-0 -translate-y-2'}`}>
+                    <div className={`text-black/60 text-[0.9rem] md:text-[0.95rem] font-outfit leading-[1.85] font-light transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] px-5 md:px-6 ${isOpen ? 'pb-8 opacity-100 translate-y-0' : 'pb-0 opacity-0 -translate-y-4'}`}>
                         {children}
                     </div>
                 </div>
@@ -210,25 +210,25 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                 <div className="flex flex-col lg:flex-row lg:items-start gap-0 lg:gap-10 xl:gap-14 lg:justify-center">
                     
                     {/* 2. PRODUCT IMAGE SECTION */}
-                    <section className="w-full lg:w-[50%] relative bg-[#F9F9F9] md:bg-transparent overflow-hidden self-start sticky lg:top-24 group">
+                    <section className="w-full lg:w-[50%] relative bg-[#FAFAFA] md:bg-transparent overflow-hidden self-start sticky lg:top-24 group">
                         {/* Swipe Gallery */}
                         <div 
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
-                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-square md:aspect-[4/5] max-h-[85vh] no-scrollbar md:rounded-[2rem] md:bg-[#F5F5F7]"
+                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-square md:aspect-[4/5] lg:aspect-[3/4] max-h-[85vh] no-scrollbar md:rounded-3xl md:bg-[#F5F5F7] transition-all duration-700"
                         >
                             {images.map((img, idx) => (
                                 <div 
                                     key={idx} 
-                                    className="flex-[0_0_100%] w-full h-full snap-start snap-always relative shrink-0 flex items-center justify-center p-6 sm:p-12 md:p-16 cursor-zoom-in group/img"
+                                    className="flex-[0_0_100%] w-full h-full snap-start snap-always relative shrink-0 flex items-center justify-center p-8 sm:p-14 md:p-20 cursor-zoom-in group/img"
                                     onClick={() => setFullscreenImage(idx)}
                                 >
-                                    <div className="relative w-full h-full transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover/img:scale-105 active:scale-95">
+                                    <div className="relative w-full h-full transition-transform duration-[800ms] ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover/img:scale-[1.03] active:scale-[0.98]">
                                         <Image 
                                             src={optimizeImage(img, 1000)} 
                                             alt={dbProduct.title} 
                                             fill
-                                            className="object-contain object-center mix-blend-darken drop-shadow-sm" 
+                                            className="object-contain object-center mix-blend-darken" 
                                             sizes="(max-width: 768px) 100vw, 50vw"
                                             priority={idx === 0}
                                         />
@@ -278,33 +278,44 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                     <div className="w-full lg:w-[52%] px-4  md:px-0 lg:py-0 flex flex-col min-w-0">
                         
                         {/* 3. PRODUCT TITLE AREA */}
-                        <section className="mb-6 lg:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
-                            <div className="flex flex-col gap-3 mb-6 md:mb-8">
+                        <section className="mb-8 lg:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+                            <div className="flex flex-col gap-3 mb-8">
                                 {(dbProduct.badge || dbProduct.is_new) && (
                                     <div className="flex">
-                                        <span className="inline-flex items-center justify-center bg-transparent border border-black/10 text-black/60 px-2.5 py-1 text-[0.55rem] font-medium font-montserrat tracking-[0.2em] rounded-full uppercase leading-none">
+                                        <span className="inline-flex items-center justify-center bg-[#F5F5F7] text-black/70 px-3 py-1.5 text-[0.6rem] font-medium font-montserrat tracking-[0.2em] rounded-full uppercase leading-none">
                                             {dbProduct.badge || "New Arrival"}
                                         </span>
                                     </div>
                                 )}
-                                <h1 className="text-[1.7rem] md:text-[2rem] lg:text-[2.5rem] font-semibold font-montserrat text-[#111] leading-[1.05] tracking-tight">
+                                <h1 className="text-[1.6rem] md:text-[1.85rem] lg:text-[2.2rem] font-medium font-montserrat text-[#111] leading-[1.1] tracking-[-0.01em] pr-4">
                                     {dbProduct.title}
                                 </h1>
                                 {dbProduct.subtitle && (
-                                    <p className="text-[0.9rem] md:text-[1.05rem] text-gray-500 font-outfit leading-[1.6] font-light max-w-xl mt-1">
+                                    <p className="text-[0.9rem] md:text-[1rem] text-black/50 font-outfit leading-[1.6] font-light max-w-[90%] md:max-w-xl mt-1">
                                         {dbProduct.subtitle}
                                     </p>
                                 )}
                             </div>
                             
-                            <div className="flex flex-col gap-1.5 mt-2 border-t border-black/[0.03] pt-6">
+                            <div className="flex flex-col gap-2 mt-4 pt-6 border-t border-black/[0.04]">
                                 <div className="flex items-baseline gap-3">
-                                    <span className="text-3xl lg:text-[2.5rem] font-medium font-montserrat text-black tracking-tight leading-none">₹{dbProduct.price.toLocaleString("en-IN")}</span>
+                                    <span className="text-[1.8rem] lg:text-[2.2rem] font-medium font-montserrat text-black tracking-tight leading-none">
+                                        ₹{dbProduct.price.toLocaleString("en-IN")}
+                                    </span>
                                     {dbProduct.compare_at_price && (
-                                        <span className="text-[1.05rem] lg:text-[1.2rem] text-gray-400 line-through font-outfit font-light">₹{dbProduct.compare_at_price.toLocaleString("en-IN")}</span>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-[1rem] lg:text-[1.1rem] text-black/30 line-through font-outfit font-light">
+                                                ₹{dbProduct.compare_at_price.toLocaleString("en-IN")}
+                                            </span>
+                                            <span className="text-[0.65rem] font-montserrat uppercase tracking-[0.15em] font-semibold text-[#B2825C] bg-[#B2825C]/10 px-2 py-0.5 rounded-sm">
+                                                {Math.round(((dbProduct.compare_at_price - dbProduct.price) / dbProduct.compare_at_price) * 100)}% OFF
+                                            </span>
+                                        </div>
                                     )}
                                 </div>
-                                <p className="text-[0.65rem] md:text-[0.7rem] text-gray-400 font-outfit font-light tracking-[0.1em] uppercase mt-1">Inclusive of all taxes</p>
+                                <p className="text-[0.65rem] md:text-[0.7rem] text-black/40 font-outfit font-light tracking-[0.1em] uppercase mt-0.5">
+                                    Inclusive of all taxes
+                                </p>
                             </div>
                         </section>
 
@@ -327,24 +338,25 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         </section>
 
                         {/* 5. QUANTITY + BUY SECTION (Inline) */}
-                        <section className="mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
+                        <section className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
                             <div className="flex gap-3 md:gap-4 mb-3 md:mb-4">
                                 {/* Quantity selector */}
-                                <div className="flex items-center border border-black/10 rounded-xl bg-white p-1 w-[110px] md:w-[130px] shrink-0 transition-colors hover:border-black/20 focus-within:border-black/30 shadow-sm">
-                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="flex-1 h-12 bg-transparent border-none text-xl text-gray-500 hover:text-black cursor-pointer active:scale-90 transition-all focus:outline-none">−</button>
-                                    <span className="flex-1 text-center text-sm font-medium font-outfit text-black">{quantity}</span>
-                                    <button onClick={() => setQuantity(quantity + 1)} className="flex-1 h-12 bg-transparent border-none text-xl text-gray-500 hover:text-black cursor-pointer active:scale-90 transition-all focus:outline-none">+</button>
+                                <div className="flex items-center border border-black/[0.08] rounded-xl bg-white p-1 w-[110px] md:w-[130px] shrink-0 transition-colors hover:border-black/20 focus-within:border-black/30 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="flex-1 h-[48px] bg-transparent border-none text-xl text-black/50 hover:text-black cursor-pointer active:scale-90 transition-all focus:outline-none">−</button>
+                                    <span className="flex-1 text-center text-[0.95rem] font-medium font-outfit text-black">{quantity}</span>
+                                    <button onClick={() => setQuantity(quantity + 1)} className="flex-1 h-[48px] bg-transparent border-none text-xl text-black/50 hover:text-black cursor-pointer active:scale-90 transition-all focus:outline-none">+</button>
                                 </div>
                                 {/* Add to cart */}
-                                <button onClick={handleAddToCart} className="flex-1 h-[56px] bg-[#111] hover:bg-black text-white border-none rounded-xl text-[0.75rem] md:text-[0.8rem] font-semibold font-montserrat uppercase tracking-[0.15em] cursor-pointer shadow-[0_4px_14px_rgba(0,0,0,0.15)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.2)] active:scale-[0.98] transition-all duration-300">
-                                    Add to Cart
+                                <button onClick={handleAddToCart} className="flex-1 h-[56px] bg-[#111] hover:bg-black text-white border-none rounded-xl text-[0.75rem] md:text-[0.8rem] font-semibold font-montserrat uppercase tracking-[0.2em] cursor-pointer shadow-[0_8px_20px_rgba(0,0,0,0.12)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.18)] active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] relative overflow-hidden group">
+                                    <span className="relative z-10">Add to Cart</span>
+                                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] pointer-events-none" />
                                 </button>
                             </div>
                             
                             {/* Buy on WhatsApp */}
-                            <button onClick={handleWhatsApp} className="w-full h-[56px] bg-[#25D366] hover:bg-[#20ba59] text-white border-none rounded-xl text-[0.75rem] md:text-[0.8rem] font-semibold font-montserrat uppercase tracking-[0.15em] cursor-pointer flex items-center justify-center gap-2.5 active:scale-[0.98] transition-all duration-300 group shadow-[0_4px_14px_rgba(37,211,102,0.2)] hover:shadow-[0_6px_20px_rgba(37,211,102,0.3)]">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="group-hover:scale-110 transition-transform duration-300"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-                                Buy On WhatsApp
+                            <button onClick={handleWhatsApp} className="w-full h-[56px] bg-[#1A1F1C] hover:bg-[#121614] text-white border-none rounded-xl text-[0.75rem] md:text-[0.8rem] font-semibold font-montserrat uppercase tracking-[0.2em] cursor-pointer flex items-center justify-center gap-3 active:scale-[0.98] transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] group shadow-[0_8px_20px_rgba(26,31,28,0.12)] hover:shadow-[0_12px_24px_rgba(26,31,28,0.18)]">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className="text-[#25D366] group-hover:scale-110 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)]"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                                Inquire On WhatsApp
                             </button>
 
                             {/* 6. TRUST MESSAGE */}
@@ -368,7 +380,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
 
                         {/* 8. ACCORDION INFORMATION SECTION */}
                         <section className="mb-16 mt-2">
-                            <div className="-mx-4 md:mx-0 border-y md:border border-black/[0.04] md:rounded-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
+                            <div className="-mx-4 md:mx-0 border-y md:border border-black/[0.04] md:rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both bg-white md:shadow-[0_2px_10px_rgba(0,0,0,0.01)]">
                                 <Accordion title="Materials & Finish" open>
                                     <ul className="pl-2 m-0 space-y-2.5">
                                         {dbProduct.material && <li className="relative pl-4 before:content-[''] before:absolute before:left-0 before:top-[0.65rem] before:w-1 before:h-1 before:bg-black/20 before:rounded-full"><span className="text-black/80 font-medium">Material:</span> {dbProduct.material}</li>}
@@ -447,18 +459,18 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                             <h2 className="text-[1.3rem] lg:text-[1.8rem] font-semibold font-montserrat text-black tracking-[-0.02em] leading-none">Complete The Look</h2>
                         </div>
                         
-                        <div className="flex overflow-x-auto gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 pb-8 px-5 md:px-0 no-scrollbar snap-x snap-mandatory">
+                        <div className="flex overflow-x-auto gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 pb-8 px-5 md:px-0 no-scrollbar snap-x snap-mandatory pr-10">
                             {relatedProducts.map(rp => (
-                                <Link key={rp.id} href={`/shop/${rp.id}`} className="snap-start shrink-0 w-[65vw] sm:w-[40vw] md:w-auto group flex flex-col h-full focus:outline-none">
-                                    <div className="bg-[#F5F5F7] rounded-[1.25rem] aspect-[4/5] mb-4 overflow-hidden relative flex items-center justify-center p-6 transition-colors duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-[#EAEAEB]">
-                                        <img src={optimizeImage(rp.image_url, 600)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-105 mix-blend-darken" />
-                                        <div className="absolute bottom-4 right-4 w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm border border-black/5">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black/80"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                <Link key={rp.id} href={`/shop/${rp.id}`} className="snap-start shrink-0 w-[70vw] sm:w-[45vw] md:w-auto group flex flex-col h-full focus:outline-none">
+                                    <div className="bg-[#F5F5F7] rounded-[1.5rem] aspect-[4/5] lg:aspect-[3/4] mb-5 overflow-hidden relative flex items-center justify-center p-8 transition-colors duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-[#EAEAEB]">
+                                        <img src={optimizeImage(rp.image_url, 600)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.03] mix-blend-darken" />
+                                        <div className="absolute bottom-5 right-5 w-10 h-10 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-sm border border-black/5">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black/80"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                                         </div>
                                     </div>
                                     <div className="px-1 flex flex-col flex-1">
-                                        <p className="text-[0.9rem] lg:text-[0.95rem] font-medium font-montserrat text-[#111] mb-1.5 line-clamp-2 leading-snug tracking-wide group-hover:text-black/70 transition-colors">{rp.title}</p>
-                                        <p className="text-[0.85rem] lg:text-[0.95rem] text-gray-500 font-outfit mt-auto font-light">₹{rp.price.toLocaleString("en-IN")}</p>
+                                        <p className="text-[0.9rem] lg:text-[0.95rem] font-medium font-montserrat text-[#111] mb-1.5 line-clamp-2 leading-[1.4] tracking-tight group-hover:text-black/60 transition-colors">{rp.title}</p>
+                                        <p className="text-[0.85rem] lg:text-[0.95rem] text-black/50 font-outfit mt-auto font-light">₹{rp.price.toLocaleString("en-IN")}</p>
                                     </div>
                                 </Link>
                             ))}
@@ -484,14 +496,14 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                 </section>
 
                 {/* 11. SOCIAL PROOF */}
-                <section className="py-10 text-center px-4 md:px-0 flex flex-col items-center justify-center">
+                {/* <section className="py-10 text-center px-4 md:px-0 flex flex-col items-center justify-center">
                     <div className="flex items-center gap-1 mb-3">
                         {[1, 2, 3, 4, 5].map((i) => (
                             <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-black/80"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
                         ))}
                     </div>
                     <p className="text-[0.7rem] lg:text-[0.75rem] font-medium font-montserrat text-black/50 m-0 tracking-[0.15em] uppercase">Trusted by 10,000+ customers across India</p>
-                </section>
+                </section> */}
             </div>
             
             <SiteFooter />
@@ -551,24 +563,25 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
             )}
 
             {/* STICKY BOTTOM BAR (MOBILE ONLY) */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/85 backdrop-blur-2xl border-t border-black/[0.04] px-4 md:px-6 py-2.5 flex items-center justify-between z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.03)] pb-[calc(0.6rem+env(safe-area-inset-bottom))] lg:hidden animate-in slide-in-from-bottom-full duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/70 backdrop-blur-3xl border-t border-black/[0.06] px-5 py-3 flex items-center justify-between z-40 shadow-[0_-12px_40px_rgba(0,0,0,0.04)] pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden animate-in slide-in-from-bottom-full duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
                 <div className="flex flex-col justify-center">
-                    <span className="text-[0.55rem] text-gray-400 font-outfit uppercase tracking-[0.2em] font-medium mb-[3px]">Total</span>
-                    <span className="text-xl font-medium font-montserrat text-black tracking-[-0.02em] leading-none">₹{dbProduct?.price?.toLocaleString("en-IN")}</span>
+                    <span className="text-[0.55rem] text-black/40 font-outfit uppercase tracking-[0.2em] font-semibold mb-[2px]">Total</span>
+                    <span className="text-[1.35rem] font-medium font-montserrat text-black tracking-[-0.02em] leading-none">₹{dbProduct?.price?.toLocaleString("en-IN")}</span>
                 </div>
-                <div className="flex gap-2.5 ml-4">
+                <div className="flex gap-3 ml-4">
                     <button 
                         onClick={handleWhatsApp} 
-                        className="w-[52px] h-[52px] bg-white border border-black/5 rounded-[14px] flex items-center justify-center cursor-pointer active:scale-90 transition-all shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:border-[#25D366]/30 text-[#25D366] shrink-0"
+                        className="w-[50px] h-[50px] bg-white border border-black/[0.06] rounded-[14px] flex items-center justify-center cursor-pointer active:scale-90 transition-all duration-500 shadow-[0_4px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_16px_rgba(0,0,0,0.08)] shrink-0 group"
                         aria-label="Buy on WhatsApp"
                     >
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" className="text-black/80 group-hover:text-[#25D366] transition-colors duration-300"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
                     </button>
                     <button 
                         onClick={handleAddToCart} 
-                        className="px-6 sm:px-8 h-[52px] bg-[#111] text-white border-none rounded-[14px] text-[0.75rem] font-semibold font-montserrat uppercase tracking-[0.15em] cursor-pointer active:scale-95 transition-all shadow-[0_6px_16px_rgba(0,0,0,0.12)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.16)] whitespace-nowrap"
+                        className="px-7 sm:px-8 h-[50px] bg-[#111] text-white border-none rounded-[14px] text-[0.7rem] font-semibold font-montserrat uppercase tracking-[0.2em] cursor-pointer active:scale-[0.98] transition-all duration-500 shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.2)] whitespace-nowrap relative overflow-hidden group"
                     >
-                        Add to Cart
+                        <span className="relative z-10">Add to Cart</span>
+                        <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] pointer-events-none" />
                     </button>
                 </div>
             </div>
