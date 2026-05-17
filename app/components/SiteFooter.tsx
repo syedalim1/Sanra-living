@@ -5,10 +5,9 @@ export default function SiteFooter() {
 
     return (
         <footer className="bg-[#111] text-white font-montserrat pb-[calc(5rem+env(safe-area-inset-bottom))] lg:pb-0">
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-20 lg:pt-28">
-
+            <div className="max-w-7xl mx-auto px-6 lg:px-8 pt-12 lg:pt-16">
                 {/* ── MAIN CONTENT ──────────────────────────────────── */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 lg:gap-16 mb-16 lg:mb-20">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-10 lg:mb-14">
 
                     {/* Col 1 – Brand */}
                     <div className="flex flex-col">
@@ -79,7 +78,7 @@ export default function SiteFooter() {
                 </div>
 
                 {/* ── LEGAL & COPYRIGHT ──────────────────────────────── */}
-                <div className="border-t border-white/[0.03] pt-8 pb-12 flex flex-col gap-8">
+                <div className="border-t border-white/[0.03] pt-6 pb-8 flex flex-col gap-6">
                     <p className="text-[0.7rem] text-white/50 font-outfit font-light leading-[1.8] max-w-2xl m-0">
                         All GST invoices and billing are issued under <strong className="text-white/80 font-normal">Indian Make Steel Industries</strong> in compliance with Indian tax regulations.
                     </p>

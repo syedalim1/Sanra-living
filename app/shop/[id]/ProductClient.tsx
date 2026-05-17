@@ -215,7 +215,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         <div 
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
-                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-[3/4] lg:aspect-[4/5] max-h-[90vh] no-scrollbar md:rounded-3xl md:bg-[#F5F5F7] transition-all duration-700"
+                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-[2/3] md:aspect-[3/4] lg:aspect-[4/5] max-h-[85vh] no-scrollbar md:rounded-3xl md:bg-[#F5F5F7] transition-all duration-700"
                         >
                             {images.map((img, idx) => (
                                 <div 
@@ -316,11 +316,11 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         </section>
 
                         {/* 4. QUICK TRUST ICONS */}
-                        <section className="grid grid-cols-4 py-8 my-8 border-y border-black/[0.03] gap-2 md:gap-4 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
+                        <section className="grid grid-cols-4 py-6 my-6 gap-2 md:gap-4 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
                             {trustFeatures.slice(0, 4).map((feat, i) => (
-                                <div key={i} className="flex flex-col items-center gap-4 group">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-black/5 flex items-center justify-center shrink-0 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-black/5 group-hover:border-transparent">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="opacity-60 group-hover:opacity-100 transition-opacity duration-700">
+                                <div key={i} className="flex flex-col items-center gap-2 group">
+                                    <div className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-black/5 flex items-center justify-center shrink-0 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-black/[0.02] group-hover:border-transparent">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="0.75" strokeLinecap="round" strokeLinejoin="round" className="opacity-70 group-hover:opacity-100 transition-opacity duration-700">
                                             {i === 0 && <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>}
                                             {i === 1 && <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>}
                                             {i === 2 && <><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></>}
@@ -328,7 +328,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                             {i > 3 && <path d="M5 12l5 5l10 -10"></path>}
                                         </svg>
                                     </div>
-                                    <span className="text-[0.55rem] md:text-[0.6rem] font-montserrat text-black/50 text-center leading-[1.3] tracking-[0.15em] uppercase max-w-[80px]">{feat}</span>
+                                    <span className="text-[0.5rem] md:text-[0.55rem] font-montserrat text-black/40 text-center leading-[1.3] tracking-[0.2em] uppercase max-w-[70px]">{feat}</span>
                                 </div>
                             ))}
                         </section>
@@ -457,7 +457,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         
                         <div className="flex overflow-x-auto gap-4 md:gap-5 pb-8 px-5 md:px-0 no-scrollbar snap-x snap-mandatory lg:pr-5">
                             {relatedProducts.map(rp => (
-                                <Link key={rp.id} href={`/shop/${rp.id}`} className="snap-start shrink-0 w-[65vw] sm:w-[40vw] md:w-[30vw] lg:w-[22vw] group flex flex-col h-full focus:outline-none">
+                                <Link key={rp.id} href={`/shop/${rp.id}`} className="snap-start shrink-0 w-[78vw] sm:w-[45vw] md:w-[32vw] lg:w-[22vw] group flex flex-col h-full focus:outline-none">
                                     <div className="bg-[#F5F5F7] rounded-2xl aspect-[4/5] mb-4 overflow-hidden relative flex items-center justify-center p-6 md:p-8 transition-colors duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-[#EAEAEB]">
                                         <img src={optimizeImage(rp.image_url, 600)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.03] mix-blend-darken" />
                                         <div className="absolute bottom-4 right-4 w-9 h-9 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-sm border border-black/5">
@@ -465,7 +465,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                         </div>
                                     </div>
                                     <div className="px-1 flex flex-col flex-1">
-                                        <p className="text-[0.85rem] lg:text-[0.95rem] font-medium font-montserrat text-[#111] mb-1.5 line-clamp-1 leading-[1.4] tracking-tight group-hover:text-black/60 transition-colors">{rp.title}</p>
+                                        <p className="text-[0.85rem] lg:text-[0.95rem] font-medium font-montserrat text-[#111] mb-1.5 line-clamp-2 leading-[1.4] tracking-tight group-hover:text-black/60 transition-colors">{rp.title}</p>
                                         <p className="text-[0.85rem] lg:text-[0.9rem] text-black/50 font-outfit mt-auto font-light">₹{rp.price.toLocaleString("en-IN")}</p>
                                     </div>
                                 </Link>
@@ -559,7 +559,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
             )}
 
             {/* STICKY BOTTOM BAR (MOBILE ONLY) */}
-            <div className="fixed bottom-0 left-0 right-0 bg-white/70 backdrop-blur-3xl border-t border-black/[0.06] px-5 py-3 flex items-center justify-between z-40 shadow-[0_-12px_40px_rgba(0,0,0,0.04)] pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden animate-in slide-in-from-bottom-full duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+            <div className="fixed bottom-0 left-0 right-0 bg-white/60 backdrop-blur-2xl border-t border-white/50 px-5 py-3 flex items-center justify-between z-40 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] pb-[calc(0.75rem+env(safe-area-inset-bottom))] lg:hidden animate-in slide-in-from-bottom-full duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
                 <div className="flex flex-col justify-center">
                     <span className="text-[0.55rem] text-black/40 font-outfit uppercase tracking-[0.2em] font-semibold mb-[2px]">Total</span>
                     <span className="text-[1.35rem] font-medium font-montserrat text-black tracking-[-0.02em] leading-none">₹{dbProduct?.price?.toLocaleString("en-IN")}</span>
