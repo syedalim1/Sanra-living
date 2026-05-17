@@ -60,15 +60,7 @@ function FilterPanel({
             ))}
             <button
                 onClick={onReset}
-                style={{
-                    width: "100%", padding: "0.625rem", fontSize: "0.68rem", fontWeight: 700,
-                    letterSpacing: "0.15em", textTransform: "uppercase", cursor: "pointer",
-                    marginTop: "1.5rem", border: "1px solid #EBEBEB", background: "transparent",
-                    color: "#000", fontFamily: FM, transition: "all 0.3s",
-                    borderRadius: "0.5rem"
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#F9F9F9"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+                className="w-full mt-5 py-2.5 text-[0.6rem] font-medium tracking-[0.2em] uppercase cursor-pointer font-montserrat border border-black/8 bg-transparent text-black/60 hover:text-black hover:border-black/20 transition-all duration-300 rounded-lg"
             >
                 Clear Filters
             </button>
@@ -172,21 +164,21 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
         <main style={{ background: C.bg, minHeight: "100vh", fontFamily: FO }}>
             <SiteHeader />
 
-            <section className="bg-white border-b border-black/5 py-10 lg:py-16 px-6 lg:px-8">
-                <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <section className="bg-white border-b border-black/[0.04] py-8 lg:py-12 px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
                         {/* Breadcrumb */}
-                        <p className="text-[0.65rem] tracking-[0.2em] uppercase text-gray-400 font-montserrat mb-4">
-                            <Link href="/" className="hover:text-black transition-colors">Home</Link>
-                            <span className="mx-2">/</span>
-                            <Link href="/shop" className="hover:text-black transition-colors">Shop</Link>
-                            <span className="mx-2">/</span>
-                            <span className="text-black font-semibold">{config.name}</span>
+                        <p className="text-[0.58rem] tracking-[0.22em] uppercase text-black/30 font-montserrat mb-3">
+                            <Link href="/" className="hover:text-black transition-colors duration-300">Home</Link>
+                            <span className="mx-1.5 opacity-50">/</span>
+                            <Link href="/shop" className="hover:text-black transition-colors duration-300">Shop</Link>
+                            <span className="mx-1.5 opacity-50">/</span>
+                            <span className="text-black/70">{config.name}</span>
                         </p>
-                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-black text-black tracking-tight font-montserrat mb-3 leading-tight">
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium text-black tracking-tight font-montserrat mb-2.5 leading-[1.15]">
                             {config.name}
                         </h1>
-                        <p className="text-sm md:text-base text-gray-500 font-outfit max-w-xl font-light">
+                        <p className="text-[0.85rem] md:text-[0.9rem] text-black/45 font-outfit max-w-xl font-light leading-[1.7]">
                             {config.description}
                         </p>
                     </div>
@@ -224,28 +216,29 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                     <div className="flex-1 min-w-0">
 
                         {/* Header Row: Count & Sort */}
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-                            <div className="flex items-center gap-4">
+                        <div className="flex items-center justify-between gap-4 mb-6">
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setFilterDrawerOpen(true)}
-                                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-black/10 bg-white text-[0.7rem] font-bold tracking-[0.15em] uppercase text-black font-montserrat rounded-full"
+                                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-black/8 bg-white text-[0.6rem] font-medium tracking-[0.18em] uppercase text-black/70 font-montserrat rounded-full transition-all duration-300 hover:border-black/20 hover:text-black"
                                 >
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="3" y1="6" x2="21" y2="6" /><line x1="7" y1="12" x2="17" y2="12" /><line x1="10" y1="18" x2="14" y2="18" />
                                     </svg>
                                     Filters
                                 </button>
-                                <p className="text-[0.7rem] tracking-[0.15em] uppercase text-gray-400 font-montserrat">
-                                    {loading ? "Loading…" : `${sorted.length} ${sorted.length === 1 ? "product" : "products"} found`}
+                                <p className="text-[0.6rem] tracking-[0.18em] uppercase text-black/30 font-montserrat">
+                                    {loading ? "Loading…" : `${sorted.length} ${sorted.length === 1 ? "piece" : "pieces"}`}
                                 </p>
                             </div>
                             
-                            <div className="flex items-center gap-3">
-                                <span className="text-[0.65rem] font-bold tracking-[0.2em] uppercase text-gray-400 font-montserrat hidden sm:inline-block">Sort By</span>
+                            <div className="flex items-center gap-2.5">
+                                <span className="text-[0.58rem] font-medium tracking-[0.22em] uppercase text-black/30 font-montserrat hidden sm:inline-block">Sort</span>
                                 <select
                                     value={selectedSort}
                                     onChange={(e) => setSelectedSort(e.target.value)}
-                                    className="border border-black/10 bg-transparent text-black text-[0.75rem] font-outfit px-3 py-2 outline-none cursor-pointer rounded-md focus:border-black transition-colors"
+                                    className="border border-black/8 bg-white text-black text-[0.72rem] font-outfit px-3 py-1.5 outline-none cursor-pointer rounded-lg focus:border-black/25 transition-colors duration-300 appearance-none pr-7"
+                                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.6rem center' }}
                                 >
                                     {sortOptions.map((o) => <option key={o}>{o}</option>)}
                                 </select>
@@ -264,26 +257,21 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                         {/* Grid */}
                         {!loading && !error && (sorted.length === 0 ? (
                             <div className="text-center py-20">
-                                <p className="text-gray-500 font-outfit mb-2">No products in this category yet.</p>
-                                <Link href="/shop" className="text-black text-sm font-semibold font-outfit underline underline-offset-4">Browse All Categories</Link>
+                                <p className="text-black/40 font-outfit text-sm mb-3 font-light">No products in this category yet.</p>
+                                <Link href="/shop" className="text-black text-[0.75rem] font-medium font-montserrat uppercase tracking-[0.15em] underline underline-offset-4">Browse All Categories</Link>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 md:gap-x-6 md:gap-y-12">
                                 {visible.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
                             </div>
                         ))}
 
                         {/* Load more */}
                         {hasMore && (
-                            <div style={{ display: "flex", justifyContent: "center", margin: "1rem 0 2rem" }}>
+                            <div className="flex justify-center mt-12 mb-6">
                                 <button
                                     onClick={() => setVisibleCount((c) => c + 6)}
-                                    style={{
-                                        padding: "0.9rem 3rem", background: C.dark, color: "#fff",
-                                        fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.18em",
-                                        textTransform: "uppercase", border: "none", cursor: "pointer",
-                                        fontFamily: FM, transition: "background 0.2s",
-                                    }}
+                                    className="px-10 py-3 bg-[#111] text-white text-[0.62rem] font-medium tracking-[0.22em] uppercase font-montserrat rounded-full transition-all duration-500 hover:bg-black active:scale-[0.97]"
                                 >
                                     Load More
                                 </button>
@@ -304,23 +292,27 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                 {filterDrawerOpen && (
                     <>
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                            transition={{ duration: 0.25 }}
                             onClick={() => setFilterDrawerOpen(false)}
-                            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 40 }}
+                            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)", zIndex: 40, backdropFilter: "blur(2px)" }}
                         />
                         <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
-                            transition={{ type: "tween", duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                            style={{ position: "fixed", top: 0, left: 0, height: "100%", width: 300, maxWidth: "85vw", background: C.white, zIndex: 50, overflowY: "auto" }}>
+                            transition={{ type: "tween", duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                            style={{ position: "fixed", top: 0, left: 0, height: "100%", width: 275, maxWidth: "82vw", background: "#FAFAFA", zIndex: 50, overflowY: "auto", borderRight: "1px solid rgba(0,0,0,0.04)" }}>
                             {/* Drawer header */}
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.25rem 1.5rem", borderBottom: `1px solid ${C.border}` }}>
-                                <h2 style={{ fontSize: "0.62rem", fontWeight: 900, letterSpacing: "0.28em", textTransform: "uppercase", color: C.black, fontFamily: FM }}>Filters</h2>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.1rem 1.4rem", borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                                <h2 style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", color: "#111", fontFamily: FM, margin: 0 }}>Filters</h2>
                                 <button onClick={() => setFilterDrawerOpen(false)}
-                                    style={{ background: "none", border: "none", cursor: "pointer", padding: "0.25rem" }}>
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="2.5">
+                                    style={{ background: "none", border: "none", cursor: "pointer", padding: "0.35rem", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", transition: "background 0.2s" }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(0,0,0,0.04)"; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
+                                >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                                     </svg>
                                 </button>
                             </div>
-                            <div style={{ padding: "1.5rem" }}>
+                            <div style={{ padding: "1.25rem 1.4rem" }}>
                                 <FilterPanel
                                     selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
                                     selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
@@ -331,13 +323,14 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 <button
                                     onClick={() => setFilterDrawerOpen(false)}
                                     style={{
-                                        width: "100%", marginTop: "0.75rem", padding: "0.875rem",
-                                        background: C.dark, color: "#fff", fontSize: "0.72rem", fontWeight: 700,
-                                        letterSpacing: "0.15em", textTransform: "uppercase", border: "none",
-                                        cursor: "pointer", fontFamily: FM,
+                                        width: "100%", marginTop: "1rem", padding: "0.8rem",
+                                        background: "#111", color: "#fff", fontSize: "0.6rem", fontWeight: 600,
+                                        letterSpacing: "0.22em", textTransform: "uppercase", border: "none",
+                                        cursor: "pointer", fontFamily: FM, borderRadius: "8px",
+                                        transition: "background 0.3s",
                                     }}
                                 >
-                                    Apply & View Results
+                                    View Results
                                 </button>
                             </div>
                         </motion.div>
