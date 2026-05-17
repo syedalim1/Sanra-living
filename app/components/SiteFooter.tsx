@@ -12,7 +12,7 @@ export default function SiteFooter() {
                     {/* Col 1 – Brand */}
                     <div className="flex flex-col">
                         <div className="text-xl lg:text-2xl font-semibold tracking-tight text-white mb-2">SANRA LIVING</div>
-                        <div className="text-[0.55rem] font-medium tracking-[0.25em] text-white/50 uppercase mb-6">Steel Furniture Manufacturer</div>
+                        <div className="text-[0.55rem] font-light tracking-[0.28em] text-white/35 uppercase mb-6">Est. Coimbatore, India</div>
                         <p className="text-[0.85rem] text-white/60 font-outfit font-light leading-[1.8] max-w-[280px]">
                             Premium engineered steel furniture owned and operated by <strong className="text-white/90 font-normal">Indian Make Steel Industries</strong>.
                         </p>

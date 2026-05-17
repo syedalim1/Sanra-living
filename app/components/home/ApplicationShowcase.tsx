@@ -34,38 +34,85 @@ export default function ApplicationShowcase() {
     return (
         <section className="bg-white py-16 lg:py-24 px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-                <div className="text-center mb-12 lg:mb-16">
-                    <h2 className="text-3xl md:text-4xl font-black text-black font-montserrat tracking-tight mb-4">
+                <div className="text-center mb-10 lg:mb-14">
+                    <h2 className="text-2xl md:text-3xl font-light text-black font-montserrat tracking-tight mb-3">
                         Designed for Every Space
                     </h2>
-                    <p className="text-gray-500 text-base md:text-lg font-outfit font-light max-w-2xl mx-auto">
-                        From intimate homes to bustling commercial environments, our engineered steel adapts flawlessly to your aesthetic.
+                    <p className="text-black/40 text-sm font-outfit font-light max-w-lg mx-auto leading-[1.8]">
+                        From intimate homes to commercial environments, SANRA steel adapts to your aesthetic.
                     </p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                {/* Mobile: first full-width tall, then 2 side-by-side | Desktop: asymmetric grid */}
+                <div className="block md:hidden">
+                    {/* First image — full width, taller */}
+                    {spaces.slice(0, 1).map((space) => (
+                        <Link
+                            key={space.title}
+                            href={space.href}
+                            className="group relative block w-full overflow-hidden rounded-2xl bg-[#F5F5F3] mb-3 transition-all duration-500"
+                        >
+                            <div className="w-full aspect-[4/3] relative">
+                                <img
+                                    src={space.image}
+                                    alt={space.title}
+                                    loading="lazy"
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.03]"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
+                                <div className="absolute bottom-0 left-0 w-full p-5">
+                                    <h3 className="text-lg font-normal text-white font-montserrat mb-0.5 tracking-tight">{space.title}</h3>
+                                    <p className="text-[0.7rem] text-white/60 font-outfit tracking-[0.06em]">{space.subtitle}</p>
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
+                    {/* Remaining two — side by side */}
+                    <div className="grid grid-cols-2 gap-3">
+                        {spaces.slice(1).map((space) => (
+                            <Link
+                                key={space.title}
+                                href={space.href}
+                                className="group relative block overflow-hidden rounded-xl bg-[#F5F5F3] transition-all duration-500"
+                            >
+                                <div className="w-full aspect-square relative">
+                                    <img
+                                        src={space.image}
+                                        alt={space.title}
+                                        loading="lazy"
+                                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.04]"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                                    <div className="absolute bottom-0 left-0 w-full p-3.5">
+                                        <h3 className="text-sm font-normal text-white font-montserrat tracking-tight">{space.title}</h3>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Desktop: original asymmetric grid */}
+                <div className="hidden md:grid grid-cols-3 gap-6 lg:gap-8">
                     {spaces.map((space) => (
                         <Link
                             key={space.title}
                             href={space.href}
-                            className={`group relative block w-full overflow-hidden rounded-2xl bg-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition-shadow duration-500 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] ${space.gridClass}`}
+                            className={`group relative block w-full overflow-hidden rounded-2xl bg-[#F5F5F3] transition-all duration-500 hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] ${space.gridClass}`}
                         >
                             <div className={`w-full ${space.aspect} relative`}>
                                 <img
                                     src={space.image}
                                     alt={space.title}
                                     loading="lazy"
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                                 />
-                                {/* Gradient Overlay for text readability */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent mix-blend-multiply" />
-                                
-                                {/* Content */}
-                                <div className="absolute bottom-0 left-0 w-full p-6 lg:p-8 flex flex-col justify-end">
-                                    <h3 className="text-xl lg:text-2xl font-black text-white font-montserrat mb-1 tracking-tight">
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/8 to-transparent" />
+                                <div className="absolute bottom-0 left-0 w-full p-6 lg:p-8">
+                                    <h3 className="text-xl lg:text-2xl font-normal text-white font-montserrat mb-1 tracking-tight">
                                         {space.title}
                                     </h3>
-                                    <p className="text-sm text-white/80 font-outfit tracking-wide">
+                                    <p className="text-[0.75rem] text-white/65 font-outfit tracking-[0.06em]">
                                         {space.subtitle}
                                     </p>
                                 </div>
