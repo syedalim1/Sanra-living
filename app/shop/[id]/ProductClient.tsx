@@ -278,42 +278,42 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                     <div className="w-full lg:w-[52%] px-4  md:px-0 lg:py-0 flex flex-col min-w-0">
                         
                         {/* 3. PRODUCT TITLE AREA */}
-                        <section className=" lg:mb-8 animate-in fade-in slide-in-from-bottom-2 duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
-                            <div className="flex flex-col gap-2.5 mb-5 md:mb-6">
-                                {dbProduct.badge && (
+                        <section className="mb-6 lg:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+                            <div className="flex flex-col gap-3 mb-6 md:mb-8">
+                                {(dbProduct.badge || dbProduct.is_new) && (
                                     <div className="flex">
-                                        <span className="inline-flex items-center justify-center bg-[#111] text-white px-3 py-1 text-[0.6rem] font-semibold font-montserrat tracking-[0.2em] rounded-full uppercase leading-none">
-                                            {dbProduct.badge}
+                                        <span className="inline-flex items-center justify-center bg-transparent border border-black/10 text-black/60 px-2.5 py-1 text-[0.55rem] font-medium font-montserrat tracking-[0.2em] rounded-full uppercase leading-none">
+                                            {dbProduct.badge || "New Arrival"}
                                         </span>
                                     </div>
                                 )}
-                                <h1 className="text-[1.5rem] md:text-[1.7rem] lg:text-[2.1rem] font-semibold font-montserrat text-black leading-[1.1] tracking-[-0.02em]">
+                                <h1 className="text-[1.7rem] md:text-[2rem] lg:text-[2.5rem] font-semibold font-montserrat text-[#111] leading-[1.05] tracking-tight">
                                     {dbProduct.title}
                                 </h1>
                                 {dbProduct.subtitle && (
-                                    <p className="text-[0.85rem] md:text-base text-gray-500 font-outfit leading-relaxed font-light tracking-wide max-w-xl">
+                                    <p className="text-[0.9rem] md:text-[1.05rem] text-gray-500 font-outfit leading-[1.6] font-light max-w-xl mt-1">
                                         {dbProduct.subtitle}
                                     </p>
                                 )}
                             </div>
                             
-                            <div className="flex flex-col gap-1   border-black/[0.04] py-1">
-                                <div className="flex items-baseline gap-3 md:gap-4">
-                                    <span className="text-3xl lg:text-4xl font-medium font-montserrat text-black tracking-tight">₹{dbProduct.price.toLocaleString("en-IN")}</span>
+                            <div className="flex flex-col gap-1.5 mt-2 border-t border-black/[0.03] pt-6">
+                                <div className="flex items-baseline gap-3">
+                                    <span className="text-3xl lg:text-[2.5rem] font-medium font-montserrat text-black tracking-tight leading-none">₹{dbProduct.price.toLocaleString("en-IN")}</span>
                                     {dbProduct.compare_at_price && (
-                                        <span className="text-lg md:text-xl text-gray-400 line-through font-outfit font-light tracking-wide">₹{dbProduct.compare_at_price.toLocaleString("en-IN")}</span>
+                                        <span className="text-[1.05rem] lg:text-[1.2rem] text-gray-400 line-through font-outfit font-light">₹{dbProduct.compare_at_price.toLocaleString("en-IN")}</span>
                                     )}
                                 </div>
-                                <p className="text-[0.65rem] md:text-xs text-gray-400 font-outfit font-light tracking-widest uppercase mt-1">Inclusive of all taxes</p>
+                                <p className="text-[0.65rem] md:text-[0.7rem] text-gray-400 font-outfit font-light tracking-[0.1em] uppercase mt-1">Inclusive of all taxes</p>
                             </div>
                         </section>
 
                         {/* 4. QUICK TRUST ICONS */}
-                        <section className="flex justify-between py-3 my-4 border-y border-black/[0.04] overflow-x-auto gap-2 md:gap-4 no-scrollbar animate-in fade-in slide-in-from-bottom-3 duration-700 delay-100 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
+                        <section className="flex justify-between py-6 my-6 border-y border-black/[0.03] overflow-x-auto gap-2 md:gap-4 no-scrollbar animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
                             {trustFeatures.slice(0, 4).map((feat, i) => (
-                                <div key={i} className="flex flex-col items-center gap-2.5 min-w-[72px] flex-1 group">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#FAFAFA] border border-black/[0.04] flex items-center justify-center shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-105 group-hover:bg-[#F0F0F0]">
-                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" className="opacity-80">
+                                <div key={i} className="flex flex-col items-center gap-3 min-w-[72px] flex-1 group">
+                                    <div className="w-9 h-9 md:w-11 md:h-11 rounded-full bg-[#F5F5F7] flex items-center justify-center shrink-0 transition-transform duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-105">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-70">
                                             {i === 0 && <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>}
                                             {i === 1 && <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>}
                                             {i === 2 && <><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></>}
@@ -321,7 +321,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                             {i > 3 && <path d="M5 12l5 5l10 -10"></path>}
                                         </svg>
                                     </div>
-                                    <span className="text-[0.6rem] md:text-[0.65rem] font-montserrat font-medium text-gray-500 text-center leading-tight tracking-[0.05em] uppercase">{feat}</span>
+                                    <span className="text-[0.55rem] md:text-[0.6rem] font-montserrat font-medium text-gray-400 text-center leading-tight tracking-[0.1em] uppercase">{feat}</span>
                                 </div>
                             ))}
                         </section>
@@ -379,19 +379,28 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                     </ul>
                                 </Accordion>
                                 
-                                <Accordion title="Dimensions & Weight">
-                                    <div className="space-y-4">
-                                        {dbProduct.dimensions ? (
-                                            <p className="m-0 leading-relaxed text-black/70">{dbProduct.dimensions}</p>
-                                        ) : (
-                                            <p className="m-0 leading-relaxed text-black/70">Please reference the product gallery images for detailed dimensional drawings.</p>
-                                        )}
+                                <Accordion title="Dimensions & Specifications">
+                                    <div className="flex flex-col gap-4">
+                                        <div className="bg-[#F9F9F9] rounded-xl p-4 md:p-5 border border-black/[0.03]">
+                                            <div className="flex items-center gap-2.5 mb-2.5">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-black/50"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M3 9h18M9 21V9"></path></svg>
+                                                <span className="text-[0.65rem] font-montserrat uppercase tracking-[0.15em] font-semibold text-black/50">Measurements</span>
+                                            </div>
+                                            {dbProduct.dimensions ? (
+                                                <p className="m-0 leading-relaxed text-black/80 text-[0.95rem] font-medium tracking-wide">{dbProduct.dimensions}</p>
+                                            ) : (
+                                                <p className="m-0 leading-relaxed text-black/60 text-[0.85rem]">Please reference the product gallery images for detailed dimensional drawings.</p>
+                                            )}
+                                        </div>
                                         {dbProduct.weight_kg && (
-                                            <div className="flex items-center gap-3 pt-4 border-t border-black/[0.03]">
-                                                <div className="w-8 h-8 rounded-full bg-[#F5F5F7] flex items-center justify-center">
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-black/60"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                            <div className="bg-[#F9F9F9] rounded-xl p-4 md:p-5 border border-black/[0.03] flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-black/[0.02] shrink-0">
+                                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-black/60"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                                                 </div>
-                                                <p className="m-0 text-[0.85rem]"><span className="text-black/80 font-medium uppercase tracking-widest text-[0.7rem] mr-2">Capacity:</span> {dbProduct.weight_kg}kg</p>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[0.6rem] font-montserrat uppercase tracking-[0.15em] font-semibold text-black/40 mb-0.5">Weight Capacity</span>
+                                                    <span className="text-base font-medium text-black/80 tracking-tight">{dbProduct.weight_kg} kg</span>
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -412,6 +421,19 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                         <li className="relative pl-4 before:content-[''] before:absolute before:left-0 before:top-[0.65rem] before:w-1 before:h-1 before:bg-black/20 before:rounded-full">Dry immediately to prevent water spots and protect the finish.</li>
                                     </ul>
                                 </Accordion>
+
+                                {dbProduct.faqs && dbProduct.faqs.length > 0 && (
+                                    <Accordion title="Frequently Asked Questions">
+                                        <div className="flex flex-col gap-5">
+                                            {dbProduct.faqs.map((faq, i) => (
+                                                <div key={i} className="border-b border-black/[0.04] pb-5 last:border-0 last:pb-0">
+                                                    <h4 className="text-[0.9rem] lg:text-[0.95rem] font-medium font-montserrat text-black mb-2 leading-snug">{faq.question}</h4>
+                                                    <p className="text-[0.85rem] lg:text-[0.9rem] text-black/60 font-outfit leading-relaxed m-0">{faq.answer}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </Accordion>
+                                )}
                             </div>
                         </section>
 
@@ -420,18 +442,23 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
 
                 {/* 9. RELATED PRODUCTS */}
                 {relatedProducts.length > 0 && (
-                    <section className="mt-12 lg:mt-20 px-4 md:px-0">
-                        <h2 className="text-xl lg:text-2xl font-medium font-montserrat text-black mb-6 tracking-wide">Complete The Look</h2>
+                    <section className="mt-16 lg:mt-24 mb-10">
+                        <div className="px-5 md:px-0 mb-6 lg:mb-8">
+                            <h2 className="text-[1.3rem] lg:text-[1.8rem] font-semibold font-montserrat text-black tracking-[-0.02em] leading-none">Complete The Look</h2>
+                        </div>
                         
-                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+                        <div className="flex overflow-x-auto gap-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 pb-8 px-5 md:px-0 no-scrollbar snap-x snap-mandatory">
                             {relatedProducts.map(rp => (
-                                <Link key={rp.id} href={`/shop/${rp.id}`} className="group flex flex-col justify-between h-full bg-white p-2 lg:p-3 rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 min-w-0">
-                                    <div className="bg-white rounded-lg aspect-[4/5] mb-3 overflow-hidden relative shrink-0">
-                                        <img src={optimizeImage(rp.image_url, 400)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 group-hover:scale-105" />
+                                <Link key={rp.id} href={`/shop/${rp.id}`} className="snap-start shrink-0 w-[65vw] sm:w-[40vw] md:w-auto group flex flex-col h-full focus:outline-none">
+                                    <div className="bg-[#F5F5F7] rounded-[1.25rem] aspect-[4/5] mb-4 overflow-hidden relative flex items-center justify-center p-6 transition-colors duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-[#EAEAEB]">
+                                        <img src={optimizeImage(rp.image_url, 600)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-105 mix-blend-darken" />
+                                        <div className="absolute bottom-4 right-4 w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm border border-black/5">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black/80"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                        </div>
                                     </div>
-                                    <div className="px-1 min-w-0 flex flex-col justify-between flex-1">
-                                        <p className="text-sm lg:text-base font-medium font-montserrat text-black mb-1 line-clamp-2 leading-snug min-h-[40px]">{rp.title}</p>
-                                        <p className="text-sm lg:text-sm text-gray-600 font-light font-outfit mt-auto">₹{rp.price.toLocaleString("en-IN")}</p>
+                                    <div className="px-1 flex flex-col flex-1">
+                                        <p className="text-[0.9rem] lg:text-[0.95rem] font-medium font-montserrat text-[#111] mb-1.5 line-clamp-2 leading-snug tracking-wide group-hover:text-black/70 transition-colors">{rp.title}</p>
+                                        <p className="text-[0.85rem] lg:text-[0.95rem] text-gray-500 font-outfit mt-auto font-light">₹{rp.price.toLocaleString("en-IN")}</p>
                                     </div>
                                 </Link>
                             ))}
@@ -439,9 +466,31 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                     </section>
                 )}
 
-                {/* 10. SOCIAL PROOF */}
-                <section className="py-8 mt-6 border-t border-black/5 text-center px-4 md:px-0">
-                    <p className="text-base lg:text-lg font-medium font-montserrat text-black m-0 tracking-wide">Trusted by 10,000+ customers<br className="lg:hidden"/> across India.</p>
+                {/* 10. CINEMATIC BRAND STORY */}
+                <section className="mt-10 lg:mt-16 mb-6">
+                    <div className="bg-[#111] text-white rounded-3xl mx-4 md:mx-0 p-8 md:p-12 flex flex-col items-center justify-center text-center overflow-hidden relative min-h-[300px]">
+                        <div className="relative z-10 flex flex-col items-center">
+                            <span className="text-[0.6rem] font-semibold font-montserrat tracking-[0.3em] uppercase text-white/50 mb-4">SANRA LIVING</span>
+                            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-montserrat tracking-tight leading-[1.2] mb-5 max-w-lg">
+                                Crafted For Everyday Elegance.
+                            </h2>
+                            <p className="text-[0.85rem] md:text-[0.95rem] font-outfit text-white/60 max-w-md font-light leading-[1.8]">
+                                Every piece is precision-engineered from premium stainless steel and expertly finished to elevate your space for generations.
+                            </p>
+                        </div>
+                        {/* Soft ambient background glow */}
+                        <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] pointer-events-none" />
+                    </div>
+                </section>
+
+                {/* 11. SOCIAL PROOF */}
+                <section className="py-10 text-center px-4 md:px-0 flex flex-col items-center justify-center">
+                    <div className="flex items-center gap-1 mb-3">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                            <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-black/80"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        ))}
+                    </div>
+                    <p className="text-[0.7rem] lg:text-[0.75rem] font-medium font-montserrat text-black/50 m-0 tracking-[0.15em] uppercase">Trusted by 10,000+ customers across India</p>
                 </section>
             </div>
             
