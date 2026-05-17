@@ -161,7 +161,7 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
 
 
     return (
-        <main style={{ background: C.bg, minHeight: "100vh", fontFamily: FO }}>
+        <main style={{ background: "#f5f5f3", minHeight: "100vh", fontFamily: FO }}>
             <SiteHeader />
 
             <section className="bg-white border-b border-black/[0.04] py-8 lg:py-12 px-6 lg:px-8">
@@ -185,7 +185,7 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                 </div>
             </section>
 
-            <div className="max-w-7xl mx-auto py-10 lg:py-16 px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto py-8 lg:py-14 px-5 lg:px-8">
                 <div className="flex gap-10 lg:gap-14 items-start">
 
                     {/* ── SIDEBAR – desktop only ────────────────────────── */}
@@ -216,29 +216,29 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                     <div className="flex-1 min-w-0">
 
                         {/* Header Row: Count & Sort */}
-                        <div className="flex items-center justify-between gap-4 mb-6">
-                            <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-between gap-3 mb-5">
+                            <div className="flex items-center gap-2.5">
                                 <button
                                     onClick={() => setFilterDrawerOpen(true)}
-                                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-black/8 bg-white text-[0.6rem] font-medium tracking-[0.18em] uppercase text-black/70 font-montserrat rounded-full transition-all duration-300 hover:border-black/20 hover:text-black"
+                                    className="lg:hidden flex items-center gap-1.5 px-3.5 py-[7px] border border-black/[0.06] bg-white/80 text-[0.58rem] font-medium tracking-[0.18em] uppercase text-black/60 font-montserrat rounded-full transition-all duration-300 hover:border-black/15 hover:text-black/80 active:scale-[0.97]"
                                 >
-                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="3" y1="6" x2="21" y2="6" /><line x1="7" y1="12" x2="17" y2="12" /><line x1="10" y1="18" x2="14" y2="18" />
                                     </svg>
                                     Filters
                                 </button>
-                                <p className="text-[0.6rem] tracking-[0.18em] uppercase text-black/30 font-montserrat">
+                                <p className="text-[0.55rem] tracking-[0.2em] uppercase text-black/25 font-montserrat">
                                     {loading ? "Loading…" : `${sorted.length} ${sorted.length === 1 ? "piece" : "pieces"}`}
                                 </p>
                             </div>
                             
-                            <div className="flex items-center gap-2.5">
-                                <span className="text-[0.58rem] font-medium tracking-[0.22em] uppercase text-black/30 font-montserrat hidden sm:inline-block">Sort</span>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[0.55rem] font-medium tracking-[0.22em] uppercase text-black/25 font-montserrat hidden sm:inline-block">Sort</span>
                                 <select
                                     value={selectedSort}
                                     onChange={(e) => setSelectedSort(e.target.value)}
-                                    className="border border-black/8 bg-white text-black text-[0.72rem] font-outfit px-3 py-1.5 outline-none cursor-pointer rounded-lg focus:border-black/25 transition-colors duration-300 appearance-none pr-7"
-                                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.6rem center' }}
+                                    className="border border-black/[0.06] bg-white/80 text-black/70 text-[0.68rem] font-outfit px-3 py-[6px] outline-none cursor-pointer rounded-lg focus:border-black/20 transition-all duration-300 appearance-none pr-7"
+                                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.55rem center' }}
                                 >
                                     {sortOptions.map((o) => <option key={o}>{o}</option>)}
                                 </select>
@@ -261,7 +261,7 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 <Link href="/shop" className="text-black text-[0.75rem] font-medium font-montserrat uppercase tracking-[0.15em] underline underline-offset-4">Browse All Categories</Link>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 md:gap-x-6 md:gap-y-12">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2.5 gap-y-7 sm:gap-x-4 sm:gap-y-9 md:gap-x-5 md:gap-y-11">
                                 {visible.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
                             </div>
                         ))}
@@ -297,10 +297,10 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                             style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)", zIndex: 40, backdropFilter: "blur(2px)" }}
                         />
                         <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
-                            transition={{ type: "tween", duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                            style={{ position: "fixed", top: 0, left: 0, height: "100%", width: 275, maxWidth: "82vw", background: "#FAFAFA", zIndex: 50, overflowY: "auto", borderRight: "1px solid rgba(0,0,0,0.04)" }}>
+                            transition={{ type: "tween", duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+                            style={{ position: "fixed", top: 0, left: 0, height: "100%", width: "84vw", maxWidth: 310, background: "#f8f8f7", zIndex: 50, overflowY: "auto", borderRight: "1px solid rgba(0,0,0,0.035)" }}>
                             {/* Drawer header */}
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "1.1rem 1.4rem", borderBottom: "1px solid rgba(0,0,0,0.04)" }}>
+                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.95rem 1.25rem", borderBottom: "1px solid rgba(0,0,0,0.035)" }}>
                                 <h2 style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", color: "#111", fontFamily: FM, margin: 0 }}>Filters</h2>
                                 <button onClick={() => setFilterDrawerOpen(false)}
                                     style={{ background: "none", border: "none", cursor: "pointer", padding: "0.35rem", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", transition: "background 0.2s" }}
@@ -312,7 +312,7 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                     </svg>
                                 </button>
                             </div>
-                            <div style={{ padding: "1.25rem 1.4rem" }}>
+                            <div style={{ padding: "1rem 1.25rem" }}>
                                 <FilterPanel
                                     selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
                                     selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}

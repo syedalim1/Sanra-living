@@ -51,19 +51,19 @@ export function StockBadge({ status }: { status: string }) {
         New: { label: "New", bg: "rgba(255,255,255,0.9)", color: "#111", border: "1px solid rgba(0,0,0,0.12)" },
         Limited: { label: "Limited", bg: "rgba(60,60,60,0.8)", color: "#fff" },
     };
-    const cfg = map[status] ?? { label: status, bg: "rgba(60,60,60,0.75)", color: "#fff" };
+    const cfg = map[status] ?? { label: status, bg: "rgba(60,60,60,0.82)", color: "#fff" };
     return (
         <span
             style={{
                 position: "absolute",
-                top: 10,
-                left: 10,
+                top: 9,
+                left: 9,
                 zIndex: 10,
-                fontSize: "0.52rem",
-                fontWeight: 600,
-                letterSpacing: "0.2em",
+                fontSize: "0.48rem",
+                fontWeight: 550,
+                letterSpacing: "0.18em",
                 textTransform: "uppercase",
-                padding: "0.2rem 0.5rem",
+                padding: "0.17rem 0.45rem",
                 background: cfg.bg,
                 color: cfg.color,
                 border: cfg.border ?? "none",
@@ -71,6 +71,7 @@ export function StockBadge({ status }: { status: string }) {
                 backdropFilter: "blur(8px)",
                 WebkitBackdropFilter: "blur(8px)",
                 borderRadius: "3px",
+                lineHeight: 1.6,
             }}
         >
             {cfg.label}
@@ -101,7 +102,7 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
             className="group flex flex-col cursor-pointer bg-transparent overflow-hidden h-full transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-0.5"
         >
             {/* Image Area */}
-            <div className="relative aspect-[4/5] overflow-hidden bg-[#F7F7F7] mb-3 rounded-xl md:rounded-2xl">
+            <div className="relative aspect-[4/5] overflow-hidden bg-[#f2f2f0] mb-3 rounded-xl md:rounded-2xl" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04)" }}>
                 {badge ? (
                     <StockBadge status={badge} />
                 ) : (
@@ -129,16 +130,16 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
             </div>
 
             {/* Card Body */}
-            <div className="flex flex-col flex-1 px-1 pb-3">
-                <h3 className="text-[0.8rem] md:text-[0.875rem] font-medium text-[#111] font-montserrat mb-1 line-clamp-2 leading-[1.4] tracking-tight">
+            <div className="flex flex-col flex-1 px-0.5 pb-2">
+                <h3 className="text-[0.78rem] md:text-[0.85rem] font-[430] text-[#111] font-montserrat mb-0.5 line-clamp-2 leading-[1.35] tracking-tight">
                     {product.title}
                 </h3>
-                <p className="text-[0.6rem] text-black/35 font-outfit mb-2 uppercase tracking-[0.18em]">
+                <p className="text-[0.55rem] text-black/30 font-outfit mb-1.5 uppercase tracking-[0.16em]">
                     {product.category}
                 </p>
 
                 <div className="mt-auto">
-                    <p className="text-[0.85rem] font-medium text-black font-montserrat tracking-tight">
+                    <p className="text-[0.82rem] font-medium text-[#111] font-montserrat tracking-tight">
                         {priceDisplay}
                     </p>
                 </div>
@@ -161,12 +162,12 @@ export function FilterSection({
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="border-b border-black/[0.04] py-3.5">
+        <div className="border-b border-black/[0.035] py-3">
             <button 
                 onClick={() => setIsOpen(!isOpen)} 
                 className="w-full flex justify-between items-center bg-transparent border-none cursor-pointer p-0 group"
             >
-                <span className="font-medium font-montserrat text-[0.62rem] tracking-[0.18em] uppercase text-[#111] group-hover:text-black/50 transition-colors duration-300">
+                <span className="font-medium font-montserrat text-[0.6rem] tracking-[0.16em] uppercase text-[#111]/80 group-hover:text-black/40 transition-colors duration-300">
                     {title}
                 </span>
                 <svg
@@ -179,20 +180,20 @@ export function FilterSection({
             </button>
             <div className="grid transition-all duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)]" style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}>
                 <div className="overflow-hidden">
-                    <div className={`flex flex-col gap-0.5 transition-all duration-400 ${isOpen ? 'mt-3 pb-1' : 'mt-0'}`}>
+                    <div className={`flex flex-col gap-0.5 transition-all duration-400 ${isOpen ? 'mt-2.5 pb-1' : 'mt-0'}`}>
                         {options.map((opt) => {
                             const active = selected === opt;
                             return (
                                 <button
                                     key={opt}
                                     onClick={() => onSelect(opt)}
-                                    className={`w-full text-left py-1 text-[0.78rem] font-outfit cursor-pointer border-none flex items-center gap-2.5 transition-all duration-250
-                                        ${active ? 'text-[#111]' : 'text-black/40 hover:text-black/70 bg-transparent'}
+                                    className={`w-full text-left py-[5px] text-[0.75rem] font-outfit cursor-pointer border-none flex items-center gap-2.5 transition-all duration-200
+                                        ${active ? 'text-[#111]' : 'text-black/38 hover:text-black/65 bg-transparent'}
                                     `}
                                     style={{ background: "transparent" }}
                                 >
-                                    <span className={`inline-flex w-[5px] h-[5px] rounded-full flex-shrink-0 border transition-all duration-300 ${active ? 'bg-black border-black' : 'bg-transparent border-black/20'}`} />
-                                    <span className={active ? 'font-medium' : 'font-light'}>{opt}</span>
+                                    <span className={`inline-flex w-[4px] h-[4px] rounded-full flex-shrink-0 border transition-all duration-300 ${active ? 'bg-black border-black scale-110' : 'bg-transparent border-black/20'}`} />
+                                    <span className={`leading-[1.3] ${active ? 'font-[470]' : 'font-[380]'}`}>{opt}</span>
                                 </button>
                             );
                         })}
