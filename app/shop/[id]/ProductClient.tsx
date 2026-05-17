@@ -206,7 +206,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
         <main className="min-h-screen bg-white font-outfit break-words">
             <SiteHeader />
 
-            <div className="max-w-7xl mx-auto pb-10 lg:pb-0 pt-0 lg:pt-8 px-0 md:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto  lg:pb-0 pt-0 lg:pt-8 px-0 md:px-6 lg:px-8">
                 <div className="flex flex-col lg:flex-row lg:items-start gap-0 lg:gap-10 xl:gap-14 lg:justify-center">
                     
                     {/* 2. PRODUCT IMAGE SECTION */}
@@ -215,7 +215,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         <div 
                             ref={scrollContainerRef}
                             onScroll={handleScroll}
-                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-[2/3] md:aspect-[3/4] lg:aspect-[4/5] max-h-[85vh] no-scrollbar md:rounded-3xl md:bg-[#F5F5F7] transition-all duration-700"
+                            className="flex overflow-x-auto snap-x snap-mandatory scroll-smooth w-full aspect-[3/4] lg:aspect-[4/5] max-h-[85vh] no-scrollbar md:rounded-3xl md:bg-[#F5F5F7] transition-all duration-700"
                         >
                             {images.map((img, idx) => (
                                 <div 
@@ -274,8 +274,8 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                     <div className="w-full lg:w-[52%] px-4  md:px-0 lg:py-0 flex flex-col min-w-0">
                         
                         {/* 3. PRODUCT TITLE AREA */}
-                        <section className="mb-8 lg:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
-                            <div className="flex flex-col gap-3 mb-8">
+                        <section className=" lg:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+                            <div className="flex flex-col gap-3 ">
                                 {(dbProduct.badge || dbProduct.is_new) && (
                                     <div className="flex">
                                         <span className="inline-flex items-center justify-center bg-[#F5F5F7] text-black/70 px-3 py-1.5 text-[0.6rem] font-medium font-montserrat tracking-[0.2em] rounded-full uppercase leading-none">
@@ -287,13 +287,13 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                     {dbProduct.title}
                                 </h1>
                                 {dbProduct.subtitle && (
-                                    <p className="text-[0.9rem] md:text-[1rem] text-black/50 font-outfit leading-[1.7] font-light max-w-[90%] md:max-w-xl mt-2">
+                                    <p className="text-[0.9rem] md:text-[1rem] text-black/50 font-outfit leading-[1.7] font-light max-w-[90%] md:max-w-xl ">
                                         {dbProduct.subtitle}
                                     </p>
                                 )}
                             </div>
                             
-                            <div className="flex flex-col gap-2 mt-4 pt-6 border-t border-black/[0.04]">
+                            <div className="flex flex-col gap-2  pt-1 border-t border-black/[0.04]">
                                 <div className="flex items-baseline gap-3">
                                     <span className="text-[1.8rem] lg:text-[2.2rem] font-medium font-montserrat text-black tracking-tight leading-none">
                                         ₹{dbProduct.price.toLocaleString("en-IN")}
@@ -316,7 +316,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         </section>
 
                         {/* 4. QUICK TRUST ICONS */}
-                        <section className="grid grid-cols-4 py-6 my-6 gap-2 md:gap-4 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
+                        <section className="grid grid-cols-4 py-2 my-2 gap-2 md:gap-4 animate-in fade-in slide-in-from-bottom-5 duration-700 delay-100 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
                             {trustFeatures.slice(0, 4).map((feat, i) => (
                                 <div key={i} className="flex flex-col items-center gap-2 group">
                                     <div className="w-9 h-9 md:w-10 md:h-10 rounded-full border border-black/5 flex items-center justify-center shrink-0 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-black/[0.02] group-hover:border-transparent">
@@ -334,7 +334,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         </section>
 
                         {/* 5. QUANTITY + BUY SECTION (Inline) */}
-                        <section className="mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
+                        <section className="mb-2 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both">
                             <div className="flex gap-3 md:gap-4 mb-3 md:mb-4">
                                 {/* Quantity selector */}
                                 <div className="flex items-center border border-black/[0.08] rounded-xl bg-white p-1 w-[110px] md:w-[130px] shrink-0 transition-colors hover:border-black/20 focus-within:border-black/30 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
@@ -375,7 +375,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                         </section>
 
                         {/* 8. ACCORDION INFORMATION SECTION */}
-                        <section className="mb-10 mt-2">
+                        <section className="mb-2 mt-2">
                             <div className="-mx-4 md:mx-0 border-y md:border border-black/[0.04] md:rounded-3xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-700 delay-300 ease-[cubic-bezier(0.2,0.8,0.2,1)] fill-mode-both bg-white md:shadow-[0_2px_10px_rgba(0,0,0,0.01)]">
                                 <Accordion title="Materials & Finish" open>
                                     <ul className="pl-2 m-0 space-y-2.5">
@@ -450,16 +450,16 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
 
                 {/* 9. RELATED PRODUCTS */}
                 {relatedProducts.length > 0 && (
-                    <section className="mt-10 lg:mt-12 mb-10">
+                    <section className="mt-2 px-2 lg:mt-12 mb-2">
                         <div className="px-5 md:px-0 mb-6 lg:mb-8">
                             <h2 className="text-[1.3rem] lg:text-[1.8rem] font-semibold font-montserrat text-black tracking-[-0.02em] leading-none">Complete The Look</h2>
                         </div>
                         
-                        <div className="flex overflow-x-auto gap-4 md:gap-5 pb-8 px-5 md:px-0 no-scrollbar snap-x snap-mandatory lg:pr-5">
+                        <div className="flex overflow-x-auto gap-4 md:gap-5 pb-2 px-5 md:px-0 no-scrollbar snap-x snap-mandatory lg:pr-5">
                             {relatedProducts.map(rp => (
                                 <Link key={rp.id} href={`/shop/${rp.id}`} className="snap-start shrink-0 w-[78vw] sm:w-[45vw] md:w-[32vw] lg:w-[22vw] group flex flex-col h-full focus:outline-none">
-                                    <div className="bg-[#F5F5F7] rounded-2xl aspect-[4/5] mb-4 overflow-hidden relative flex items-center justify-center p-6 md:p-8 transition-colors duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-[#EAEAEB]">
-                                        <img src={optimizeImage(rp.image_url, 600)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.03] mix-blend-darken" />
+                                    <div className="rounded-2xl aspect-[4/5] mb-4 overflow-hidden relative flex items-center justify-center  md:p-8 transition-colors duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:bg-[#EAEAEB]">
+                                        <img src={optimizeImage(rp.image_url, 600)} alt={rp.title} className="w-full h-full object-contain object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.03]" />
                                         <div className="absolute bottom-4 right-4 w-9 h-9 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500 shadow-sm border border-black/5">
                                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-black/80"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                                         </div>
@@ -474,32 +474,6 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                     </section>
                 )}
 
-                {/* 10. CINEMATIC BRAND STORY */}
-                <section className="mt-8 lg:mt-10 mb-0">
-                    <div className="bg-[#111] text-white rounded-3xl mx-4 md:mx-0 p-8 md:p-12 flex flex-col items-center justify-center text-center overflow-hidden relative min-h-[300px]">
-                        <div className="relative z-10 flex flex-col items-center">
-                            <span className="text-[0.6rem] font-semibold font-montserrat tracking-[0.3em] uppercase text-white/50 mb-4">SANRA LIVING</span>
-                            <h2 className="text-2xl md:text-3xl lg:text-4xl font-semibold font-montserrat tracking-tight leading-[1.2] mb-5 max-w-lg">
-                                Crafted For Everyday Elegance.
-                            </h2>
-                            <p className="text-[0.85rem] md:text-[0.95rem] font-outfit text-white/60 max-w-md font-light leading-[1.8]">
-                                Every piece is precision-engineered from premium stainless steel and expertly finished to elevate your space for generations.
-                            </p>
-                        </div>
-                        {/* Soft ambient background glow */}
-                        <div className="absolute top-[-50%] left-[-50%] w-[200%] h-[200%] bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.03)_0%,transparent_70%)] pointer-events-none" />
-                    </div>
-                </section>
-
-                {/* 11. SOCIAL PROOF */}
-                {/* <section className="py-10 text-center px-4 md:px-0 flex flex-col items-center justify-center">
-                    <div className="flex items-center gap-1 mb-3">
-                        {[1, 2, 3, 4, 5].map((i) => (
-                            <svg key={i} width="14" height="14" viewBox="0 0 24 24" fill="currentColor" className="text-black/80"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        ))}
-                    </div>
-                    <p className="text-[0.7rem] lg:text-[0.75rem] font-medium font-montserrat text-black/50 m-0 tracking-[0.15em] uppercase">Trusted by 10,000+ customers across India</p>
-                </section> */}
             </div>
             
             <SiteFooter />
