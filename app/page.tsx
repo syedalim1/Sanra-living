@@ -25,40 +25,59 @@ export default function Homepage() {
       <HeroSection />
 
       {/* 1.5. TRUST BADGES STRIP */}
-      <section className="bg-white border-b border-black/[0.04]">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-6 flex flex-nowrap overflow-x-auto no-scrollbar justify-start sm:justify-center gap-8 lg:gap-14 items-center">
-          {[
-            {
-              icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
-              text: "10 Year Warranty"
-            },
-            {
-              icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>,
-              text: "Premium Jindal Steel"
-            },
-            {
-              icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>,
-              text: "Pan India Delivery"
-            },
-            {
-              icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>,
-              text: "Secure Payments"
-            },
-            {
-              icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
-              text: "Made in Coimbatore"
-            },
-          ].map((badge) => (
-            <div key={badge.text} className="flex items-center gap-2.5 shrink-0">
-              <span className="text-black/40">{badge.icon}</span>
-              <span className="text-[0.58rem] font-light text-black/50 tracking-[0.18em] uppercase font-montserrat whitespace-nowrap">
-                {badge.text}
-              </span>
-            </div>
-          ))}
-        </div>
-      </section>
+      <section className="bg-white border-b border-black/[0.04] overflow-hidden">
 
+  <div className="relative w-full">
+
+    {/* Left Fade */}
+    <div className="absolute left-0 top-0 z-10 h-full w-20 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+
+    {/* Right Fade */}
+    <div className="absolute right-0 top-0 z-10 h-full w-20 bg-gradient-to-l from-white to-transparent pointer-events-none" />
+
+    <div
+      className="flex w-max"
+      style={{
+        animation: "scroll 25s linear infinite",
+      }}
+    >
+
+      {[...Array(2)].map((_, i) => (
+
+        <div key={i} className="flex shrink-0 items-center">
+
+          {[
+            "10 Year Warranty",
+            "Premium Jindal Steel",
+            "Pan India Delivery",
+            "Secure Payments",
+            "Made in Coimbatore",
+          ].map((text) => (
+
+            <div
+              key={text}
+              className="flex items-center gap-3 px-10 py-5 shrink-0"
+            >
+
+              <div className="w-1.5 h-1.5 rounded-full bg-black/30" />
+
+              <span className="text-[0.58rem] uppercase tracking-[0.28em] text-black/55 whitespace-nowrap font-light">
+                {text}
+              </span>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      ))}
+
+    </div>
+
+  </div>
+
+</section>
       {/* 2. Visual Categories */}
       <CategoryGrid />
 
@@ -74,13 +93,13 @@ export default function Homepage() {
 
       {/* 5. Factory/Workshop Section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 bg-[#0A0A0A] text-white">
-        <div className="relative min-h-[400px] lg:min-h-[600px] w-full">
-            <img 
+        <div className="relative lg:min-h-[600px] w-full">
+            {/* <img 
                 src="/steel-welding.png" 
                 alt="Sanra Steel Factory" 
                 className="absolute inset-0 w-full h-full object-cover filter grayscale opacity-50 mix-blend-luminosity"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/70 to-transparent" />
+            /> */}
+            {/* <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#0A0A0A] via-[#0A0A0A]/70 to-transparent" /> */}
         </div>
         <div className="flex flex-col justify-center px-8 py-16 lg:px-24 lg:py-32 relative z-10">
             <p className="text-[0.58rem] tracking-[0.3em] uppercase text-white/30 font-montserrat mb-5">Our Craft</p>

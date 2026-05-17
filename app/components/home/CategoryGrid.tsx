@@ -41,19 +41,19 @@ export default function CategoryGrid() {
                     </div>
                 </div>
 
-                <div className="flex overflow-x-auto lg:grid lg:grid-cols-4 gap-4 lg:gap-6 snap-x snap-mandatory no-scrollbar -mx-6 px-6 lg:mx-0 lg:px-0 pb-6 lg:pb-0">
+                <div className="flex  overflow-x-auto lg:grid lg:grid-cols-4 gap-4 lg:gap-6 snap-x snap-mandatory no-scrollbar -mx-6 px-6 lg:mx-0 lg:px-0 pb-6 lg:pb-0">
                     {categories.map((cat) => (
                         <Link
                             key={cat.name}
                             href={cat.href}
-                            className="group block w-[72vw] sm:w-[42vw] lg:w-full flex-shrink-0 snap-start lg:snap-align-none"
+                            className="group block w-[72vw] sm:w-[42vw] lg:w-full flex-shrink-0 snap-start lg:snap-align-none p-5"
                         >
-                            <div className="w-full aspect-[4/5] bg-[#F5F5F3] rounded-2xl overflow-hidden mb-4 relative transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
+                            <div className="w-full  aspect-[1/1] bg-[#F5F5F3] rounded-2xl overflow-hidden mb-4 relative transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)]">
                                 <img
                                     src={cat.image}
                                     alt={cat.name}
                                     loading="lazy"
-                                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.04]"
+                                    className="absolute inset-0 w-full h-full object-contain object-center transition-transform duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.04]"
                                 />
                                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-700" />
                             </div>
