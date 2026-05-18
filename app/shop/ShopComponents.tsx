@@ -45,33 +45,20 @@ type StockStatus = "In Stock" | "Only 12 Left" | "Only 3 Left" | "New" | "Limite
 
 export function StockBadge({ status }: { status: string }) {
     const map: Record<string, { label: string; bg: string; color: string; border?: string }> = {
-        "In Stock": { label: "In Stock", bg: "rgba(17,17,17,0.75)", color: "#fff" },
-        "Only 12 Left": { label: "Only 12 Left", bg: "rgba(30,30,30,0.8)", color: "#fff" },
-        "Only 3 Left": { label: "Only 3 Left", bg: "rgba(20,20,20,0.85)", color: "#fff" },
-        New: { label: "New", bg: "rgba(255,255,255,0.9)", color: "#111", border: "1px solid rgba(0,0,0,0.12)" },
-        Limited: { label: "Limited", bg: "rgba(60,60,60,0.8)", color: "#fff" },
+        "In Stock": { label: "Ships Fast", bg: "rgba(255,255,255,0.95)", color: "#111", border: "1px solid rgba(0,0,0,0.08)" },
+        "Only 12 Left": { label: "Selling Fast", bg: "rgba(30,30,30,0.9)", color: "#fff" },
+        "Only 3 Left": { label: "Only 3 Left", bg: "rgba(200,50,50,0.9)", color: "#fff" },
+        New: { label: "New Arrival", bg: "#111", color: "#fff" },
+        Limited: { label: "Best Seller", bg: "rgba(180,140,80,0.9)", color: "#fff" },
     };
-    const cfg = map[status] ?? { label: status, bg: "rgba(60,60,60,0.82)", color: "#fff" };
+    const cfg = map[status] ?? { label: status, bg: "rgba(255,255,255,0.95)", color: "#111", border: "1px solid rgba(0,0,0,0.08)" };
     return (
         <span
+            className="absolute top-3 left-3 z-10 text-[0.55rem] font-bold tracking-[0.12em] uppercase px-2 py-1 rounded-[4px] shadow-sm font-montserrat backdrop-blur-md"
             style={{
-                position: "absolute",
-                top: 9,
-                left: 9,
-                zIndex: 10,
-                fontSize: "0.48rem",
-                fontWeight: 550,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                padding: "0.17rem 0.45rem",
                 background: cfg.bg,
                 color: cfg.color,
                 border: cfg.border ?? "none",
-                fontFamily: FM,
-                backdropFilter: "blur(8px)",
-                WebkitBackdropFilter: "blur(8px)",
-                borderRadius: "3px",
-                lineHeight: 1.6,
             }}
         >
             {cfg.label}
@@ -79,8 +66,9 @@ export function StockBadge({ status }: { status: string }) {
     );
 }
 
-export function ProductCard({ product, index, badge, buttonText = "View Details" }: { product: Product; index: number; badge?: string; buttonText?: string }) {
+export function ProductCard({ product, index, badge, buttonText = "Quick Add" }: { product: Product; index: number; badge?: string; buttonText?: string }) {
     const priceDisplay = `₹${product.price.toLocaleString("en-IN")}`;
+    const mrpDisplay = `₹${Math.floor(product.price * 1.35).toLocaleString("en-IN")}`;
     const router = useRouter();
 
     const handleCardClick = () => {
@@ -99,15 +87,26 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: index * 0.05, ease: [0.2, 0.8, 0.2, 1] }}
             onClick={handleCardClick}
-            className="group flex flex-col cursor-pointer bg-transparent overflow-hidden h-full transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-0.5"
+            className="group flex flex-col cursor-pointer bg-white overflow-hidden h-full transition-all duration-500 ease-[cubic-bezier(0.2,0.8,0.2,1)] hover:-translate-y-1 hover:shadow-[0_12px_40px_-10px_rgba(0,0,0,0.12)] border border-black/5 rounded-xl md:rounded-2xl"
         >
             {/* Image Area */}
-            <div className="relative aspect-[4/5] overflow-hidden bg-[#f2f2f0] mb-3 rounded-xl md:rounded-2xl" style={{ boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.04)" }}>
+            <div className="relative aspect-[4/5] overflow-hidden bg-white border-b border-black/5">
                 {badge ? (
                     <StockBadge status={badge} />
                 ) : (
                     <StockBadge status={product.stock_status} />
                 )}
+                
+                {/* Heart Icon (Top Right) */}
+                <button 
+                    onClick={(e) => e.stopPropagation()}
+                    className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/70 backdrop-blur-md text-black/40 hover:text-red-500 hover:bg-white transition-all shadow-sm"
+                >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                </button>
+
                 <img
                     src={
                         optimizeImage(product.image_url, 600) ||
@@ -115,7 +114,7 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
                     }
                     alt={product.title}
                     loading="lazy"
-                    className="absolute inset-0 w-full h-full object-contain object-center transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:opacity-0 group-hover:scale-[1.03] mix-blend-darken p-3 md:p-5"
+                    className="absolute inset-0 w-full h-full object-contain object-center transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-[1.05] p-2 md:p-4 bg-[#f8f8f8]"
                 />
                 <img
                     src={
@@ -125,24 +124,62 @@ export function ProductCard({ product, index, badge, buttonText = "View Details"
                     }
                     alt=""
                     loading="lazy"
-                    className="absolute inset-0 w-full h-full object-contain object-center opacity-0 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:opacity-100 group-hover:scale-[1.03] mix-blend-darken p-3 md:p-5"
+                    className="absolute inset-0 w-full h-full object-contain object-center opacity-0 transition-all duration-700 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:opacity-100 group-hover:scale-[1.05] p-2 md:p-4 bg-[#f8f8f8]"
                 />
+
+                {/* Quick Add Hover Bar */}
+                <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)] z-20 hidden md:block">
+                    <button 
+                        onClick={handleAddToCart}
+                        className="w-full py-3 bg-black/95 text-white text-[0.65rem] font-bold tracking-[0.15em] uppercase font-montserrat rounded-lg shadow-lg hover:bg-black transition-colors"
+                    >
+                        {buttonText}
+                    </button>
+                </div>
             </div>
 
             {/* Card Body */}
-            <div className="flex flex-col flex-1 px-0.5 pb-2">
-                <h3 className="text-[0.78rem] md:text-[0.85rem] font-[430] text-[#111] font-montserrat mb-0.5 line-clamp-2 leading-[1.35] tracking-tight">
+            <div className="flex flex-col flex-1 p-4 md:p-5">
+              
+
+                {/* Title & Tags */}
+                <h3 className="text-[0.95rem] md:text-[1.05rem] font-semibold text-[#111] font-montserrat mb-1 line-clamp-2 leading-[1.3] tracking-tight">
                     {product.title}
                 </h3>
-                <p className="text-[0.55rem] text-black/30 font-outfit mb-1.5 uppercase tracking-[0.16em]">
+                <p className="text-[0.65rem] text-black/40 font-outfit mb-3 uppercase tracking-[0.1em] font-medium flex items-center gap-2">
                     {product.category}
+                    <span className="w-1 h-1 rounded-full bg-black/20"></span>
+                    <span className="text-black/60 capitalize tracking-normal">{product.finish || 'Engineered Steel'}</span>
                 </p>
 
-                <div className="mt-auto">
-                    <p className="text-[0.82rem] font-medium text-[#111] font-montserrat tracking-tight">
-                        {priceDisplay}
-                    </p>
+                {/* Price and Swatches */}
+                <div className="mt-auto pt-2 flex items-end justify-between">
+                    <div>
+                        <p className="flex items-baseline gap-2">
+                            <span className="text-[1rem] md:text-[1.1rem] font-bold text-[#111] font-montserrat tracking-tight">
+                                {priceDisplay}
+                            </span>
+                            <span className="text-[0.75rem] text-black/30 font-outfit line-through decoration-black/20">
+                                {mrpDisplay}
+                            </span>
+                        </p>
+                    </div>
+                    
+                    {/* Swatches */}
+                    <div className="flex gap-1.5 pb-1">
+                        <span className="w-4 h-4 rounded-full bg-[#111] border border-black/10 shadow-inner"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#E5E5E5] border border-black/10 shadow-inner"></span>
+                        <span className="w-4 h-4 rounded-full bg-[#8C8C8C] border border-black/10 shadow-inner"></span>
+                    </div>
                 </div>
+
+                {/* Mobile Add to Cart (shows only on mobile) */}
+                <button 
+                    onClick={handleAddToCart}
+                    className="w-full mt-4 py-2.5 bg-[#f5f5f5] text-black text-[0.65rem] font-bold tracking-[0.15em] uppercase font-montserrat rounded-lg hover:bg-black hover:text-white transition-colors md:hidden border border-black/5"
+                >
+                    {buttonText}
+                </button>
             </div>
         </motion.div>
     );
