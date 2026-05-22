@@ -220,74 +220,82 @@ export default function MobilePreviewSection({
                         }}>📱 Live Mobile Preview</p>
 
                         <div style={{
-                            background: "#fff", borderRadius: 24,
-                            border: "3px solid #111", overflow: "hidden",
-                            boxShadow: "0 12px 40px rgba(0,0,0,0.12)",
+                            background: "#FAF9F6", borderRadius: 28,
+                            border: "6px solid #1C1A17", overflow: "hidden",
+                            boxShadow: "0 16px 48px rgba(0,0,0,0.12)",
+                            position: "relative"
                         }}>
                             {/* Status bar */}
                             <div style={{
-                                background: "#111", padding: "0.35rem 0.85rem",
+                                background: "#1C1A17", padding: "0.45rem 1rem",
                                 display: "flex", justifyContent: "space-between", alignItems: "center",
                             }}>
-                                <span style={{ color: "#fff", fontSize: "0.55rem", fontWeight: 600 }}>9:41</span>
-                                <div style={{ width: 40, height: 4, borderRadius: 99, background: "#333" }} />
+                                <span style={{ color: "#FAF9F6", fontSize: "0.55rem", fontWeight: 600 }}>9:41</span>
+                                <div style={{ width: 44, height: 4, borderRadius: 99, background: "#373430" }} />
                                 <div style={{ display: "flex", gap: 3 }}>
-                                    {[0,1,2].map(i => (
-                                        <div key={i} style={{ width: 3, height: 3, borderRadius: "50%", background: "#fff" }} />
-                                    ))}
+                                    <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#FAF9F6" }} />
+                                    <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#FAF9F6" }} />
+                                    <div style={{ width: 4, height: 4, borderRadius: "50%", background: "#C5A880" }} />
                                 </div>
                             </div>
 
                             {/* Hero image */}
-                            <div style={{ width: "100%", aspectRatio: "4/5", background: "#F3F0EB", overflow: "hidden" }}>
+                            <div style={{ width: "100%", aspectRatio: "4/5", background: "#F5F4F0", overflow: "hidden", position: "relative" }}>
                                 {heroImage ? (
                                     <img src={heroImage} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                                 ) : (
                                     <div style={{
                                         display: "flex", alignItems: "center", justifyContent: "center",
                                         height: "100%", flexDirection: "column", gap: "0.3rem",
+                                        color: "#C5A880",
                                     }}>
-                                        <span style={{ fontSize: "1.5rem", opacity: 0.3 }}>📦</span>
-                                        <span style={{ fontSize: "0.6rem", color: "#C8B89A", fontFamily: FO }}>No image</span>
+                                        <span style={{ fontSize: "1.8rem" }}>🛋️</span>
+                                        <span style={{ fontSize: "0.6rem", fontFamily: FO, letterSpacing: "0.05em", color: "#9C9485" }}>No image</span>
                                     </div>
+                                )}
+
+                                {/* Brand Badge */}
+                                <div style={{ position: "absolute", top: 12, left: 12, background: "rgba(28, 26, 23, 0.85)", backdropFilter: "blur(4px)", padding: "4px 8px", borderRadius: 4 }}>
+                                    <span style={{ fontSize: "0.42rem", color: "#FAF9F6", fontWeight: 700, fontFamily: FM, letterSpacing: "0.15em", textTransform: "uppercase" }}>SANRA</span>
+                                </div>
+
+                                {(form.is_best_seller || form.is_featured) && (
+                                    <span style={{
+                                        position: "absolute", top: 12, right: 12,
+                                        background: "#C5A880", color: "#FAF9F6",
+                                        fontSize: "0.45rem", fontWeight: 800, padding: "0.2rem 0.5rem",
+                                        borderRadius: "4px", fontFamily: FM, letterSpacing: "0.08em"
+                                    }}>
+                                        {form.is_best_seller ? "BESTSELLER" : "FEATURED"}
+                                    </span>
                                 )}
                             </div>
 
                             {/* Product info */}
-                            <div style={{ padding: "0.85rem" }}>
-                                {/* Badges */}
-                                {(form.is_featured || form.is_best_seller) && (
-                                    <div style={{ display: "flex", gap: "0.3rem", marginBottom: "0.4rem" }}>
-                                        {form.is_best_seller && (
-                                            <span style={{ fontSize: "0.4rem", background: "#FFF5F0", color: "#8B2500", padding: "0.1rem 0.3rem", borderRadius: 3, fontWeight: 700, fontFamily: FM, textTransform: "uppercase" }}>Best Seller</span>
-                                        )}
-                                        {form.is_featured && (
-                                            <span style={{ fontSize: "0.4rem", background: "#FDF6E3", color: "#B8860B", padding: "0.1rem 0.3rem", borderRadius: 3, fontWeight: 700, fontFamily: FM, textTransform: "uppercase" }}>Featured</span>
-                                        )}
-                                    </div>
-                                )}
-
+                            <div style={{ padding: "1rem", background: "#FAF9F6" }}>
                                 <p style={{
-                                    fontSize: "0.82rem", fontWeight: 700, fontFamily: FM, color: "#111",
-                                    margin: "0 0 0.1rem", lineHeight: 1.25,
-                                }}>{form.title || "Product Title"}</p>
+                                    fontSize: "0.85rem", fontWeight: 700, fontFamily: FM, color: "#1C1A17",
+                                    margin: "0 0 0.15rem", lineHeight: 1.25, letterSpacing: "-0.01em"
+                                }}>{form.title || "Luxury Specimen"}</p>
 
                                 {form.subtitle && (
-                                    <p style={{ fontSize: "0.58rem", color: "#9C9485", fontFamily: FO, margin: "0 0 0.4rem" }}>{form.subtitle}</p>
+                                    <p style={{ fontSize: "0.6rem", color: "#9C9485", fontFamily: FO, margin: "0 0 0.5rem" }}>{form.subtitle}</p>
                                 )}
 
                                 {/* Price */}
-                                <div style={{ display: "flex", alignItems: "baseline", gap: "0.35rem", marginBottom: "0.5rem" }}>
-                                    <span style={{ fontSize: "0.95rem", fontWeight: 800, fontFamily: FM, color: "#111" }}>
+                                <div style={{ display: "flex", alignItems: "baseline", gap: "0.4rem", marginBottom: "0.75rem" }}>
+                                    <span style={{ fontSize: "1rem", fontWeight: 800, fontFamily: FM, color: "#1C1A17" }}>
                                         {form.price ? fmtPrice(form.price) : "₹0"}
                                     </span>
                                     {form.compare_at_price && Number(form.compare_at_price) > Number(form.price ?? 0) && (
                                         <>
-                                            <span style={{ fontSize: "0.6rem", color: "#C8B89A", textDecoration: "line-through", fontFamily: FO }}>
+                                            <span style={{ fontSize: "0.65rem", color: "#C5A880", textDecoration: "line-through", fontFamily: FO }}>
                                                 {fmtPrice(form.compare_at_price)}
                                             </span>
                                             {discountPct && (
-                                                <span style={{ fontSize: "0.45rem", background: "#10B98118", color: "#10B981", padding: "0.1rem 0.25rem", borderRadius: 3, fontWeight: 700, fontFamily: FM }}>{discountPct}% OFF</span>
+                                                <span style={{ fontSize: "0.48rem", background: "rgba(16,185,129,0.08)", color: "#10B981", padding: "0.1rem 0.3rem", borderRadius: 4, fontWeight: 700, fontFamily: FM }}>
+                                                    {discountPct}% OFF
+                                                </span>
                                             )}
                                         </>
                                     )}
@@ -295,47 +303,47 @@ export default function MobilePreviewSection({
 
                                 {/* Trust badges */}
                                 {(form.trust_features ?? []).length > 0 && (
-                                    <div style={{ display: "flex", gap: "0.25rem", flexWrap: "wrap", marginBottom: "0.5rem" }}>
-                                        {(form.trust_features ?? []).slice(0, 4).map((f, i) => (
+                                    <div style={{ display: "flex", gap: "0.25rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
+                                        {(form.trust_features ?? []).slice(0, 3).map((f, i) => (
                                             <span key={i} style={{
-                                                fontSize: "0.4rem", background: "#F3F0EB", padding: "0.12rem 0.3rem",
-                                                borderRadius: 3, fontFamily: FM, fontWeight: 600, color: "#111",
+                                                fontSize: "0.42rem", background: "#F5F4F0", padding: "0.15rem 0.35rem",
+                                                borderRadius: 4, fontFamily: FM, fontWeight: 600, color: "#1C1A17",
+                                                border: "1px solid #E8E4DC"
                                             }}>{f}</span>
                                         ))}
-                                        {(form.trust_features ?? []).length > 4 && (
-                                            <span style={{ fontSize: "0.4rem", color: "#9C9485", fontFamily: FO, padding: "0.12rem 0" }}>
-                                                +{(form.trust_features ?? []).length - 4} more
-                                            </span>
-                                        )}
                                     </div>
                                 )}
 
-                                {/* CTA buttons */}
-                                <div style={{
-                                    background: "#111", color: "#fff", textAlign: "center",
-                                    padding: "0.45rem", borderRadius: 6,
-                                    fontSize: "0.5rem", fontWeight: 700, fontFamily: FM,
-                                    marginBottom: "0.3rem", letterSpacing: "0.08em",
-                                }}>ADD TO CART</div>
-                                <div style={{ display: "flex", gap: "0.25rem" }}>
+                                {/* Action buttons */}
+                                <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
                                     <div style={{
-                                        flex: 1, background: "#F3F0EB", textAlign: "center",
-                                        padding: "0.4rem", borderRadius: 6,
-                                        fontSize: "0.45rem", fontWeight: 700, fontFamily: FM,
-                                        color: "#111",
-                                    }}>BUY NOW</div>
-                                    <div style={{
-                                        flex: 1, background: "#25D366", textAlign: "center",
-                                        padding: "0.4rem", borderRadius: 6,
-                                        fontSize: "0.45rem", fontWeight: 700, fontFamily: FM,
-                                        color: "#fff",
-                                    }}>WHATSAPP</div>
+                                        background: "#1C1A17", color: "#FAF9F6", textAlign: "center",
+                                        padding: "0.55rem", borderRadius: 8,
+                                        fontSize: "0.55rem", fontWeight: 700, fontFamily: FM,
+                                        letterSpacing: "0.1em", cursor: "pointer"
+                                    }}>ADD TO CART</div>
+                                    
+                                    <div style={{ display: "flex", gap: "0.35rem" }}>
+                                        <div style={{
+                                            flex: 1, background: "#FAF9F6", border: "1px solid #1C1A17", color: "#1C1A17",
+                                            textAlign: "center", padding: "0.5rem", borderRadius: 8,
+                                            fontSize: "0.5rem", fontWeight: 700, fontFamily: FM, letterSpacing: "0.05em"
+                                        }}>BUY NOW</div>
+                                        <div style={{
+                                            flex: 1, background: "#25D366", color: "#FAF9F6",
+                                            textAlign: "center", padding: "0.5rem", borderRadius: 8,
+                                            fontSize: "0.5rem", fontWeight: 700, fontFamily: FM, letterSpacing: "0.05em",
+                                            display: "flex", alignItems: "center", justifyContent: "center", gap: 3
+                                        }}>
+                                            <span>WHATSAPP</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             {/* Home indicator */}
-                            <div style={{ padding: "0.35rem 0", display: "flex", justifyContent: "center" }}>
-                                <div style={{ width: 40, height: 4, borderRadius: 99, background: "#E8E4DC" }} />
+                            <div style={{ padding: "0.4rem 0", display: "flex", justifyContent: "center", background: "#FAF9F6" }}>
+                                <div style={{ width: 44, height: 4, borderRadius: 99, background: "#E8E4DC" }} />
                             </div>
                         </div>
                     </div>

@@ -5,11 +5,11 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { ProductCard, FilterSection, Product, C, FM, FO, sortOptions } from "./ShopComponents";
+import { ProductCard, FilterSection, Product, sortOptions } from "./ShopComponents";
 
 /* ═══════════════════════════════════════════════════════════════
    CATEGORY CONFIG — each category can define custom filters
-═══════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════ */
 export interface CategoryFilterDef {
     title: string;
     key: string;
@@ -46,7 +46,7 @@ function FilterPanel({
     onReset: () => void;
 }) {
     return (
-        <>
+        <div className="flex flex-col">
             <FilterSection title="Price Range" options={priceRanges} selected={selectedPrice} onSelect={setSelectedPrice} />
             <FilterSection title="Finish" options={finishes} selected={selectedFinish} onSelect={setSelectedFinish} />
             {extraFilters?.map((ef) => (
@@ -60,17 +60,17 @@ function FilterPanel({
             ))}
             <button
                 onClick={onReset}
-                className="w-full mt-5 py-2.5 text-[0.6rem] font-medium tracking-[0.2em] uppercase cursor-pointer font-montserrat border border-black/8 bg-transparent text-black/60 hover:text-black hover:border-black/20 transition-all duration-300 rounded-lg"
+                className="w-full mt-6 py-3 text-[0.58rem] font-medium tracking-[0.2em] uppercase cursor-pointer font-montserrat border border-black/10 bg-transparent text-black/55 hover:text-black hover:bg-black/5 transition-all duration-300 rounded-full"
             >
                 Clear Filters
             </button>
-        </>
+        </div>
     );
 }
 
 /* ═══════════════════════════════════════════════════════════════
    CATEGORY PAGE COMPONENT
-═══════════════════════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════════════════ */
 export default function CategoryPage({ config }: { config: CategoryConfig }) {
     const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -158,131 +158,139 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
         setExtraFilterValues(resetExtras);
     };
 
-
-
     return (
-        <main style={{ background: "#f5f5f3", minHeight: "100vh", fontFamily: FO }}>
+        <main className="bg-[#FAF9F6] min-h-screen text-[#111111] font-outfit">
             <SiteHeader />
 
-            <section className="bg-white border-b border-black/[0.04] py-8 lg:py-12 px-6 lg:px-8">
+            {/* Breadcrumbs and Page Title Header */}
+            <section className="bg-[#FAF9F6] border-b border-black/[0.035] pt-24 pb-8 lg:pt-32 lg:pb-12 px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-4">
                     <div>
                         {/* Breadcrumb */}
-                        <p className="text-[0.58rem] tracking-[0.22em] uppercase text-black/30 font-montserrat mb-3">
+                        <p className="text-[0.58rem] tracking-[0.22em] uppercase text-black/35 font-montserrat mb-3.5">
                             <Link href="/" className="hover:text-black transition-colors duration-300">Home</Link>
-                            <span className="mx-1.5 opacity-50">/</span>
+                            <span className="mx-2 opacity-50">/</span>
                             <Link href="/shop" className="hover:text-black transition-colors duration-300">Shop</Link>
-                            <span className="mx-1.5 opacity-50">/</span>
-                            <span className="text-black/70">{config.name}</span>
+                            <span className="mx-2 opacity-50">/</span>
+                            <span className="text-black/80 font-normal">{config.name}</span>
                         </p>
-                        <h1 className="text-2xl md:text-3xl lg:text-4xl font-medium text-black tracking-tight font-montserrat mb-2.5 leading-[1.15]">
+                        <h1 className="text-2xl md:text-3.5xl lg:text-4xl font-light text-black tracking-tight font-montserrat mb-3 leading-[1.15]">
                             {config.name}
                         </h1>
-                        <p className="text-[0.85rem] md:text-[0.9rem] text-black/45 font-outfit max-w-xl font-light leading-[1.7]">
+                        <p className="text-[0.85rem] md:text-[0.9rem] text-black/45 max-w-xl font-light leading-[1.8]">
                             {config.description}
                         </p>
                     </div>
                 </div>
             </section>
 
-            <div className="max-w-7xl mx-auto py-8 lg:py-14 px-5 lg:px-8">
+            <div className="max-w-7xl mx-auto py-8 lg:py-14 px-6 lg:px-8">
                 <div className="flex gap-10 lg:gap-14 items-start">
 
                     {/* ── SIDEBAR – desktop only ────────────────────────── */}
-                    <aside className="hidden lg:block w-[240px] shrink-0 sticky top-28">
+                    <aside className="hidden lg:block w-[240px] shrink-0 sticky top-28 bg-[#FAF9F6]">
                         <div>
-                            <h3 className="text-xs font-black tracking-[0.2em] uppercase text-black font-montserrat pb-4 border-b border-black mb-4">
-                                Filters
+                            <h3 className="text-[0.58rem] font-medium tracking-[0.25em] uppercase text-black font-montserrat pb-4 border-b border-black/10 mb-5">
+                                Refine By
                             </h3>
                             <FilterPanel
                                 selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
                                 selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
                                 extraFilterValues={extraFilterValues} setExtraFilterValues={setExtraFilterValues}
-                                    extraFilters={config.extraFilters}
-                                    onReset={resetFilters}
-                                />
-                            </div>
+                                extraFilters={config.extraFilters}
+                                onReset={resetFilters}
+                            />
+                        </div>
 
-                            {/* Back to shop */}
-                            <Link
-                                href="/shop"
-                                className="inline-flex items-center gap-2 mt-8 text-[0.7rem] font-semibold text-gray-500 font-montserrat tracking-widest hover:text-black transition-colors uppercase"
-                            >
-                                ← All Categories
-                            </Link>
+                        {/* Back to shop */}
+                        <Link
+                            href="/shop"
+                            className="inline-flex items-center gap-2 mt-10 text-[0.58rem] font-medium text-black/45 font-montserrat tracking-[0.2em] hover:text-black transition-colors uppercase border-b border-black/10 pb-0.5"
+                        >
+                            ← All Series
+                        </Link>
                     </aside>
 
                     {/* ── PRODUCT AREA ─────────────────────────────────── */}
                     <div className="flex-1 min-w-0">
 
                         {/* Header Row: Count & Sort */}
-                        <div className="flex items-center justify-between gap-3 mb-5">
-                            <div className="flex items-center gap-2.5">
+                        <div className="flex items-center justify-between gap-3 mb-8">
+                            <div className="flex items-center gap-3">
                                 <button
                                     onClick={() => setFilterDrawerOpen(true)}
-                                    className="lg:hidden flex items-center gap-1.5 px-3.5 py-[7px] border border-black/[0.06] bg-white/80 text-[0.58rem] font-medium tracking-[0.18em] uppercase text-black/60 font-montserrat rounded-full transition-all duration-300 hover:border-black/15 hover:text-black/80 active:scale-[0.97]"
+                                    className="lg:hidden flex items-center gap-2 px-4 py-2 border border-black/10 bg-white/50 backdrop-blur-md text-[0.58rem] font-medium tracking-[0.2em] uppercase text-[#1A1917] font-montserrat rounded-full transition-all duration-300 hover:border-black/20 active:scale-[0.97]"
                                 >
-                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="3" y1="6" x2="21" y2="6" /><line x1="7" y1="12" x2="17" y2="12" /><line x1="10" y1="18" x2="14" y2="18" />
                                     </svg>
                                     Filters
                                 </button>
-                                <p className="text-[0.55rem] tracking-[0.2em] uppercase text-black/25 font-montserrat">
-                                    {loading ? "Loading…" : `${sorted.length} ${sorted.length === 1 ? "piece" : "pieces"}`}
+                                <p className="text-[0.58rem] tracking-[0.2em] uppercase text-black/35 font-montserrat">
+                                    {loading ? "Loading…" : `${sorted.length} ${sorted.length === 1 ? "design" : "designs"}`}
                                 </p>
                             </div>
                             
-                            <div className="flex items-center gap-2">
-                                <span className="text-[0.55rem] font-medium tracking-[0.22em] uppercase text-black/25 font-montserrat hidden sm:inline-block">Sort</span>
-                                <select
-                                    value={selectedSort}
-                                    onChange={(e) => setSelectedSort(e.target.value)}
-                                    className="border border-black/[0.06] bg-white/80 text-black/70 text-[0.68rem] font-outfit px-3 py-[6px] outline-none cursor-pointer rounded-lg focus:border-black/20 transition-all duration-300 appearance-none pr-7"
-                                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='none' stroke='%23bbb' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.55rem center' }}
-                                >
-                                    {sortOptions.map((o) => <option key={o}>{o}</option>)}
-                                </select>
+                            <div className="flex items-center gap-2.5">
+                                <span className="text-[0.58rem] font-medium tracking-[0.2em] uppercase text-black/35 font-montserrat hidden sm:inline-block">Sort by</span>
+                                <div className="relative">
+                                    <select
+                                        value={selectedSort}
+                                        onChange={(e) => setSelectedSort(e.target.value)}
+                                        className="border border-black/10 bg-white/50 backdrop-blur-md text-[#1A1917] text-[0.7rem] font-montserrat font-medium tracking-[0.05em] px-4 py-2 outline-none cursor-pointer rounded-full focus:border-black/25 transition-all duration-300 appearance-none pr-8"
+                                        style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='none' stroke='%231a1917' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.8rem center' }}
+                                    >
+                                        {sortOptions.map((o) => <option key={o}>{o}</option>)}
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
                         {/* Loading skeleton */}
                         {loading && (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 lg:gap-10">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
                                 {Array.from({ length: 6 }).map((_, i) => (
-                                    <div key={i} className="bg-gray-100 aspect-[4/5] rounded-2xl animate-pulse" />
+                                    <div key={i} className="bg-black/[0.02] aspect-[4/5] rounded-2xl animate-pulse" />
                                 ))}
                             </div>
                         )}
 
                         {/* Grid */}
                         {!loading && !error && (sorted.length === 0 ? (
-                            <div className="text-center py-20">
-                                <p className="text-black/40 font-outfit text-sm mb-3 font-light">No products in this category yet.</p>
-                                <Link href="/shop" className="text-black text-[0.75rem] font-medium font-montserrat uppercase tracking-[0.15em] underline underline-offset-4">Browse All Categories</Link>
+                            <div className="text-center py-24 bg-black/[0.015] rounded-2xl p-8 border border-black/[0.01]">
+                                <p className="text-black/45 font-outfit text-sm mb-4 font-light leading-relaxed">No designs match the selected filters.</p>
+                                <button onClick={resetFilters} className="text-[#C5A880] text-[0.62rem] font-medium font-montserrat uppercase tracking-[0.2em] hover:text-[#1A1917] transition-colors duration-300 border-b border-[#C5A880] pb-0.5">Reset Filters</button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-2.5 gap-y-7 sm:gap-x-4 sm:gap-y-9 md:gap-x-5 md:gap-y-11">
+                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12 md:gap-x-8 md:gap-y-14">
                                 {visible.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
                             </div>
                         ))}
 
                         {/* Load more */}
                         {hasMore && (
-                            <div className="flex justify-center mt-12 mb-6">
+                            <div className="flex justify-center mt-16 mb-8">
                                 <button
                                     onClick={() => setVisibleCount((c) => c + 6)}
-                                    className="px-10 py-3 bg-[#111] text-white text-[0.62rem] font-medium tracking-[0.22em] uppercase font-montserrat rounded-full transition-all duration-500 hover:bg-black active:scale-[0.97]"
+                                    className="px-12 py-4 bg-[#1A1917] hover:bg-black text-[#C5A880] text-[0.62rem] font-medium tracking-[0.22em] uppercase font-montserrat rounded-full transition-all duration-500 hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] active:scale-[0.97]"
                                 >
                                     Load More
                                 </button>
                             </div>
                         )}
 
-                        {/* Bulk CTA */}
-                        <p style={{ textAlign: "center", fontSize: "0.8rem", color: C.muted, fontFamily: FO, paddingBottom: "1rem" }}>
-                            Need bulk orders or custom sizing?{" "}
-                            <Link href="/contact" style={{ color: C.black, fontWeight: 600, textDecoration: "underline", textUnderlineOffset: 3 }}>Contact Us</Link>
-                        </p>
+                        {/* Bottom Commercial Help Strip */}
+                        <div className="mt-20 border-t border-black/[0.035] pt-8 text-center">
+                            <p className="text-[0.78rem] text-black/45 font-outfit font-light m-0 leading-relaxed">
+                                Seeking custom finishing, dimensions, or wholesale quotes?{" "}
+                                <a 
+                                    href="https://wa.me/918300904920?text=Hi!%20I'm%20interested%20in%20SANRA%20LIVING%20custom%20orders." 
+                                    className="text-[#1A1917] font-semibold underline underline-offset-4 hover:text-[#C5A880] transition-colors duration-300"
+                                >
+                                    Enquire on WhatsApp
+                                </a>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -291,28 +299,34 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
             <AnimatePresence>
                 {filterDrawerOpen && (
                     <>
-                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                            transition={{ duration: 0.25 }}
+                        <motion.div 
+                            initial={{ opacity: 0 }} 
+                            animate={{ opacity: 1 }} 
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
                             onClick={() => setFilterDrawerOpen(false)}
-                            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.35)", zIndex: 40, backdropFilter: "blur(2px)" }}
+                            className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
                         />
-                        <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
-                            transition={{ type: "tween", duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
-                            style={{ position: "fixed", top: 0, left: 0, height: "100%", width: "84vw", maxWidth: 310, background: "#f8f8f7", zIndex: 50, overflowY: "auto", borderRight: "1px solid rgba(0,0,0,0.035)" }}>
+                        <motion.div 
+                            initial={{ x: "-100%" }} 
+                            animate={{ x: 0 }} 
+                            exit={{ x: "-100%" }}
+                            transition={{ type: "tween", duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                            className="fixed top-0 left-0 h-full w-[85vw] max-w-[320px] bg-[#FAF9F6] z-50 overflow-y-auto border-r border-black/[0.035]"
+                        >
                             {/* Drawer header */}
-                            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.95rem 1.25rem", borderBottom: "1px solid rgba(0,0,0,0.035)" }}>
-                                <h2 style={{ fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.3em", textTransform: "uppercase", color: "#111", fontFamily: FM, margin: 0 }}>Filters</h2>
-                                <button onClick={() => setFilterDrawerOpen(false)}
-                                    style={{ background: "none", border: "none", cursor: "pointer", padding: "0.35rem", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", transition: "background 0.2s" }}
-                                    onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(0,0,0,0.04)"; }}
-                                    onMouseLeave={(e) => { e.currentTarget.style.background = "none"; }}
+                            <div className="flex items-center justify-between px-6 py-5 border-b border-black/[0.035]">
+                                <h2 className="text-[0.58rem] font-medium tracking-[0.25em] uppercase text-[#111] font-montserrat m-0">Filters</h2>
+                                <button 
+                                    onClick={() => setFilterDrawerOpen(false)}
+                                    className="p-2 rounded-full hover:bg-black/5 text-[#111]/60 transition-colors duration-300"
                                 >
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#111" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                                         <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                                     </svg>
                                 </button>
                             </div>
-                            <div style={{ padding: "1rem 1.25rem" }}>
+                            <div className="px-6 py-6">
                                 <FilterPanel
                                     selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
                                     selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
@@ -322,13 +336,7 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 />
                                 <button
                                     onClick={() => setFilterDrawerOpen(false)}
-                                    style={{
-                                        width: "100%", marginTop: "1rem", padding: "0.8rem",
-                                        background: "#111", color: "#fff", fontSize: "0.6rem", fontWeight: 600,
-                                        letterSpacing: "0.22em", textTransform: "uppercase", border: "none",
-                                        cursor: "pointer", fontFamily: FM, borderRadius: "8px",
-                                        transition: "background 0.3s",
-                                    }}
+                                    className="w-full mt-6 py-3.5 bg-[#1A1917] text-[#C5A880] text-[0.6rem] font-medium tracking-[0.22em] uppercase border-none cursor-pointer font-montserrat rounded-full hover:bg-black transition-colors duration-300"
                                 >
                                     View Results
                                 </button>
