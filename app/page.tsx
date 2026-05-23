@@ -79,19 +79,14 @@ export default function Homepage() {
       <HeroSection />
 
       {/* 1.5. TRUST BADGES STRIP */}
-      <section className="bg-[#FAF9F6] border-b border-black/[0.03] overflow-hidden py-1">
+      <section className="bg-white border-y border-black/[0.04] overflow-hidden">
         <div className="relative w-full">
-          {/* Left Fade */}
-          <div className="absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-[#FAF9F6] to-transparent pointer-events-none" />
-
-          {/* Right Fade */}
-          <div className="absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-[#FAF9F6] to-transparent pointer-events-none" />
+          <div className="absolute left-0 top-0 z-10 h-full w-16 sm:w-24 bg-gradient-to-r from-white to-transparent pointer-events-none" />
+          <div className="absolute right-0 top-0 z-10 h-full w-16 sm:w-24 bg-gradient-to-l from-white to-transparent pointer-events-none" />
 
           <div
             className="flex w-max"
-            style={{
-              animation: "scroll 30s linear infinite",
-            }}
+            style={{ animation: "scroll 28s linear infinite" }}
           >
             {[...Array(2)].map((_, i) => (
               <div key={i} className="flex shrink-0 items-center">
@@ -102,12 +97,9 @@ export default function Homepage() {
                   "Secure Payments",
                   "Made in Coimbatore",
                 ].map((text) => (
-                  <div
-                    key={text}
-                    className="flex items-center gap-3.5 px-12 py-4 shrink-0"
-                  >
-                    <div className="w-1 h-1 rounded-full bg-[#C5A880]" />
-                    <span className="text-[0.55rem] uppercase tracking-[0.25em] text-black/55 font-montserrat font-light">
+                  <div key={text} className="flex items-center gap-3 px-8 sm:px-12 py-3.5 shrink-0">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#C5A880] flex-shrink-0" />
+                    <span className="text-[0.58rem] uppercase tracking-[0.22em] text-black/50 font-montserrat font-medium whitespace-nowrap">
                       {text}
                     </span>
                   </div>
@@ -133,30 +125,32 @@ export default function Homepage() {
 
       {/* 5. Factory/Workshop Section */}
       <section className="grid grid-cols-1 lg:grid-cols-2 bg-[#1A1917] text-white overflow-hidden">
-        <div className="relative min-h-[350px] lg:min-h-[600px] w-full group">
-          <img 
-            src="/steel-welding.png" 
-            alt="Sanra Steel Factory Craftsman welding steel" 
-            className="absolute inset-0 w-full h-full object-cover filter grayscale opacity-45 mix-blend-luminosity scale-100 group-hover:scale-105 transition-transform duration-[2000ms] cubic-bezier(0.16, 1, 0.3, 1)"
+        {/* Image */}
+        <div className="relative group" style={{ minHeight: "clamp(280px, 45vw, 600px)" }}>
+          <img
+            src="/steel-welding.png"
+            alt="Sanra Steel Factory Craftsman welding steel"
+            className="absolute inset-0 w-full h-full object-cover filter grayscale opacity-45 mix-blend-luminosity group-hover:scale-105 transition-transform duration-[2000ms] ease-out"
           />
-          <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#1A1917] via-[#1A1917]/60 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t lg:bg-gradient-to-r from-[#1A1917] via-[#1A1917]/50 to-transparent" />
         </div>
-        <div className="flex flex-col justify-center px-8 py-16 lg:px-24 lg:py-32 relative z-10">
-          <p className="text-[0.58rem] tracking-[0.3em] uppercase text-[#C5A880] font-montserrat mb-5">Our Craft</p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light font-montserrat text-white leading-[1.2] tracking-tight mb-6">
+        {/* Content */}
+        <div className="flex flex-col justify-center px-6 py-12 sm:px-10 sm:py-16 lg:px-20 lg:py-28 relative z-10">
+          <p className="text-[0.56rem] tracking-[0.32em] uppercase text-[#C5A880] font-montserrat mb-4">Our Craft</p>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-light font-montserrat text-white leading-[1.2] tracking-tight mb-5">
             Forged in Excellence.<br />Crafted in Coimbatore.
           </h2>
-          <p className="text-sm lg:text-base text-white/50 font-outfit font-light leading-[1.9] max-w-lg mb-12">
+          <p className="text-[0.85rem] lg:text-base text-white/50 font-outfit font-light leading-[1.9] max-w-md mb-10">
             Our manufacturing facility combines traditional craftsmanship with precision engineering. We use only premium Jindal Steel to create furniture that lasts generations.
           </p>
           <div className="flex items-center gap-10 lg:gap-16">
             <div>
-              <h4 className="text-4xl lg:text-5xl font-light font-montserrat text-white mb-2 tracking-tight">15+</h4>
-              <p className="text-[0.58rem] lg:text-[0.62rem] uppercase tracking-[0.22em] text-white/35 font-montserrat">Years Expertise</p>
+              <h4 className="text-3xl lg:text-4xl xl:text-5xl font-light font-montserrat text-white mb-1.5 tracking-tight">15+</h4>
+              <p className="text-[0.56rem] uppercase tracking-[0.22em] text-white/35 font-montserrat">Years Expertise</p>
             </div>
             <div>
-              <h4 className="text-4xl lg:text-5xl font-light font-montserrat text-white mb-2 tracking-tight">10k+</h4>
-              <p className="text-[0.58rem] lg:text-[0.62rem] uppercase tracking-[0.22em] text-white/35 font-montserrat">Spaces Designed</p>
+              <h4 className="text-3xl lg:text-4xl xl:text-5xl font-light font-montserrat text-white mb-1.5 tracking-tight">10k+</h4>
+              <p className="text-[0.56rem] uppercase tracking-[0.22em] text-white/35 font-montserrat">Spaces Designed</p>
             </div>
           </div>
         </div>

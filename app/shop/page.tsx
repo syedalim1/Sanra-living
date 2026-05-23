@@ -5,9 +5,6 @@ import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
 import WhatsAppFloat from "../components/WhatsAppFloat";
 
-/* ═══════════════════════════════════════════════════════════════
-   CURATED COLLECTIONS
-   ═══════════════════════════════════════════════════════════════ */
 const collections = [
     {
         name: "Steel Chairs",
@@ -42,94 +39,94 @@ export default function ShopPage() {
         <main className="bg-[#FAF9F6] min-h-screen text-[#111111] font-outfit">
             <SiteHeader />
 
-            {/* ── HERO HEADER ────────────────── */}
-            <section className="relative py-28 md:py-36 lg:py-44 flex items-center justify-center overflow-hidden bg-[#1A1917]">
-                {/* Background Image */}
-                <div className="absolute inset-0 z-0 group">
-                    <img 
-                        src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=2000&q=80" 
-                        alt="Luxury Modern Dining Living Setup" 
-                        className="w-full h-full object-cover opacity-35 mix-blend-luminosity scale-105"
+            {/* ── HERO HEADER ─────────────────────────────────────── */}
+            <section className="relative overflow-hidden bg-[#1A1917]" style={{ minHeight: "clamp(260px, 40vw, 480px)" }}>
+                <div className="absolute inset-0 z-0">
+                    <img
+                        src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=2000&q=80"
+                        alt="Luxury Modern Dining Living Setup"
+                        className="w-full h-full object-cover opacity-40 mix-blend-luminosity"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A1917] via-[#1A1917]/50 to-black/35" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#1A1917] via-[#1A1917]/55 to-black/30" />
                 </div>
-                
-                <div className="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-8 text-center flex flex-col items-center mt-10">
-                    <p className="text-[0.58rem] tracking-[0.3em] uppercase text-[#C5A880] font-montserrat font-medium mb-3.5">
+
+                <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center"
+                    style={{ minHeight: "clamp(260px, 40vw, 480px)", paddingTop: "clamp(80px, 12vw, 140px)", paddingBottom: "clamp(48px, 8vw, 80px)" }}>
+                    <p className="text-[0.54rem] tracking-[0.32em] uppercase text-[#C5A880] font-montserrat font-medium mb-3">
                         SANRA LIVING PORTFOLIO
                     </p>
-                    <h1 className="text-4xl sm:text-5xl md:text-6.5xl lg:text-7.5xl font-light text-white font-montserrat tracking-tight leading-[1.1] mb-6">
+                    <h1 className="font-light text-white font-montserrat tracking-tight leading-[1.05] mb-4"
+                        style={{ fontSize: "clamp(2rem, 6vw, 4.5rem)" }}>
                         Curated Collections.
                     </h1>
-                    <p className="text-sm md:text-base text-white/55 font-light max-w-xl mx-auto leading-relaxed">
-                        Explore our premium engineered steel furniture. Designed for modern living, built to endure.
+                    <p className="text-[0.85rem] text-white/55 font-light max-w-sm mx-auto leading-relaxed">
+                        Premium engineered steel furniture — designed for modern living, built to endure.
                     </p>
                 </div>
             </section>
 
-            {/* ── CATEGORY GRID ────────────────────────────────────── */}
-            <section className="py-20 lg:py-28 px-6 lg:px-8 max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-14">
+            {/* ── CATEGORY GRID ───────────────────────────────────── */}
+            <section className="py-12 lg:py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
                     {collections.map((col) => (
                         <Link
                             key={col.name}
                             href={col.href}
-                            className="group block bg-transparent"
+                            className="group block relative overflow-hidden rounded-2xl"
+                            style={{ aspectRatio: "4/3" }}
                         >
-                            <div className="relative w-full aspect-[16/10] overflow-hidden rounded-2xl bg-[#F5F4F0] mb-6 border border-black/[0.015] shadow-sm transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.06)] group-hover:bg-[#EFECE6]">
-                                <img
-                                    src={col.image}
-                                    alt={col.name}
-                                    loading="lazy"
-                                    className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-103"
-                                />
-                                {/* Soft overlay on hover */}
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-[#1A1917]/[0.02] transition-colors duration-1000" />
+                            <img
+                                src={col.image}
+                                alt={col.name}
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full object-cover transition-transform duration-900 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
+                            />
+                            {/* Gradient overlay */}
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#1A1917]/80 via-[#1A1917]/25 to-transparent transition-all duration-500 group-hover:from-[#1A1917]/90" />
+
+                            {/* Labels */}
+                            <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                                <h2 className="text-[0.85rem] sm:text-base md:text-lg font-light text-white font-montserrat tracking-wide leading-tight">
+                                    {col.name}
+                                </h2>
+                                <p className="text-[0.68rem] text-white/60 font-outfit font-light mt-0.5 hidden sm:block">
+                                    {col.subtitle}
+                                </p>
                             </div>
 
-                            <div className="flex flex-col px-1">
-                                <div className="flex justify-between items-start mb-2">
-                                    <div>
-                                        <h2 className="text-base md:text-lg font-light text-black font-montserrat tracking-wide transition-colors duration-300 group-hover:text-[#C5A880]">
-                                            {col.name}
-                                        </h2>
-                                        <p className="text-[0.78rem] text-black/45 font-light mt-1">
-                                            {col.subtitle}
-                                        </p>
-                                    </div>
-                                    <div className="text-[0.58rem] font-medium uppercase tracking-[0.2em] font-montserrat flex items-center gap-2 text-black/60 group-hover:text-black transition-colors duration-300 mt-1 pb-0.5 border-b border-transparent group-hover:border-black/25">
-                                        Explore
-                                        <span className="text-xs leading-none transform transition-transform duration-300 group-hover:translate-x-1">→</span>
-                                    </div>
-                                </div>
+                            {/* Explore badge on hover */}
+                            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-400">
+                                <span className="text-[0.5rem] font-semibold tracking-[0.18em] uppercase px-3 py-1.5 rounded-full bg-white text-[#1A1917] font-montserrat shadow-md">
+                                    Explore →
+                                </span>
                             </div>
                         </Link>
                     ))}
                 </div>
 
-                {/* Bottom CTA */}
-                <div className="mt-28 lg:mt-36 p-10 md:p-20 bg-[#FAF9F6] border border-black/[0.035] rounded-3xl text-center flex flex-col items-center">
-                    <p className="text-[0.58rem] tracking-[0.3em] uppercase text-[#C5A880] font-montserrat font-medium mb-3">
+                {/* ── BOTTOM CTA ─────────────────────────────────── */}
+                <div className="mt-14 lg:mt-20 p-8 sm:p-12 md:p-16 bg-white border border-black/[0.04] rounded-3xl text-center flex flex-col items-center shadow-sm">
+                    <p className="text-[0.54rem] tracking-[0.3em] uppercase text-[#C5A880] font-montserrat font-medium mb-3">
                         TAILORED REQUISITIONS
                     </p>
-                    <h3 className="text-2xl md:text-3xl font-light text-black font-montserrat mb-4 tracking-tight">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-light text-black font-montserrat mb-3 tracking-tight">
                         Need Pricing or a Custom Quote?
                     </h3>
-                    <p className="text-sm text-black/45 font-light mb-10 max-w-lg mx-auto leading-[1.8]">
-                        Contact us directly for retail pricing, bulk commercial orders, and specialized project requirements.
+                    <p className="text-[0.85rem] text-black/45 font-light mb-8 max-w-md mx-auto leading-[1.8]">
+                        Contact us for retail pricing, bulk commercial orders, and specialized project requirements.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center w-full max-w-md">
+                    <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
                         <a
                             href={waLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-2.5 px-8 py-4 bg-[#1A1917] hover:bg-black text-[#C5A880] text-[0.62rem] font-medium tracking-[0.22em] uppercase font-montserrat rounded-full hover:shadow-[0_12px_30px_rgba(0,0,0,0.12)] transition-all duration-300"
+                            className="flex-1 inline-flex items-center justify-center gap-2.5 px-7 py-4 bg-[#1A1917] hover:bg-black text-white text-[0.6rem] font-semibold tracking-[0.22em] uppercase font-montserrat rounded-full hover:shadow-[0_12px_30px_rgba(0,0,0,0.14)] transition-all duration-300 active:scale-[0.97]"
                         >
-                            <span>Chat on WhatsApp</span>
+                            Chat on WhatsApp
                         </a>
-                        <Link 
-                            href="/bulk-orders" 
-                            className="inline-flex items-center justify-center px-8 py-4 border border-[#1A1917]/25 text-[#1A1917] text-[0.62rem] font-medium tracking-[0.22em] uppercase font-montserrat rounded-full hover:bg-[#1A1917]/5 transition-all duration-300"
+                        <Link
+                            href="/bulk-orders"
+                            className="flex-1 inline-flex items-center justify-center px-7 py-4 border border-[#1A1917]/25 text-[#1A1917] text-[0.6rem] font-semibold tracking-[0.22em] uppercase font-montserrat rounded-full hover:bg-[#1A1917]/5 transition-all duration-300 active:scale-[0.97]"
                         >
                             Bulk Orders
                         </Link>

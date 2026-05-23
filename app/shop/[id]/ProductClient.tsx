@@ -372,7 +372,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                                     <button onClick={() => setQuantity(quantity + 1)} className="flex-1 h-[44px] bg-transparent border-none text-base text-black/40 hover:text-black cursor-pointer active:scale-90 transition-all focus:outline-none">+</button>
                                 </div>
                                 {/* Add to cart */}
-                                <button onClick={handleAddToCart} className="flex-1 h-[52px] bg-[#1A1917] hover:bg-black text-[#C5A880] border-none rounded-full text-[0.62rem] font-medium font-montserrat uppercase tracking-[0.22em] cursor-pointer shadow-lg active:scale-[0.98] transition-all duration-500">
+                                <button onClick={handleAddToCart} className="flex-1 h-[52px] bg-[#1A1917] hover:bg-black text-[#FFFFFF] border-none rounded-full text-[0.62rem] font-medium font-montserrat uppercase tracking-[0.22em] cursor-pointer shadow-lg active:scale-[0.98] transition-all duration-500">
                                     Add to Cart
                                 </button>
                             </div>
@@ -556,7 +556,7 @@ export default function ProductDetailPage({ initialProduct }: { initialProduct?:
                     </button>
                     <button 
                         onClick={handleAddToCart} 
-                        className="px-8 h-[48px] bg-[#1A1917] hover:bg-black text-[#C5A880] border-none rounded-full text-[0.62rem] font-medium font-montserrat uppercase tracking-[0.2em] cursor-pointer active:scale-95 transition-all duration-300"
+                        className="px-8 h-[48px] bg-[#1A1917] hover:bg-black text-[#FFFFFF] border-none rounded-full text-[0.62rem] font-medium font-montserrat uppercase tracking-[0.2em] cursor-pointer active:scale-95 transition-all duration-300"
                     >
                         Add to Cart
                     </button>

@@ -6,25 +6,25 @@ import Link from "next/link";
 const categories = [
     {
         name: "Dining Series",
-        description: "Elegant chairs and dining tables.",
+        description: "Chairs & dining tables",
         href: "/shop/dining-furniture",
         image: "/dining.png",
     },
     {
         name: "Seating Series",
-        description: "Ergonomic designs and lounge seating.",
+        description: "Lounge & ergonomic designs",
         href: "/shop/seating",
-        image: "/living.png", // Using living.png for seating series since it displays seating well
+        image: "/living.png",
     },
     {
         name: "Workspace Series",
-        description: "Minimalist study desks and chairs.",
+        description: "Study desks & chairs",
         href: "/shop/workspace",
         image: "/workspace.png",
     },
     {
         name: "Commercial Series",
-        description: "High-grade setups for hospitality.",
+        description: "High-grade hospitality",
         href: "/shop/commercial",
         image: "/commercial.png",
     },
@@ -32,47 +32,58 @@ const categories = [
 
 export default function CategoryGrid() {
     return (
-        <section className="py-20 lg:py-28 bg-[#FAF9F6] border-b border-black/[0.03] px-6 lg:px-8">
+        <section className="py-16 lg:py-24 bg-[#FAF9F6] border-b border-black/[0.03] px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-end mb-12 lg:mb-16">
+                {/* Section Header */}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end mb-8 lg:mb-12 gap-3">
                     <div>
-                        <p className="text-[0.58rem] tracking-[0.3em] uppercase text-[#C5A880] font-montserrat font-medium mb-3">
+                        <p className="text-[0.56rem] tracking-[0.32em] uppercase text-[#C5A880] font-montserrat font-medium mb-2">
                             SPACE SELECTIONS
                         </p>
-                        <h2 className="text-3xl md:text-4xl font-light text-[#111111] font-montserrat tracking-tight">
+                        <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-[#111111] font-montserrat tracking-tight">
                             Shop by Collection
                         </h2>
                     </div>
-                    <Link 
-                        href="/shop" 
-                        className="text-[0.62rem] text-black/55 font-montserrat tracking-[0.2em] uppercase hover:text-black transition-colors duration-300 mt-4 md:mt-0 border-b border-black/15 pb-1 w-fit"
+                    <Link
+                        href="/shop"
+                        className="text-[0.6rem] text-black/55 font-montserrat tracking-[0.2em] uppercase hover:text-black transition-colors duration-300 border-b border-black/15 pb-0.5 w-fit shrink-0"
                     >
-                        View All Collections →
+                        View All →
                     </Link>
                 </div>
 
-                <div className="flex overflow-x-auto lg:grid lg:grid-cols-4 gap-6 lg:gap-8 snap-x snap-mandatory no-scrollbar -mx-6 px-6 lg:mx-0 lg:px-0 pb-6 lg:pb-0">
+                {/* 2×2 grid on mobile, 4 columns on desktop */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
                     {categories.map((cat) => (
                         <Link
                             key={cat.name}
                             href={cat.href}
-                            className="group block w-[75vw] sm:w-[45vw] lg:w-full flex-shrink-0 snap-start lg:snap-align-none"
+                            className="group block sl-cat-tile"
+                            style={{ aspectRatio: "3/4" }}
                         >
-                            <div className="w-full aspect-[4/5] bg-black/[0.02] rounded-2xl overflow-hidden mb-5 relative transition-all duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] border border-black/[0.015]">
-                                <img
-                                    src={cat.image}
-                                    alt={cat.name}
-                                    loading="lazy"
-                                    className="absolute inset-0 w-full h-full object-contain object-center scale-[0.93] transition-transform duration-1000 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[0.98]"
-                                />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/[0.015] transition-colors duration-1000" />
+                            <img
+                                src={cat.image}
+                                alt={cat.name}
+                                loading="lazy"
+                                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-900 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.06]"
+                                style={{ position: "absolute", inset: 0 }}
+                            />
+                            <div className="sl-cat-overlay" />
+
+                            {/* Shop Now badge on hover */}
+                            <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-400 z-10">
+                                <span className="text-[0.5rem] font-semibold tracking-[0.2em] uppercase px-3 py-1.5 rounded-full bg-white text-[#1A1917] font-montserrat shadow-md">
+                                    Shop →
+                                </span>
                             </div>
-                            
-                            <div className="pl-1">
-                                <h3 className="font-montserrat text-[0.72rem] font-medium text-[#111] tracking-[0.12em] uppercase transition-colors duration-300 mb-1">
+
+                            <div className="sl-cat-label z-10">
+                                <h3 className="font-montserrat text-[0.72rem] sm:text-[0.78rem] font-semibold text-white tracking-[0.1em] uppercase mb-0.5 leading-tight">
                                     {cat.name}
                                 </h3>
-                                <p className="text-[0.78rem] text-black/45 font-outfit font-light leading-normal">{cat.description}</p>
+                                <p className="text-[0.68rem] text-white/70 font-outfit font-light hidden sm:block">
+                                    {cat.description}
+                                </p>
                             </div>
                         </Link>
                     ))}
