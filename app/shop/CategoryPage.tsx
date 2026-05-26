@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import SiteHeader from "../components/SiteHeader";
 import SiteFooter from "../components/SiteFooter";
-import { ProductCard, FilterSection, Product, sortOptions } from "./ShopComponents";
+import { ProductCard, FilterSection, Product, sortOptions, QuickViewModal } from "./ShopComponents";
+import { useCart } from "@/app/context/CartContext";
+import { optimizeImage } from "@/utils/cloudinary";
 
 /* ═══════════════════════════════════════════════════════════════
    CATEGORY CONFIG
@@ -25,29 +27,75 @@ export interface CategoryConfig {
     extraFilters?: CategoryFilterDef[];
 }
 
-/* ── Global filters ───────────────────────────────────────── */
 const priceRanges = ["All", "Under ₹2,000", "₹2,000 – ₹5,000", "₹5,000 – ₹10,000", "₹10,000+"];
 const finishes = ["All", "Matte Black", "Graphite Grey"];
 
+const SHOP_CATEGORIES = [
+    { name: "Tables", slug: "tables" },
+    { name: "Seating", slug: "seating" },
+    { name: "Dining", slug: "dining-furniture" },
+    { name: "Storage", slug: "storage" },
+    { name: "Bedroom", slug: "bedroom" },
+    { name: "Workspace", slug: "workspace" },
+    { name: "Modular", slug: "modular" },
+    { name: "Commercial", slug: "commercial" },
+    { name: "Balcony & Outdoor", slug: "balcony-outdoor" },
+    { name: "CNC Decor", slug: "cnc-decor" },
+];
+
+/* ── Filter helper ────────────────────────────────────────── */
+function checkProductMatch(p: any, key: string, value: string): boolean {
+    if (value === "All") return true;
+    const valLower = value.toLowerCase();
+
+    // 1. Check in tags array if present
+    if (Array.isArray(p.tags) && p.tags.some((t: string) => t.toLowerCase() === valLower)) {
+        return true;
+    }
+
+    // 2. Check cushion specific filtering
+    if (key === "cushion") {
+        const hasCushionWord = 
+            p.title?.toLowerCase().includes("cushion") || 
+            p.subtitle?.toLowerCase().includes("cushion") ||
+            (Array.isArray(p.tags) && p.tags.some((t: string) => t.toLowerCase().includes("cushion")));
+            
+        if (value === "With Cushion") return hasCushionWord;
+        if (value === "Without Cushion") return !hasCushionWord;
+    }
+
+    // 3. Check direct attributes (product_type, sub_category, material, finish, etc.)
+    if (p.product_type && p.product_type.toLowerCase() === valLower) return true;
+    if (p.sub_category && p.sub_category.toLowerCase() === valLower) return true;
+    if (p[key] && String(p[key]).toLowerCase() === valLower) return true;
+
+    // 4. Fallback: Check if title or subtitle contains the option value
+    if (p.title && p.title.toLowerCase().includes(valLower)) return true;
+    if (p.subtitle && p.subtitle.toLowerCase().includes(valLower)) return true;
+
+    return false;
+}
+
 /* ── FilterPanel ──────────────────────────────────────────── */
 function FilterPanel({
-    selectedPrice, setSelectedPrice,
-    selectedFinish, setSelectedFinish,
-    extraFilterValues, setExtraFilterValues,
+    selectedPrice, setSelectedPrice, priceCounts,
+    selectedFinish, setSelectedFinish, finishCounts,
+    extraFilterValues, setExtraFilterValues, extraFiltersCounts,
     extraFilters,
     onReset,
 }: {
-    selectedPrice: string; setSelectedPrice: (v: string) => void;
-    selectedFinish: string; setSelectedFinish: (v: string) => void;
+    selectedPrice: string; setSelectedPrice: (v: string) => void; priceCounts: Record<string, number>;
+    selectedFinish: string; setSelectedFinish: (v: string) => void; finishCounts: Record<string, number>;
     extraFilterValues: Record<string, string>;
     setExtraFilterValues: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+    extraFiltersCounts: Record<string, Record<string, number>>;
     extraFilters?: CategoryFilterDef[];
     onReset: () => void;
 }) {
     return (
         <div className="flex flex-col">
-            <FilterSection title="Price Range" options={priceRanges} selected={selectedPrice} onSelect={setSelectedPrice} />
-            <FilterSection title="Finish" options={finishes} selected={selectedFinish} onSelect={setSelectedFinish} />
+            <FilterSection title="Price Range" options={priceRanges} selected={selectedPrice} onSelect={setSelectedPrice} counts={priceCounts} />
+            <FilterSection title="Finish" options={finishes} selected={selectedFinish} onSelect={setSelectedFinish} counts={finishCounts} />
             {extraFilters?.map((ef) => (
                 <FilterSection
                     key={ef.key}
@@ -55,6 +103,7 @@ function FilterPanel({
                     options={["All", ...ef.options]}
                     selected={extraFilterValues[ef.key] ?? "All"}
                     onSelect={(v) => setExtraFilterValues((prev) => ({ ...prev, [ef.key]: v }))}
+                    counts={extraFiltersCounts[ef.key]}
                 />
             ))}
             <button
@@ -96,16 +145,25 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
     const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
     const [visibleCount, setVisibleCount] = useState(12);
     const [extraFilterValues, setExtraFilterValues] = useState<Record<string, string>>({});
+    
+    // Desktop layout grid columns: 3 (standard) or 4 (compact)
+    const [cols, setCols] = useState(3);
+    // Quick view modal target
+    const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+
+    const { dispatch: cartDispatch } = useCart();
 
     useEffect(() => {
         const initExtras: Record<string, string> = {};
         config.extraFilters?.forEach((f) => { initExtras[f.key] = "All"; });
         setExtraFilterValues(initExtras);
+        setVisibleCount(12);
     }, [config]);
 
     useEffect(() => {
         (async () => {
             try {
+                setLoading(true);
                 const res = await fetch(`/api/products?category=${encodeURIComponent(config.dbCategories[0])}&limit=100`);
                 if (!res.ok) throw new Error("Failed to load");
                 const json = await res.json();
@@ -122,7 +180,9 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                     }
                 }
 
-                setAllProducts(products.filter((p) => p.is_active));
+                // Filter duplicates by ID
+                const uniqueProducts = Array.from(new Map(products.map(p => [p.id, p])).values());
+                setAllProducts(uniqueProducts.filter((p) => p.is_active));
             } catch {
                 setError("Could not load products. Please try again.");
             } finally {
@@ -131,15 +191,81 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
         })();
     }, [config.dbCategories]);
 
+    // Apply filters
     const filtered = allProducts.filter((p) => {
         if (selectedPrice === "Under ₹2,000" && p.price >= 2000) return false;
         if (selectedPrice === "₹2,000 – ₹5,000" && (p.price < 2000 || p.price > 5000)) return false;
         if (selectedPrice === "₹5,000 – ₹10,000" && (p.price < 5000 || p.price > 10000)) return false;
         if (selectedPrice === "₹10,000+" && p.price < 10000) return false;
         if (selectedFinish !== "All" && p.finish !== selectedFinish) return false;
+        
+        // Apply extra filters
+        for (const [key, value] of Object.entries(extraFilterValues)) {
+            if (value && value !== "All") {
+                if (!checkProductMatch(p, key, value)) return false;
+            }
+        }
         return true;
     });
 
+    // Dynamic Counts Calculation
+    const priceCounts: Record<string, number> = {};
+    priceRanges.forEach((range) => {
+        priceCounts[range] = allProducts.filter((p) => {
+            if (selectedFinish !== "All" && p.finish !== selectedFinish) return false;
+            for (const [ek, ev] of Object.entries(extraFilterValues)) {
+                if (ev !== "All" && !checkProductMatch(p, ek, ev)) return false;
+            }
+            if (range === "All") return true;
+            if (range === "Under ₹2,000") return p.price < 2000;
+            if (range === "₹2,000 – ₹5,000") return p.price >= 2000 && p.price <= 5000;
+            if (range === "₹5,000 – ₹10,000") return p.price >= 5000 && p.price <= 10000;
+            if (range === "₹10,000+") return p.price >= 10000;
+            return true;
+        }).length;
+    });
+
+    const finishCounts: Record<string, number> = {};
+    finishes.forEach((fin) => {
+        finishCounts[fin] = allProducts.filter((p) => {
+            if (selectedPrice !== "All") {
+                if (selectedPrice === "Under ₹2,000" && p.price >= 2000) return false;
+                if (selectedPrice === "₹2,000 – ₹5,000" && (p.price < 2000 || p.price > 5000)) return false;
+                if (selectedPrice === "₹5,000 – ₹10,000" && (p.price < 5000 || p.price > 10000)) return false;
+                if (selectedPrice === "₹10,000+" && p.price < 10000) return false;
+            }
+            for (const [ek, ev] of Object.entries(extraFilterValues)) {
+                if (ev !== "All" && !checkProductMatch(p, ek, ev)) return false;
+            }
+            if (fin === "All") return true;
+            return p.finish === fin;
+        }).length;
+    });
+
+    const extraFiltersCounts: Record<string, Record<string, number>> = {};
+    config.extraFilters?.forEach((ef) => {
+        const counts: Record<string, number> = {};
+        const options = ["All", ...ef.options];
+        options.forEach((opt) => {
+            counts[opt] = allProducts.filter((p) => {
+                if (selectedPrice !== "All") {
+                    if (selectedPrice === "Under ₹2,000" && p.price >= 2000) return false;
+                    if (selectedPrice === "₹2,000 – ₹5,000" && (p.price < 2000 || p.price > 5000)) return false;
+                    if (selectedPrice === "₹5,000 – ₹10,000" && (p.price < 5000 || p.price > 10000)) return false;
+                    if (selectedPrice === "₹10,000+" && p.price < 10000) return false;
+                }
+                if (selectedFinish !== "All" && p.finish !== selectedFinish) return false;
+                for (const [ek, ev] of Object.entries(extraFilterValues)) {
+                    if (ek !== ef.key && ev !== "All" && !checkProductMatch(p, ek, ev)) return false;
+                }
+                if (opt === "All") return true;
+                return checkProductMatch(p, ef.key, opt);
+            }).length;
+        });
+        extraFiltersCounts[ef.key] = counts;
+    });
+
+    // Apply sorting
     const sorted = [...filtered].sort((a, b) => {
         if (selectedSort === "Price: Low to High") return a.price - b.price;
         if (selectedSort === "Price: High to Low") return b.price - a.price;
@@ -153,6 +279,17 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
     const activeFilters: { label: string; reset: () => void }[] = [];
     if (selectedPrice !== "All") activeFilters.push({ label: selectedPrice, reset: () => setSelectedPrice("All") });
     if (selectedFinish !== "All") activeFilters.push({ label: selectedFinish, reset: () => setSelectedFinish("All") });
+    
+    // Active extra filters chips
+    Object.entries(extraFilterValues).forEach(([key, val]) => {
+        if (val !== "All") {
+            const def = config.extraFilters?.find(f => f.key === key);
+            activeFilters.push({
+                label: `${def?.title || key}: ${val}`,
+                reset: () => setExtraFilterValues(prev => ({ ...prev, [key]: "All" }))
+            });
+        }
+    });
 
     useEffect(() => {
         document.body.style.overflow = filterDrawerOpen ? "hidden" : "";
@@ -176,7 +313,6 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
 
             {/* ── CATEGORY HERO ──────────────────────────────────── */}
             <section className="relative pt-[56px] md:pt-[64px] overflow-hidden">
-                {/* Hero image — full bleed */}
                 <div className="relative w-full" style={{ height: "clamp(200px, 35vw, 400px)" }}>
                     <img
                         src={heroImage}
@@ -208,6 +344,29 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
 
             {/* ── MAIN CONTENT ───────────────────────────────────── */}
             <div className="max-w-7xl mx-auto py-6 lg:py-12 px-4 sm:px-6 lg:px-8">
+                
+                {/* Related Categories Navigation Slider */}
+                <div className="w-full overflow-x-auto pb-4 mb-8 -mx-4 px-4 sm:mx-0 sm:px-0 no-scrollbar">
+                    <div className="flex gap-2.5 w-max">
+                        {SHOP_CATEGORIES.map((cat) => {
+                            const active = config.slug === cat.slug;
+                            return (
+                                <Link
+                                    key={cat.slug}
+                                    href={`/shop/${cat.slug}`}
+                                    className={`px-5 py-2.5 rounded-full text-[0.62rem] font-semibold tracking-[0.18em] uppercase font-montserrat transition-all duration-300 border shadow-sm
+                                        ${active 
+                                            ? "bg-[#1A1917] border-[#1A1917] text-white hover:bg-black" 
+                                            : "bg-white border-black/10 text-black/55 hover:text-black hover:border-black/20 hover:scale-102"
+                                        }`}
+                                >
+                                    {cat.name}
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+
                 <div className="flex gap-8 lg:gap-12 items-start">
 
                     {/* ── SIDEBAR desktop ────────────────────────── */}
@@ -216,9 +375,10 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                             Refine By
                         </h3>
                         <FilterPanel
-                            selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
-                            selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
+                            selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice} priceCounts={priceCounts}
+                            selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish} finishCounts={finishCounts}
                             extraFilterValues={extraFilterValues} setExtraFilterValues={setExtraFilterValues}
+                            extraFiltersCounts={extraFiltersCounts}
                             extraFilters={config.extraFilters}
                             onReset={resetFilters}
                         />
@@ -233,7 +393,7 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                     {/* ── PRODUCT AREA ────────────────────────────── */}
                     <div className="flex-1 min-w-0">
 
-                        {/* Top bar: filter trigger + count + sort */}
+                        {/* Top bar: filter trigger + count + sort + columns */}
                         <div className="flex items-center justify-between gap-3 mb-5 sm:mb-8">
                             <div className="flex items-center gap-2.5 flex-wrap">
                                 {/* Mobile filter button */}
@@ -257,22 +417,46 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 </p>
                             </div>
 
-                            {/* Sort */}
-                            <div className="flex items-center gap-2">
-                                <span className="text-[0.58rem] font-medium tracking-[0.18em] uppercase text-black/35 font-montserrat hidden sm:inline-block">Sort</span>
-                                <div className="relative">
-                                    <select
-                                        value={selectedSort}
-                                        onChange={(e) => setSelectedSort(e.target.value)}
-                                        className="border border-black/10 bg-white text-[#1A1917] text-[0.68rem] font-montserrat font-medium tracking-[0.05em] px-4 py-2 outline-none cursor-pointer rounded-full focus:border-black/25 transition-all duration-300 appearance-none pr-8 shadow-sm"
-                                        style={{
-                                            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='none' stroke='%231a1917' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-                                            backgroundRepeat: "no-repeat",
-                                            backgroundPosition: "right 0.75rem center",
-                                        }}
+                            {/* Desktop controls: layout + sort */}
+                            <div className="flex items-center gap-4">
+                                {/* Columns switcher (desktop only) */}
+                                <div className="hidden md:flex items-center gap-1 bg-white border border-black/10 p-0.5 rounded-full shadow-sm">
+                                    <button
+                                        onClick={() => setCols(3)}
+                                        className={`p-1.5 rounded-full transition-all duration-300 ${cols === 3 ? "bg-[#1A1917] text-white" : "text-black/45 hover:text-black"}`}
+                                        aria-label="3 Columns Grid"
                                     >
-                                        {sortOptions.map((o) => <option key={o}>{o}</option>)}
-                                    </select>
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <rect x="3" y="3" width="4" height="18" /><rect x="10" y="3" width="4" height="18" /><rect x="17" y="3" width="4" height="18" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        onClick={() => setCols(4)}
+                                        className={`p-1.5 rounded-full transition-all duration-300 ${cols === 4 ? "bg-[#1A1917] text-white" : "text-black/45 hover:text-black"}`}
+                                        aria-label="4 Columns Grid"
+                                    >
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <rect x="2" y="3" width="3" height="18" /><rect x="8" y="3" width="3" height="18" /><rect x="14" y="3" width="3" height="18" /><rect x="20" y="3" width="3" height="18" />
+                                        </svg>
+                                    </button>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[0.58rem] font-medium tracking-[0.18em] uppercase text-black/35 font-montserrat hidden sm:inline-block">Sort</span>
+                                    <div className="relative">
+                                        <select
+                                            value={selectedSort}
+                                            onChange={(e) => setSelectedSort(e.target.value)}
+                                            className="border border-black/10 bg-white text-[#1A1917] text-[0.68rem] font-montserrat font-medium tracking-[0.05em] px-4 py-2 outline-none cursor-pointer rounded-full focus:border-black/25 transition-all duration-300 appearance-none pr-8 shadow-sm"
+                                            style={{
+                                                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='none' stroke='%231a1917' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+                                                backgroundRepeat: "no-repeat",
+                                                backgroundPosition: "right 0.75rem center",
+                                            }}
+                                        >
+                                            {sortOptions.map((o) => <option key={o}>{o}</option>)}
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -294,7 +478,7 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
 
                         {/* Loading skeleton */}
                         {loading && (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+                            <div className={`grid grid-cols-2 ${cols === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-4 sm:gap-6 lg:gap-8`}>
                                 {Array.from({ length: 6 }).map((_, i) => (
                                     <div key={i} className="sl-skeleton" style={{ aspectRatio: "3/4" }} />
                                 ))}
@@ -315,8 +499,12 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 </button>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-                                {visible.map((p, i) => <ProductCard key={p.id} product={p} index={i} />)}
+                            <div className={`grid grid-cols-2 ${cols === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"} gap-4 sm:gap-6 lg:gap-8`}>
+                                {visible.map((p, i) => (
+                                    <motion.div key={p.id} layout transition={{ type: "spring", stiffness: 350, damping: 32 }}>
+                                        <ProductCard key={p.id} product={p} index={i} onQuickViewClick={setQuickViewProduct} />
+                                    </motion.div>
+                                ))}
                             </div>
                         ))}
 
@@ -339,6 +527,8 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                                 <a
                                     href="https://wa.me/918300904920?text=Hi!%20I'm%20interested%20in%20SANRA%20LIVING%20custom%20orders."
                                     className="text-[#1A1917] font-semibold underline underline-offset-4 hover:text-[#C5A880] transition-colors duration-300"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                 >
                                     Enquire on WhatsApp →
                                 </a>
@@ -383,9 +573,10 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
 
                             <div className="px-5 py-5 flex-1">
                                 <FilterPanel
-                                    selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice}
-                                    selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish}
+                                    selectedPrice={selectedPrice} setSelectedPrice={setSelectedPrice} priceCounts={priceCounts}
+                                    selectedFinish={selectedFinish} setSelectedFinish={setSelectedFinish} finishCounts={finishCounts}
                                     extraFilterValues={extraFilterValues} setExtraFilterValues={setExtraFilterValues}
+                                    extraFiltersCounts={extraFiltersCounts}
                                     extraFilters={config.extraFilters}
                                     onReset={resetFilters}
                                 />
@@ -401,6 +592,31 @@ export default function CategoryPage({ config }: { config: CategoryConfig }) {
                             </div>
                         </motion.div>
                     </>
+                )}
+            </AnimatePresence>
+
+            {/* ── GLASSMORPHIC QUICK VIEW MODAL ───────────────────── */}
+            <AnimatePresence>
+                {quickViewProduct && (
+                    <QuickViewModal
+                        product={quickViewProduct}
+                        onClose={() => setQuickViewProduct(null)}
+                        onAddToCart={(p, qty) => {
+                            cartDispatch({
+                                type: "ADD",
+                                payload: {
+                                    id: p.id,
+                                    title: p.title,
+                                    subtitle: p.subtitle,
+                                    finish: p.finish || "Matte Black",
+                                    price: p.price,
+                                    image: p.image_url,
+                                    qty: qty,
+                                    stockQty: p.stock_qty || 99,
+                                }
+                            });
+                        }}
+                    />
                 )}
             </AnimatePresence>
 

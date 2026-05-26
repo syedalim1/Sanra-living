@@ -28,6 +28,7 @@ export default function CheckoutPage() {
     /* ── Form state ── */
     const [form, setForm] = useState({
         name: "",
+        email: "",
         phone: "",
         address: "",
         city: "",
@@ -108,7 +109,7 @@ export default function CheckoutPage() {
                     shipping: {
                         name: form.name,
                         phone: form.phone,
-                        email: "",
+                        email: form.email,
                         address1: form.address,
                         address2: "",
                         city: form.city,
@@ -250,6 +251,14 @@ export default function CheckoutPage() {
                                             placeholder="10-digit mobile number"
                                         />
                                     </div>
+                                </div>
+
+                                <div className="flex flex-col gap-2 mb-5">
+                                    <label className="text-[0.75rem] font-semibold text-gray-500 uppercase tracking-widest font-montserrat ml-1">Email Address</label>
+                                    <input type="email" name="email" value={form.email} onChange={handleChange} required 
+                                        className="w-full px-4 py-3.5 bg-[#FAFAFA] border border-black/10 rounded-xl font-outfit text-sm text-black outline-none focus:border-black/30 focus:bg-white focus:shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all placeholder:text-gray-400"
+                                        placeholder="Enter your email for order updates"
+                                    />
                                 </div>
                                 
                                 <div className="flex flex-col gap-2 mb-5">

@@ -6,6 +6,7 @@ export async function GET(req: NextRequest) {
         const { searchParams } = new URL(req.url);
         const category = searchParams.get("category");
         const finish = searchParams.get("finish");
+        const search = searchParams.get("search");
         const sort = searchParams.get("sort") ?? "featured";
         const page = parseInt(searchParams.get("page") ?? "1", 10);
         const limit = parseInt(searchParams.get("limit") ?? "20", 10);
@@ -21,6 +22,9 @@ export async function GET(req: NextRequest) {
         }
         if (finish && finish !== "All") {
             query = query.eq("finish", finish);
+        }
+        if (search) {
+            query = query.or(`title.ilike.%${search}%,subtitle.ilike.%${search}%,category.ilike.%${search}%`);
         }
 
         if (sort === "price_asc") {
